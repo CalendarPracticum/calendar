@@ -130,3 +130,8 @@ dmypy.json
 
 # IDE
 .idea
+
+# temporary ignore
+
+*migrations
+*/media/
