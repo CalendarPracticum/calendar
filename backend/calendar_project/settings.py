@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -41,8 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
+    'rest_framework_simplejwt',
+    'djoser',
     'django_filters',
+
+    'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -105,6 +112,40 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# REST conf
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+DJOSER = {
+    "HIDE_USERS": False,
+    "LOGIN_FIELD": "email",
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.IsAuthenticated'],
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
+    },
+    "SERIALIZERS": {
+        "user_create": "api.serializers.users.UsersCreateSerializer",
+        "user": "api.serializers.users.UsersSerializer",
+        "current_user": "api.serializers.users.UsersSerializer",
+    },
+    "TOKEN_MODEL": None,
+}
+
+AUTH_USER_MODEL = 'users.User'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -122,6 +163,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Media files
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media',
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
