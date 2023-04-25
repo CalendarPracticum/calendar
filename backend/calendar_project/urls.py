@@ -5,7 +5,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
+    # Раскоментировать как появится url в приложении API
+    # path('api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

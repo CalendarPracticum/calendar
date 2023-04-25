@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     'users.apps.UsersConfig',
-		'events.apps.EventsConfig',
+    'events.apps.EventsConfig',
     'api.apps.ApiConfig',
 ]
 
