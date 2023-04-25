@@ -131,5 +131,8 @@ dmypy.json
 # IDE
 .idea
 
-# Migrations befor stabel version
 
+# temporary ignore
+
+*migrations
+*/media/
