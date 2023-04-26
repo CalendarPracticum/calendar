@@ -2,9 +2,9 @@ name: Calendar backend workflows
 
 on:
   push:
-    branches: [ 'backend' ]
+    branches: [ 'feature/backend_ci-cd' ]
   pull_request:
-    branches: [ 'backend' ]
+    branches: [ 'feature/backend_ci-cd' ]
 
 jobs:
 
