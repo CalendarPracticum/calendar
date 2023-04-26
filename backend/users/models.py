@@ -1,21 +1,30 @@
-from PIL import Image
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import (
-    MinValueValidator,
     MaxValueValidator,
+    MinValueValidator,
     validate_email,
 )
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from PIL import Image
 
 
 class User(AbstractUser):
+    """
+    Переопределенная модель пользователя для проекта.
+
+    Поля электронной почты и имени пользователя обязательны и уникальны.
+    Поля количества рабочих часов и аватара опциональны и
+    имеют дефолтные значения.
+    """
+
     email = models.EmailField(
         'E-mail',
-        unique=True,
         max_length=256,
+        unique=True,
         validators=(validate_email,)
     )
     username = models.CharField(
@@ -27,6 +36,8 @@ class User(AbstractUser):
     profile_picture = models.ImageField(
         'Аватар',
         upload_to='profile_pictures',
+        default=None,
+        null=True,
     )
     hours = models.PositiveIntegerField(
         'Количество рабочих часов в неделю',
@@ -45,6 +56,12 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def save(self, *args, **kwargs):
+        """
+        Переопределенный метод сохранения экземпляра.
+
+        При наличии аватара пользователя файл сжимается до размера 128*128.
+        """
+
         super().save(*args, **kwargs)
 
         if self.profile_picture:
@@ -57,27 +74,37 @@ class User(AbstractUser):
         return f'{self.username}'
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_settings(instance, created, **kwargs):
+    """
+    Сигнал при создании экземпляра пользователя создает экземпляр настроек.
+    """
+
     if created:
         SettingsUser.objects.create(user=instance)
 
 
 class SettingsUser(models.Model):
+    """
+    Модель пользовательских настроек.
+
+    Хранит булевое значение о темной теме и поле с фоновым изображением.
+    """
+
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         verbose_name='Пользователь',
         on_delete=models.CASCADE,
-        related_name='settings'
+        related_name='settings',
     )
     dark_mode = models.BooleanField(
         'Темная тема',
-        default=False
+        default=False,
     )
     background = models.ImageField(
         'Фон',
         upload_to='backgrounds',
-        null=True
+        null=True,
     )
 
     class Meta:

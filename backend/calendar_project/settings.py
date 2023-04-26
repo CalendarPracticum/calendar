@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -131,18 +132,18 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
-    "HIDE_USERS": False,
-    "LOGIN_FIELD": "email",
+    'HIDE_USERS': False,
+    'LOGIN_FIELD': 'email',
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.IsAuthenticated'],
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
     },
-    "SERIALIZERS": {
-        "user_create": "api.serializers.users.UsersCreateSerializer",
-        "user": "api.serializers.users.UsersSerializer",
-        "current_user": "api.serializers.users.UsersSerializer",
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.users.UsersCreateSerializer',
+        'user': 'api.serializers.users.UsersSerializer',
+        'current_user': 'api.serializers.users.UsersSerializer',
     },
-    "TOKEN_MODEL": None,
+    'TOKEN_MODEL': None,
 }
 
 AUTH_USER_MODEL = 'users.User'
