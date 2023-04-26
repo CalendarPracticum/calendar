@@ -1,17 +1,31 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
-import datetime
-
-from users.models import User
 
 
 class Calendar(models.Model):
-    """Календарь"""
-    name = models.CharField('Название', max_length=100)
-    description = models.TextField('Описание', null=True, blank=True)
-    public = models.BooleanField('Публичный', default=False)
+    """
+    Календарь.
+    Содержит name - название, description - описание, public - является ли
+    публичным (bool), owner - владелец календаря (имеет связь с моделью user
+    one_to_many).
+    """
+
+    name = models.CharField(
+        'Название',
+        max_length=100
+    )
+    description = models.TextField(
+        'Описание',
+        null=True,
+        blank=True
+    )
+    public = models.BooleanField(
+        'Публичный',
+        default=False
+    )
     owner = models.ForeignKey(
-        User,
+        get_user_model(),
         on_delete=models.CASCADE,
         verbose_name='Календарь',
         related_name='calendars',
@@ -26,8 +40,17 @@ class Calendar(models.Model):
 
 
 class Category(models.Model):
-    """Категория"""
-    name = models.CharField('Название', max_length=100, unique=True)
+    """
+    Категория.
+    Содержит name - название категории и hex_color - цветовая схема категории.
+    color дополнительно валедируется на предмет символов hex формата.
+    """
+
+    name = models.CharField(
+        'Название',
+        max_length=100,
+        unique=True
+    )
     color = models.CharField(
         'Код цвета в формате HEX',
         max_length=7,
@@ -48,44 +71,40 @@ class Category(models.Model):
 
 class Event(models.Model):
     """
-    Событие. Отражает все элементы события, поля timestamp_start и finish
-    принимают дату и время. поля iso_datetime_start и finish носят только
-    информационный характер. Отображаются в филдах админки для удобного
-    чтения даты и времени которую автоматически подтягивают и конвертируют из
-    timestamp формата.
-
+    Событие.
+    Содержит поля name - название, description - описание, datetime_start -
+    дата и время начала, datetime_finish - дата и время окончания, day_off -
+    является ли выходным (bool), holiday - является ли праздничным (bool),
+    связывается через связь one_to_many с моделью category и calendar.
     """
+
     name = models.CharField(
         'Название',
         max_length=100,
         null=True,
         blank=True
     )
-    description = models.TextField('Описание', null=True, blank=True)
-    iso_datetime_start = models.DateTimeField(
-        'Начало',
+    description = models.TextField(
+        'Описание',
         null=True,
-        blank=True,
-        editable=False,
+        blank=True
     )
-    iso_datetime_finish = models.DateTimeField(
+    datetime_start = models.DateTimeField(
+        'Начало',
+    )
+    datetime_finish = models.DateTimeField(
         'Конец',
         null=True,
         blank=True,
-        editable=False,
     )
-    timestamp_start = models.BigIntegerField(
-        'Начало в timestamp формате',
-        editable=True,
+    day_off = models.BooleanField(
+        'Выходной',
+        default=False
     )
-    timestamp_finish = models.BigIntegerField(
-        'Конец в timestamp формате',
-        null=True,
-        blank=True,
-        editable=True,
+    holiday = models.BooleanField(
+        'Праздник',
+        default=False
     )
-    day_off = models.BooleanField('Выходной', default=False)
-    holiday = models.BooleanField('Праздник', default=False)
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
@@ -104,13 +123,4 @@ class Event(models.Model):
         verbose_name_plural = 'События'
 
     def __str__(self):
-        return str(self.normal_datetime_start)
-
-    def save(self, *args, **kwargs):
-        if self.timestamp_start:
-            self.iso_datetime_start = datetime.datetime.fromtimestamp(
-                self.timestamp_start).isoformat()
-        if self.timestamp_finish:
-            self.iso_datetime_finish = datetime.datetime.fromtimestamp(
-                self.timestamp_finish).isoformat()
-        super(Event, self).save(*args, **kwargs)
+        return str(self.datetime_start)
