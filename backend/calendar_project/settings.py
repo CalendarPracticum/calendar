@@ -139,9 +139,9 @@ DJOSER = {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
     },
     'SERIALIZERS': {
-        'user_create': 'api.serializers.users.UsersCreateSerializer',
-        'user': 'api.serializers.users.UsersSerializer',
-        'current_user': 'api.serializers.users.UsersSerializer',
+        'user_create': 'api.v1.serializers.users.UsersCreateSerializer',
+        'user': 'api.v1.serializers.users.UsersSerializer',
+        'current_user': 'api.v1.serializers.users.UsersSerializer',
     },
     'TOKEN_MODEL': None,
 }
@@ -169,7 +169,7 @@ STATIC_URL = 'static/'
 # Media files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media',
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
