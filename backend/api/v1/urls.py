@@ -11,9 +11,9 @@ v1_router.register(r'users', UsersViewSet)
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Calendar",
+        title='Calendar',
         default_version='v1',
-        description="Product calendar",
+        description='Product calendar',
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
