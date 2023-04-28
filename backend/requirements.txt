@@ -5,3 +5,4 @@ django-filter==23.1
 djoser==2.2.0
 Pillow==9.5.0
 python-dotenv==1.0.0
+drf-yasg==1.21.5
