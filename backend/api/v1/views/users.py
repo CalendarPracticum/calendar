@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
 
+from api.v1.paginations import UsersLimitPagination
 from api.v1.serializers.users import UsersSerializer
 
 User = get_user_model()
@@ -13,3 +14,4 @@ class UsersViewSet(UserViewSet):
 
     queryset = User.objects.all()
     serializer_class = UsersSerializer
+    pagination_class = UsersLimitPagination
