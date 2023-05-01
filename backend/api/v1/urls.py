@@ -5,7 +5,7 @@ from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 
 from api.v1.views.users import UsersViewSet
-from backend.api.v1.views.events import (
+from api.v1.views.events import (
     CalendarViewSet,
     CategoryViewSet,
     EventViewSet,
