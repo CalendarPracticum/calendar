@@ -4,12 +4,8 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 
+from api.v1.views.events import CalendarViewSet, CategoryViewSet, EventViewSet
 from api.v1.views.users import UsersViewSet
-from api.v1.views.events import (
-    CalendarViewSet,
-    CategoryViewSet,
-    EventViewSet,
-)
 
 v1_router = DefaultRouter()
 v1_router.register(r'users', UsersViewSet)

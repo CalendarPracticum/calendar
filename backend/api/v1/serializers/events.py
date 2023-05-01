@@ -1,9 +1,6 @@
-# import datetime
-
 from rest_framework import serializers
 
 from events.models import Calendar, Category, Event
-
 
 """
 class UnixTimestampField(serializers.DateTimeField):
