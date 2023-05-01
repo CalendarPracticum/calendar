@@ -6,9 +6,11 @@ from django.db import models
 class Calendar(models.Model):
     """
     Календарь.
-    Содержит name - название, description - описание, public - является ли
-    публичным (bool), owner - владелец календаря (имеет связь с моделью user
-    one_to_many).
+    Содержит name - название,
+    description - описание,
+    public - является ли
+    публичным (bool),
+    owner - владелец календаря (имеет связь с моделью user one_to_many).
     """
 
     name = models.CharField(
@@ -42,7 +44,8 @@ class Calendar(models.Model):
 class Category(models.Model):
     """
     Категория.
-    Содержит name - название категории и hex_color - цветовая схема категории.
+    Содержит name - название категории и
+    hex_color - цветовая схема категории.
     color дополнительно валедируется на предмет символов hex формата.
     """
 
@@ -72,9 +75,12 @@ class Category(models.Model):
 class Event(models.Model):
     """
     Событие.
-    Содержит поля name - название, description - описание, datetime_start -
-    дата и время начала, datetime_finish - дата и время окончания, day_off -
-    является ли выходным (bool), holiday - является ли праздничным (bool),
+    Содержит поля name - название,
+    description - описание,
+    datetime_start - дата и время начала,
+    datetime_finish - дата и время окончания,
+    day_off - является ли выходным (bool),
+    holiday - является ли праздничным (bool),
     связывается через связь one_to_many с моделью category и calendar.
     """
 
