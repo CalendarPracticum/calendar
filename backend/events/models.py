@@ -29,7 +29,7 @@ class Calendar(models.Model):
     owner = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
-        verbose_name='Календарь',
+        verbose_name='Владелец',
         related_name='calendars',
     )
 
