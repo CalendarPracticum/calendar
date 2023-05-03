@@ -10,6 +10,8 @@ class ModelTests(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Создаем тестовые экземпляры моделей User, Group, Post"""
+
         super().setUpClass()
         cls.user = User.objects.create_user(
             username='test_user1',
