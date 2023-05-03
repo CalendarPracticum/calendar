@@ -28,12 +28,6 @@
 		"lint:fix": "npm run lint -- --fix",
 		"format": "prettier . --write"
 	},
-	"eslintConfig": {
-		"extends": [
-			"react-app",
-			"react-app/jest"
-		]
-	},
 	"browserslist": {
 		"production": [
 			">0.2%",
@@ -47,8 +41,10 @@
 		]
 	},
 	"devDependencies": {
+		"eslint": "^8.39.0",
 		"eslint-config-airbnb": "^19.0.4",
 		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-import": "^2.27.5",
 		"lint-staged": "^13.2.2",
 		"prettier": "2.8.8"
 	},
