@@ -22,7 +22,7 @@ jobs:
           node-version: '18.x'
 
       - name: Install dependencies
-        run: npm install ./frontend/package.json
+        run: npm install ./frontend
 
       - name: Run ESLint
         run: npm run lint
