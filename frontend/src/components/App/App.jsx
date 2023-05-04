@@ -1,3 +1,6 @@
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/primereact.min.css';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import ruLocale from 'date-fns/locale/ru';
