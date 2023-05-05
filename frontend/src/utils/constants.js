@@ -1,2 +1,4 @@
-export const TEMP = 'temp';
-export const TEMP2 = 'temp2';
+export const firstQuarter = ['Январь', 'Февраль', 'Март'];
+export const secondQuarter = ['Апрель', 'Май', 'Июнь'];
+export const thirdQuarter = ['Июль', 'Август', 'Сентябрь'];
+export const fourthQuarter = ['Октябрь', 'Ноябрь', 'Декабрь'];

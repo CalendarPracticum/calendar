@@ -22,14 +22,12 @@ const localizer = dateFnsLocalizer({
 	locales,
 });
 
-const culture = 'ru';
-
 function App() {
 	return (
 		<div>
 			<p>Learn React</p>
 			<Main />
-			<YearCalendar localizer={localizer} culture={culture} />
+			<YearCalendar localizer={localizer} />
 		</div>
 	);
 }
