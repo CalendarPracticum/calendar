@@ -7,7 +7,7 @@ import ruLocale from 'date-fns/locale/ru';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
-import { Main } from '../../pages/Main/Main';
+import { Main } from '../Main/Main';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';

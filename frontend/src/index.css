@@ -36,4 +36,6 @@ body {
 
 .container {
 	padding: 0 24px;
+	max-width: 1920px;
+	margin: 0 auto;
 }
