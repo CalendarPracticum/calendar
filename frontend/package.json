@@ -9,6 +9,7 @@
 		"@testing-library/user-event": "^13.5.0",
 		"classnames": "^2.3.2",
 		"date-fns": "^2.30.0",
+		"primeicons": "^6.0.1",
 		"primereact": "^9.3.1",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",

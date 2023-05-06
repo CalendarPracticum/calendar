@@ -9,6 +9,8 @@ import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { Main } from '../../pages/Main/Main';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
+import { Header } from '../Header/Header';
+import styles from './App.module.css';
 
 const locales = {
 	ru: ruLocale,
@@ -26,8 +28,8 @@ const culture = 'ru';
 
 function App() {
 	return (
-		<div>
-			<p>Learn React</p>
+		<div className={styles.app}>
+			<Header />
 			<Main />
 			<YearCalendar localizer={localizer} culture={culture} />
 		</div>
