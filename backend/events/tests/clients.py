@@ -12,6 +12,16 @@ class BaseAPITestCase(APITestCase):
     def setUpTestData(cls):
         """
         Загрузка тестовых данных с помощью management-команды loaddata.
+
+        Для тестов доступны пользователи:
+        - test@user.com,
+        - owner@user.com,
+        - ad@min.com,
+
+        Владелец календаря test_calendar — owner@user.com
+        В календаре test_calendar добавлено тестовое событие test_event.
+        Также добавлены несколько общих событий от ad@min'а,
+        которые должны быть доступны к просмотру для всех.
         """
 
         command_name = 'loaddata'
