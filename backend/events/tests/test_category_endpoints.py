@@ -26,4 +26,3 @@ class CategoryTest(BaseAPITestCase):
                     f'{client.name} должен получить статус {expected_code} '
                     f'для GET-запроса на api/v1/categories/'
                 )
-

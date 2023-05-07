@@ -2,7 +2,7 @@ import os
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient, APITestCase
 
 User = get_user_model()
 

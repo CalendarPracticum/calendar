@@ -186,8 +186,8 @@ class EventTest(BaseAPITestCase):
                     self.assertEqual(
                         response.status_code,
                         expected_code,
-                        f'{client.name} должен получить статус {expected_code} '
-                        f'для {method.__name__.upper()}-запроса '
+                        f'{client.name} должен получить статус {expected_code}'
+                        f' для {method.__name__.upper()}-запроса '
                         f'на api/v1/events/<events_id>,'
                         f'где event — общее событие'
                     )
