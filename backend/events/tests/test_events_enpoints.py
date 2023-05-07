@@ -1,49 +1,19 @@
-import os
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
 
 from events.models import Event
+from events.tests.clients import BaseAPITestCase
 
 User = get_user_model()
 
 
-class EventTest(APITestCase):
+class EventTest(BaseAPITestCase):
     """
-    Тестирование доступности эндопойнтов приложения events для анонима.
+    Тестирование доступности эндопойнтов приложения events.
     """
-
-    @classmethod
-    def setUpTestData(cls):
-        """
-        Загрузка тестовых данных с помощью management-команды loaddata.
-        """
-
-        command_name = 'loaddata'
-        fixture_path = os.path.join(os.path.dirname(__file__), 'data.json')
-        call_command(command_name, fixture_path)
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        user = User.objects.get(email='test@user.com')
-        owner = User.objects.get(email='owner@user.com')
-        admin = User.objects.get(email='ad@min.com')
-
-        cls.anon = APIClient(name='Анонимный пользователь')
-        cls.user = APIClient(name='Обычный пользователь')
-        cls.owner = APIClient(name='Владелец события')
-        cls.admin = APIClient(name='Администратор')
-
-        cls.user.force_authenticate(user)
-        cls.owner.force_authenticate(owner)
-        cls.admin.force_authenticate(admin)
-        for client in (cls.anon, cls.user, cls.owner, cls.admin):
-            client.name = client.defaults.get('name')
 
     def test_get_events_list(self):
         """
