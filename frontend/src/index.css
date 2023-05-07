@@ -1,24 +1,24 @@
 @import-normalize;
 
-:root {
-	--fw-light: 300;
-	--fw-regular: 400;
-	--fw-medium: 500;
-	--fw-bold: 700;
+/*:root {*/
+/*	--fw-light: 300;*/
+/*	--fw-regular: 400;*/
+/*	--fw-medium: 500;*/
+/*	--fw-bold: 700;*/
 
-	--fs-body: 18px;
-	--lh-body: 21px;
+/*	--fs-body: 18px;*/
+/*	--lh-body: 21px;*/
 
-	--white: #fff;
-	--grey-light: #f3f3f3;
-	--grey: #d9d9d9;
-	--grey-middle: #767676;
-	--grey-dark: #333333;
-	--black: #000;
+/*	--white: #fff;*/
+/*	--grey-light: #f3f3f3;*/
+/*	--grey: #d9d9d9;*/
+/*	--grey-middle: #767676;*/
+/*	--grey-dark: #333333;*/
+/*	--black: #000;*/
 
-	--gradient: linear-gradient(108.19deg, #1fbcff 0%, #ff48cc 97.6%);
-	--shadow: 0px 4px 12px rgba(2, 89, 192, 0.12);
-}
+/* 	--gradient: linear-gradient(108.19deg, #1fbcff 0%, #ff48cc 97.6%);*/
+/*	--shadow: 0px 4px 12px rgba(2, 89, 192, 0.12);*/
+/*}*/
 
 body {
 	margin: 0;
@@ -27,9 +27,15 @@ body {
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-size: var(--fs-body, 18px);
-	line-height: var(--lh-body, 21px);
-	font-weight: var(--fw-medium, 500);
-	font-style: normal;
-	color: var(--grey-middle, #767676);
+	/*font-size: var(--fs-body, 18px);*/
+	/*line-height: var(--lh-body, 21px);*/
+	/*font-weight: var(--fw-medium, 500);*/
+	/*font-style: normal;*/
+	/*color: var(--grey-middle, #767676);*/
+}
+
+.container {
+	padding: 0 24px;
+	max-width: 1920px;
+	margin: 0 auto;
 }
