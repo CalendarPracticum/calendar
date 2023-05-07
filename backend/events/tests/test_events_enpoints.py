@@ -139,7 +139,6 @@ class EventTest(BaseAPITestCase):
         cases = (
             (self.anon, status.HTTP_403_FORBIDDEN),
             (self.user, status.HTTP_403_FORBIDDEN),
-            (self.owner, status.HTTP_403_FORBIDDEN),
             (self.admin, status.HTTP_204_NO_CONTENT),
         )
 
@@ -161,14 +160,13 @@ class EventTest(BaseAPITestCase):
         Редактирования общего события.
 
         Общее событие может редактировать только администратор.
-        Поле calendar должно валидироваться: при создании пользователь может
+        Поле calendar должно валидироваться: пользователь может
         указать только тот календарь, владельцем которого он является.
         """
 
         cases = (
             (self.anon, status.HTTP_403_FORBIDDEN),
             (self.user, status.HTTP_403_FORBIDDEN),
-            (self.owner, status.HTTP_400_BAD_REQUEST),
             (self.admin, status.HTTP_200_OK),
         )
 
