@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -11,6 +12,7 @@ import { Main } from '../Main/Main';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
+import CurrentUserContext from '../../context/CurrentUserContext';
 
 const locales = {
 	ru: ruLocale,
@@ -27,12 +29,36 @@ const localizer = dateFnsLocalizer({
 const culture = 'ru';
 
 function App() {
+	const [currentUser, setCurrentUser] = useState({});
+	const [loggedIn, setLoggedIn] = useState(false);
+
+	useEffect(() => {
+		if (loggedIn) {
+			setCurrentUser({
+				name: 'testName',
+				email: 'test@test.test',
+			});
+		}
+	}, [loggedIn]);
+
+	const user = useMemo(
+		() => ({
+			currentUser,
+			setCurrentUser,
+			loggedIn,
+			setLoggedIn,
+		}),
+		[currentUser, loggedIn]
+	);
+
 	return (
-		<div className={styles.app}>
-			<Header />
-			<Main />
-			<YearCalendar localizer={localizer} culture={culture} />
-		</div>
+		<CurrentUserContext.Provider value={user}>
+			<div className={styles.app}>
+				<Header loggedIn={loggedIn} />
+				<Main />
+				<YearCalendar localizer={localizer} culture={culture} />
+			</div>
+		</CurrentUserContext.Provider>
 	);
 }
 
