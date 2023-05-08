@@ -47,7 +47,7 @@ class UsersCreateSerializer(UserCreateSerializer):
     Поле password — в ответе не возвращается.
     """
 
-    settings = SettingsSerializer(required=False)
+    settings = SettingsSerializer(required=False, read_only=True)
     profile_picture = Base64ImageField(required=False)
 
     class Meta:

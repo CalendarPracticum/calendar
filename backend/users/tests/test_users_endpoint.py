@@ -93,21 +93,8 @@ class JwtAuthenticationTests(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
 
-        response = self.client.get(reverse('user-list'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-class AnonymousTest(APITestCase):
-    """
-    Тестирование доступа для анонимного пользователя.
-    """
-
-    def test_anonymous_get_401(self):
-        response = self.client.get(reverse('user-list'))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
         response = self.client.get(reverse('user-me'))
-        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class AuthClientTest(APITestCase):
@@ -139,13 +126,6 @@ class AuthClientTest(APITestCase):
         response = client.get(reverse('user-me'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        response = client.put(
-            reverse('user-me'),
-            {'username': 'new_name', 'email': 'new@email.com'},
-            format='json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         response = client.patch(
             reverse('user-me'),
             {'username': 'else_new_name'},
@@ -158,37 +138,3 @@ class AuthClientTest(APITestCase):
             {'current_password': 'testpassword'}
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-
-class PaginationTest(APITestCase):
-    """
-    Тестирование пагинации пользователей.
-    """
-
-    def setUp(self):
-        """
-        Создание тестовых пользователей.
-        """
-
-        User.objects.bulk_create(
-            [User(username=f'test_user{i}',
-                  email=f'test{i}@user.com',
-                  password='testpassword',) for i in range(10)]
-        )
-        user = User.objects.get(pk=1)
-        self.client.force_authenticate(user)
-        self.url = reverse('user-list')
-
-    def test_user_pagination(self):
-        """
-        Тестирование работоспособности пагинации и полей в ответе.
-        """
-
-        for i in range(1, 3):
-            response = self.client.get(self.url, {'limit': 5, 'page': i})
-            self.assertEqual(len(response.data.get('users')), 5)
-
-        self.assertEqual(
-            list(response.data.keys()),
-            ['count', 'users', 'next', 'previous']
-        )

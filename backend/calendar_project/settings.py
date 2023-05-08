@@ -126,9 +126,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
@@ -139,15 +136,6 @@ SIMPLE_JWT = {
 DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
-    'PERMISSIONS': {
-        'user_list': ['rest_framework.permissions.IsAuthenticated'],
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
-    },
-    'SERIALIZERS': {
-        'user_create': 'api.v1.serializers.users.UsersCreateSerializer',
-        'user': 'api.v1.serializers.users.UsersSerializer',
-        'current_user': 'api.v1.serializers.users.UsersSerializer',
-    },
     'TOKEN_MODEL': None,
 }
 
@@ -157,7 +145,7 @@ AUTH_USER_MODEL = 'users.User'
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
