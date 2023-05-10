@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.v1.serializers.events import (
     CalendarSerializer,
     CategorySerializer,
-    EventSerializer,
+    WriteEventSerializer, GetEventSerializer,
 )
 from api.v1.utils.events.filters import EventFilter
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
@@ -38,7 +38,6 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
     permission_classes = (AllowAny, )
-    serializer_class = EventSerializer
     pagination_class = None
     filter_backends = (DjangoFilterBackend, )
     filterset_class = EventFilter
@@ -61,3 +60,14 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                 calendar__owner__username__in=[
                     'admin', self.request.user.username])
         return qs.filter(calendar__owner__username='admin')
+
+    def get_serializer_class(self):
+        """
+        Метод определяет какой сериализатор использовать.
+        При GET запросе данные отдаются в расширенном формате, а в остальных
+        запрос используется сериализатор для записи данных
+         """
+
+        if self.request.method == 'GET':
+            return GetEventSerializer
+        return WriteEventSerializer
