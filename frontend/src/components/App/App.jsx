@@ -54,7 +54,7 @@ function App() {
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
-				<Header loggedIn={loggedIn} />
+				<Header />
 				<Main />
 				<YearCalendar localizer={localizer} culture={culture} />
 			</div>
