@@ -18,15 +18,6 @@ class CalendarViewSet(viewsets.ModelViewSet):
     serializer_class = CalendarSerializer
     pagination_class = None
 
-    def perform_create(self, serializer):
-        """
-        При POST запросе на создание экземпляра модели Calendar
-        поле owner автоматически заполняется текущим аутентифицированным
-        пользователем.
-        """
-
-        serializer.save(owner=self.request.user)
-
 
 class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
