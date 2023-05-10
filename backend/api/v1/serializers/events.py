@@ -43,3 +43,5 @@ class EventSerializer(serializers.ModelSerializer):
             'category',
             'calendar',
         )
+
+

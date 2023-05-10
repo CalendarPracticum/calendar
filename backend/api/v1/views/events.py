@@ -61,3 +61,5 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                 calendar__owner__username__in=[
                     'admin', self.request.user.username])
         return qs.filter(calendar__owner__username='admin')
+
+from django.db.models import Q
