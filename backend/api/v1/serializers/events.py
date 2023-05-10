@@ -56,7 +56,7 @@ class CategorySerializer(serializers.ModelSerializer):
         )
 
 
-class GetEventSerializer(serializers.ModelSerializer):
+class ReadEventSerializer(serializers.ModelSerializer):
 
     category = CategorySerializer(read_only=True)
     calendar = ShortCalendarSerializer(read_only=True)
@@ -127,5 +127,5 @@ class WriteEventSerializer(serializers.ModelSerializer):
         успешного запроса на изменение данных
         """
 
-        return GetEventSerializer(
+        return ReadEventSerializer(
             instance=instance, context=self.context).data

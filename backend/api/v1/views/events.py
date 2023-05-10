@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.v1.serializers.events import (
     CalendarSerializer,
     CategorySerializer,
-    GetEventSerializer,
+    ReadEventSerializer,
     WriteEventSerializer,
 )
 from api.v1.utils.events.filters import EventFilter
@@ -70,5 +70,5 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
          """
 
         if self.request.method == 'GET':
-            return GetEventSerializer
+            return ReadEventSerializer
         return WriteEventSerializer
