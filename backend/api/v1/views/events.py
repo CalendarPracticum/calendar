@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.v1.serializers.events import (
     CalendarSerializer,
     CategorySerializer,
-    WriteEventSerializer, GetEventSerializer,
+    GetEventSerializer,
+    WriteEventSerializer,
 )
 from api.v1.utils.events.filters import EventFilter
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
