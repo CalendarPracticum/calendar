@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Button } from 'primereact/button';
-import { InputSwitch } from 'primereact/inputswitch';
+import { SelectButton } from 'primereact/selectbutton';
 import 'primeicons/primeicons.css';
 import styles from './Header.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
@@ -10,7 +10,12 @@ export function Header() {
   const { currentUser, loggedIn, setLoggedIn } = userContext;
   const { name, email } = currentUser;
 
-  const [checked, setChecked] = useState(false);
+  const [value, setValue] = useState('light');
+  const themeOptions = [
+    { icon: 'pi pi-moon', value: 'dark' },
+    { icon: 'pi pi-sun', value: 'light' },
+  ];
+  const themeTemplate = (option) => <i className={option.icon} />;
 
   return (
     <header className={styles.header}>
@@ -18,13 +23,14 @@ export function Header() {
         <button type="button" onClick={() => setLoggedIn(!loggedIn)}>
           {loggedIn ? `${name} ${email}` : 'Logo'}
         </button>
-        <div className={styles.switchGroup}>
-          <i className="pi pi-moon" style={{ fontSize: '1.5rem' }} />
-          <InputSwitch
-            checked={checked}
-            onChange={(e) => setChecked(e.value)}
+        <div className={styles.selectGroup}>
+          <SelectButton
+            value={value}
+            options={themeOptions}
+            onChange={(e) => setValue(e.value)}
+            itemTemplate={themeTemplate}
+            optionLabel="value"
           />
-          <i className="pi pi-sun" style={{ fontSize: '1.5rem' }} />
         </div>
         <Button label="Войти" size="small" outlined className={styles.button} />
       </div>
