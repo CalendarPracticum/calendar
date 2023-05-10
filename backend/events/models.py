@@ -101,6 +101,10 @@ class Event(models.Model):
     datetime_finish = models.DateTimeField(
         'Конец',
     )
+    all_day = models.BooleanField(
+        'Длится весь день',
+        default=False
+    )
     day_off = models.BooleanField(
         'Выходной',
         default=False
