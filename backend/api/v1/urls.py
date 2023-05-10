@@ -31,5 +31,4 @@ urlpatterns = [
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0),
             name='schema-redoc'),
     path('', include(v1_router.urls)),
-    path('auth/', include('djoser.urls.jwt')),
 ]
