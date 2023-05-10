@@ -1,0 +1,24 @@
+.header {
+	width: 100%;
+	background-color: var(--blue-100);
+	box-shadow: 0 4px 10px rgba(2, 89, 192, 0.1);
+}
+
+.wrapper {
+	min-height: 56px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.switchGroup {
+	margin: 0 52px 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	color: var(--primary-700);
+}
+
+.button {
+	min-width: 112px;
+}

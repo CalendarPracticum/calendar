@@ -1,0 +1,11 @@
+.main {
+	padding-top: 28px;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	gap: 24px;
+}
+
+.content {
+	flex-grow: 1;
+}
