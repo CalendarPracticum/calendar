@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from events.models import Calendar, Category, Event
@@ -9,6 +10,8 @@ class CalendarSerializer(serializers.ModelSerializer):
     Поле public исключено из выдачи.
     """
 
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+
     class Meta:
         model = Calendar
         fields = (
@@ -17,7 +20,6 @@ class CalendarSerializer(serializers.ModelSerializer):
             'description',
             'owner',
         )
-        read_only_fields = ('owner', )
         extra_kwargs = {
             'name':
                 {'required': True, 'error_messages':
@@ -26,6 +28,21 @@ class CalendarSerializer(serializers.ModelSerializer):
                      }
                  },
         }
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """
+        При POST запросе на создание экземпляра модели Calendar
+        поле owner автоматически заполняется текущим аутентифицированным
+        пользователем.
+        """
+
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            validated_data['owner'] = request.user
+            return super().create(validated_data)
+        raise serializers.ValidationError(
+            'Пользователь не аутентифицирован.')
 
 
 class ShortCalendarSerializer(serializers.ModelSerializer):
