@@ -54,6 +54,7 @@ class User(AbstractUser):
     profile_picture = models.ImageField(
         'Аватар',
         upload_to=change_filename,
+        blank=True,
         default=None,
         null=True,
     )
@@ -75,6 +76,9 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('id',)
+
+    def __str__(self):
+        return f'{self.email}'
 
     def save(self, *args, **kwargs):
         """
@@ -100,9 +104,6 @@ class User(AbstractUser):
             size = (128, 128)
             img.thumbnail(size)
             img.save(self.profile_picture.path)
-
-    def __str__(self):
-        return f'{self.username}'
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -142,4 +143,4 @@ class SettingsUser(models.Model):
         verbose_name = verbose_name_plural = 'Настройки пользователя'
 
     def __str__(self):
-        return f'Настройки пользователя {self.user.username}'
+        return f'Настройки пользователя {self.user}'
