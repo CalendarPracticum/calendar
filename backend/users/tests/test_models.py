@@ -13,18 +13,17 @@ class UserTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create_user(
-            username='test_user',
             email='test@user.com',
             password='test1234',
         )
 
     def test_user_str(self):
         user = UserTest.user
-        self.assertEqual(str(user), user.username)
+        self.assertEqual(str(user), user.email)
 
     def test_create_settings(self):
         user = UserTest.user
         self.assertEqual(
             str(user.settings),
-            f'Настройки пользователя {self.user.username}'
+            f'Настройки пользователя {self.user}'
         )
