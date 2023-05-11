@@ -13,10 +13,12 @@ from events.models import Calendar, Category, Event
 
 
 class CalendarViewSet(viewsets.ModelViewSet):
-    queryset = Calendar.objects.all()
     permission_classes = (IsAuthenticated, )
     serializer_class = CalendarSerializer
     pagination_class = None
+
+    def get_queryset(self):
+        return Calendar.objects.filter(owner=self.request.user)
 
 
 class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

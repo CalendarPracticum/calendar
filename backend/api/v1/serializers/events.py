@@ -1,5 +1,5 @@
 from django.db import transaction
-from rest_framework import serializers, status
+from rest_framework import serializers
 
 from events.models import Calendar, Category, Event
 
@@ -24,8 +24,13 @@ class CalendarSerializer(serializers.ModelSerializer):
         поле owner автоматически заполняется текущим аутентифицированным
         пользователем.
         """
-        validated_data['owner'] = self.context['request'].user
-        return super().create(validated_data)
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            validated_data['owner'] = request.user
+            return super().create(validated_data)
+        else:
+            raise serializers.ValidationError(
+                'Пользователь не аутентифицирован.')
 
 
 class CategorySerializer(serializers.ModelSerializer):
