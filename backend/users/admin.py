@@ -12,6 +12,8 @@ class UserAdmin(UserAdmin):
     добавлены поля аватара и количества рабочих часов.
     """
 
+    list_display = ('id', 'email', 'username', 'is_staff')
+    list_display_links = ('id', 'email')
     add_fieldsets = (
         (
             None,
