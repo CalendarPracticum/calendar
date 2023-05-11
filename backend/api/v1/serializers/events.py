@@ -45,7 +45,6 @@ class CalendarSerializer(serializers.ModelSerializer):
             'Пользователь не аутентифицирован.')
 
 
-
 class ShortCalendarSerializer(serializers.ModelSerializer):
     """
     Сериализатор с укороченным представлением. Необходим для передачи в
