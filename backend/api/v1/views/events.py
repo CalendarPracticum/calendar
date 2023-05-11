@@ -33,7 +33,8 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
-    permission_classes = (AllowAny, )
+    lookup_field = 'id'
+    permission_classes = (AllowAny,)
     pagination_class = None
     required_query_params = ['start_dt', 'finish_dt', ]
 
@@ -50,32 +51,36 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
         Авторизованный пользователь ивенты из своего календаря
         и календаря админа.
         """
+        if self.action == 'list':
+            qs = super().get_queryset()
 
-        qs = super().get_queryset()
+            # Проверка на правильность передаваемого формата даты в запрос.
+            try:
+                start = datetime.strptime(
+                    self.request.query_params.get(
+                        'start_dt'), '%Y-%m-%dT%H:%M:%S')
+                finish = datetime.strptime(
+                    self.request.query_params.get(
+                        'finish_dt'), '%Y-%m-%dT%H:%M:%S')
+            except ValueError:
+                raise ValidationError(
+                    'Invalid date format. '
+                    'Please provide dates in the format YYYY-MM-DDTHH:MM:SS')
 
-        # Проверка на правильность передаваемого формата даты в запрос.
-        try:
-            start = datetime.strptime(
-                self.request.query_params.get(
-                    'start_dt'), '%Y-%m-%dT%H:%M:%S')
-            finish = datetime.strptime(
-                self.request.query_params.get(
-                    'finish_dt'), '%Y-%m-%dT%H:%M:%S')
-        except ValueError:
-            raise ValidationError(
-                'Invalid date format. '
-                'Please provide dates in the format YYYY-MM-DDTHH:MM:SS')
+            # Исключаются события, которые начались позже,
+            # либо закончились раньше
+            # Переданного диапазона дат.
+            qs = qs.exclude(
+                Q(datetime_start__gt=finish) | Q(datetime_finish__lt=start))
 
-        # Исключаются события, которые начались позже, либо закончились раньше
-        # Переданного диапазона дат.
-        qs = qs.exclude(
-            Q(datetime_start__gt=finish) | Q(datetime_finish__lt=start))
+            if self.request.user.is_authenticated:
+                return qs.filter(
+                    calendar__owner__username__in=[
+                        'admin', self.request.user.username])
+            return qs.filter(calendar__owner__username='admin')
 
-        if self.request.user.is_authenticated:
-            return qs.filter(
-                calendar__owner__username__in=[
-                    'admin', self.request.user.username])
-        return qs.filter(calendar__owner__username='admin')
+        if self.action == 'retrieve':
+            return Event.objects.filter(id=self.kwargs.get('id'))
 
     def get_serializer_class(self):
         """
