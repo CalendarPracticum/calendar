@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings as conf
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -25,10 +28,8 @@ class CreateUserTest(APITestCase):
         super().setUpClass()
         url = reverse('user-list')
         data = {
-            'username': 'test_user',
             'email': 'test@user.com',
-            'password': 'testpassword',
-            'profile_picture': image
+            'password': 'testpassword'
         }
         client = APIClient()
         cls.response = client.post(url, data, format='json')
@@ -41,16 +42,10 @@ class CreateUserTest(APITestCase):
         response = CreateUserTest.response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        settings = response.data.pop('settings', None)
-        self.assertEquals(settings, {'dark_mode': False, 'background': None})
-
-        image_path = response.data.pop('profile_picture')
         self.assertEquals(
             response.data,
-            {'id': 1, 'email': 'test@user.com', 'username': 'test_user'}
+            {'id': 1, 'email': 'test@user.com'}
         )
-
-        self.assertIn('/media/profile_pictures/photo_', image_path)
 
     def test_create_user_instances(self):
         """
@@ -58,10 +53,10 @@ class CreateUserTest(APITestCase):
         """
 
         self.assertTrue(
-            User.objects.filter(username='test_user').exists()
+            User.objects.filter(email='test@user.com').exists()
         )
         self.assertTrue(
-            SettingsUser.objects.filter(user__username='test_user').exists()
+            SettingsUser.objects.filter(user__email='test@user.com').exists()
         )
 
 
@@ -76,7 +71,6 @@ class JwtAuthenticationTests(APITestCase):
         """
 
         self.user = User.objects.create_user(
-            username='test_user',
             email='test@user.com',
             password='testpassword'
         )
@@ -110,7 +104,6 @@ class AuthClientTest(APITestCase):
         super().setUpClass()
 
         user = User.objects.create_user(
-            username='test_user',
             email='test@user.com',
             password='testpassword',
         )
@@ -128,9 +121,16 @@ class AuthClientTest(APITestCase):
 
         response = client.patch(
             reverse('user-me'),
-            {'username': 'else_new_name'},
+            {'profile_picture': image},
             format='json'
         )
+
+        image_path = response.data.get('profile_picture')
+        try:
+            os.remove(conf.BASE_DIR / image_path[1:])
+        except FileNotFoundError:
+            pass
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         response = client.delete(
