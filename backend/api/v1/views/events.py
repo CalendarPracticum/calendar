@@ -1,5 +1,9 @@
+from datetime import datetime
+
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from api.v1.serializers.events import (
@@ -8,7 +12,6 @@ from api.v1.serializers.events import (
     ReadEventSerializer,
     WriteEventSerializer,
 )
-from api.v1.utils.events.filters import EventFilter
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
 from events.models import Calendar, Category, Event
 
@@ -33,14 +36,15 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
     permission_classes = (AllowAny, )
     pagination_class = None
-    filter_backends = (DjangoFilterBackend, )
-    filterset_class = EventFilter
-    required_query_params = ['datetime_start_after', 'datetime_start_before', ]
+    required_query_params = ['start_dt', 'finish_dt', ]
 
     def get_queryset(self):
         """
         Возвращает queryset объектов Event, отфильтрованный в зависимости от
-        запрашиваемого юзера.
+        дат переданных в параметрах запроса и запрашиваемого юзера.
+
+        Юзер получает события которые происходят
+        в диапазоне между переданными датами.
 
         Анонимный юзер получает ивенты из календаря админа (username = admin)
 
@@ -49,6 +53,25 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
         """
 
         qs = super().get_queryset()
+
+        # Проверка на правильность передаваемого формата даты в запрос.
+        try:
+            start = datetime.strptime(
+                self.request.query_params.get(
+                    'start_dt'), '%Y-%m-%dT%H:%M:%S')
+            finish = datetime.strptime(
+                self.request.query_params.get(
+                    'finish_dt'), '%Y-%m-%dT%H:%M:%S')
+        except ValueError:
+            raise ValidationError(
+                'Invalid date format. '
+                'Please provide dates in the format YYYY-MM-DDTHH:MM:SS')
+
+        # Исключаются события, которые начались позже, либо закончились раньше
+        # Переданного диапазона дат.
+        qs = qs.exclude(
+            Q(datetime_start__gt=finish) | Q(datetime_finish__lt=start))
+
         if self.request.user.is_authenticated:
             return qs.filter(
                 calendar__owner__username__in=[
