@@ -79,15 +79,14 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                         'admin', self.request.user.username])
             return qs.filter(calendar__owner__username='admin')
 
-        if self.action == 'retrieve':
-            return Event.objects.filter(id=self.kwargs.get('id'))
+        return Event.objects.filter(id=self.kwargs.get('id'))
 
     def get_serializer_class(self):
         """
         Метод определяет какой сериализатор использовать.
         При GET запросе данные отдаются в расширенном формате, а в остальных
         запрос используется сериализатор для записи данных
-         """
+        """
 
         if self.request.method == 'GET':
             return ReadEventSerializer
