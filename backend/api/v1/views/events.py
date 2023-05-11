@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.db.models import Q
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
