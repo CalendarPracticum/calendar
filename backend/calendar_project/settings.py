@@ -92,8 +92,12 @@ WSGI_APPLICATION = 'calendar_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'data/db.sqlite3'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT')
     }
 }
 
@@ -126,9 +130,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
@@ -139,15 +140,6 @@ SIMPLE_JWT = {
 DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
-    'PERMISSIONS': {
-        'user_list': ['rest_framework.permissions.IsAuthenticated'],
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly']
-    },
-    'SERIALIZERS': {
-        'user_create': 'api.v1.serializers.users.UsersCreateSerializer',
-        'user': 'api.v1.serializers.users.UsersSerializer',
-        'current_user': 'api.v1.serializers.users.UsersSerializer',
-    },
     'TOKEN_MODEL': None,
 }
 
@@ -157,7 +149,7 @@ AUTH_USER_MODEL = 'users.User'
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -169,12 +161,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'data/static'
 
 # Media files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'data/media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

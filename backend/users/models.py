@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -9,7 +11,21 @@ from django.core.validators import (
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.crypto import get_random_string
 from PIL import Image
+
+from users.managers import CustomUserManager
+
+
+def change_filename(instance, filename):
+    """
+    Переименование файла при сохранении в 'pp_<user_id>.extension'
+    """
+
+    upload_to = 'profile_pictures'
+    ext = filename.split('.')[-1]
+    filename = f'pp_{get_random_string(7)}.{ext}'
+    return os.path.join(upload_to, filename)
 
 
 class User(AbstractUser):
@@ -32,10 +48,12 @@ class User(AbstractUser):
         max_length=150,
         unique=True,
         validators=[UnicodeUsernameValidator],
+        blank=True,
+        null=True,
     )
     profile_picture = models.ImageField(
         'Аватар',
-        upload_to='profile_pictures',
+        upload_to=change_filename,
         default=None,
         null=True,
     )
@@ -49,7 +67,9 @@ class User(AbstractUser):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -61,7 +81,17 @@ class User(AbstractUser):
         Переопределенный метод сохранения экземпляра.
 
         При наличии аватара пользователя файл сжимается до размера 128*128.
+        При обновлении аватара старый файл удаляется.
         """
+
+        if self.pk:
+            old_user = User.objects.get(pk=self.pk)
+            if old_user.profile_picture and self.profile_picture and (
+                    old_user.profile_picture != self.profile_picture):
+                try:
+                    os.remove(old_user.profile_picture.path)
+                except FileNotFoundError:
+                    pass
 
         super().save(*args, **kwargs)
 
