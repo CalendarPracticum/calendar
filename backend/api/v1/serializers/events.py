@@ -6,6 +6,8 @@ from events.models import Calendar, Category, Event
 
 class CalendarSerializer(serializers.ModelSerializer):
 
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+
     class Meta:
         model = Calendar
         fields = (
@@ -15,7 +17,6 @@ class CalendarSerializer(serializers.ModelSerializer):
             'public',
             'owner',
         )
-        read_only_fields = ('owner', )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -24,13 +25,13 @@ class CalendarSerializer(serializers.ModelSerializer):
         поле owner автоматически заполняется текущим аутентифицированным
         пользователем.
         """
+
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             validated_data['owner'] = request.user
             return super().create(validated_data)
-        else:
-            raise serializers.ValidationError(
-                'Пользователь не аутентифицирован.')
+        raise serializers.ValidationError(
+            'Пользователь не аутентифицирован.')
 
 
 class CategorySerializer(serializers.ModelSerializer):
