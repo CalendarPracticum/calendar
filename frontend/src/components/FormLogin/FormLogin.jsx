@@ -100,8 +100,8 @@ export function FormLogin() {
 											message: 'Максимальная длина 42 символа.',
 										},
 										pattern: {
-											value: /^[A-Z0-9._%+-]{1,42}$/i,
-											message: 'Латинские буквы, цифры, точка, _, +, - или %',
+											value: /^[A-ZА-Я0-9._%+-]{1,42}$/i,
+											message: 'Буквы, цифры, точка, _, +, - или %',
 										},
 									}}
 									render={({ field, fieldState }) => (
