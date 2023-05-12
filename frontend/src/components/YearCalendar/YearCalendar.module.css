@@ -1,11 +1,37 @@
+.year {
+  margin: 50px 0 167px 0;
+  text-align: left;
+  max-width: 952px;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 150%;
+  /* or 24px */
+
+  align-items: center;
+
+  /* Black */
+
+  color: #121214;
+}
+
 .quarter {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: 1fr;
-	grid-column-gap: 20px;
-	grid-row-gap: 0px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 0px;
 }
 
 .month {
-	list-style: none;
+  list-style: none;
 }
+
+.commentsBlock {
+  margin: 50px 0 50px 0;
+  text-align: left;
+  max-width: 952px;
+}
+
+

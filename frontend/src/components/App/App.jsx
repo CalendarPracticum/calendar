@@ -57,7 +57,7 @@ function App() {
 			<div className={styles.app}>
 				<Header onLogin={setVisiblePopupLogin} />
 				<Main />
-				<YearCalendar localizer={localizer} culture={culture} />
+				<YearCalendar localizer={localizer} />
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}

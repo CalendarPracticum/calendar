@@ -8,7 +8,7 @@ const year = '2023';
 
 // взяла у Жени переделать!!!
 const weekendStyle = {
-	backgroundColor: '#e6e6e6',
+	backgroundColor: '#008EF4',
 };
 
 // eslint-disable-next-line react/prop-types
@@ -52,7 +52,7 @@ export function YearCalendar({ localizer }) {
 				один час.
 			</p>
 			<h2>Комментарии к производственному календарю</h2>
-			<div>
+			<div className={styles.commentsBlock}>
 				<p>
 					Норма рабочего времени на определенные календарные периоды исчисляется
 					по расчетному графику пятидневной рабочей недели с двумя выходными
