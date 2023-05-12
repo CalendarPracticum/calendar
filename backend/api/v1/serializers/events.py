@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from events.models import Calendar, Category, Event
 
@@ -146,3 +147,12 @@ class WriteEventSerializer(serializers.ModelSerializer):
 
         return ReadEventSerializer(
             instance=instance, context=self.context).data
+
+    def create(self, validated_data):
+        calendar = validated_data.get('calendar')
+        user = self.context.get('request').user
+        if user != calendar.owner:
+            raise ValidationError(
+                {'calendar': 'Можно использовать только свой календарь'}
+            )
+        return super().create(validated_data)
