@@ -52,7 +52,8 @@ class CalendarTest(BaseAPITestCase):
         response = self.owner.get(reverse('calendars-list'))
         qs_calendars = response.data
         amount_calendar_owner = len([
-            calendar for calendar in qs_calendars if calendar.get('owner') == 1
+            calendar for calendar in qs_calendars if calendar.get(
+                'owner') == 'owner@user.com'
         ])
         self.assertEqual(
             len(qs_calendars), amount_calendar_owner,

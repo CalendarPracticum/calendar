@@ -33,7 +33,7 @@ class BaseAPITestCase(APITestCase):
         super().setUpClass()
         user = User.objects.get(email='test@user.com')
         owner = User.objects.get(email='owner@user.com')
-        admin = User.objects.get(email='ad@min.com')
+        admin = User.objects.get(email='admin@gmail.com')
 
         cls.anon = APIClient(name='Анонимный пользователь')
         cls.user = APIClient(name='Обычный пользователь')
