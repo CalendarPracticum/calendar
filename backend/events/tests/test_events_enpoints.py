@@ -80,7 +80,7 @@ class EventTest(BaseAPITestCase):
 
         event_id = Event.objects.get(name='test_event').id
         cases = (
-            (self.anon, status.HTTP_403_FORBIDDEN),
+            (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_403_FORBIDDEN),
             (self.owner, status.HTTP_200_OK),
             (self.admin, status.HTTP_200_OK),
@@ -109,7 +109,7 @@ class EventTest(BaseAPITestCase):
         mock_delete.return_value = None
         event_id = Event.objects.get(name='test_event').id
         cases = (
-            (self.anon, status.HTTP_403_FORBIDDEN),
+            (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_403_FORBIDDEN),
             (self.owner, status.HTTP_204_NO_CONTENT),
             (self.admin, status.HTTP_204_NO_CONTENT),
@@ -137,7 +137,7 @@ class EventTest(BaseAPITestCase):
 
         mock_delete.return_value = None
         cases = (
-            (self.anon, status.HTTP_403_FORBIDDEN),
+            (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_403_FORBIDDEN),
             (self.admin, status.HTTP_204_NO_CONTENT),
         )
@@ -165,7 +165,7 @@ class EventTest(BaseAPITestCase):
         """
 
         cases = (
-            (self.anon, status.HTTP_403_FORBIDDEN),
+            (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_403_FORBIDDEN),
             (self.admin, status.HTTP_200_OK),
         )
@@ -203,7 +203,7 @@ class EventTest(BaseAPITestCase):
         """
 
         cases = (
-            (self.anon, status.HTTP_403_FORBIDDEN),
+            (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_400_BAD_REQUEST),
             (self.admin, status.HTTP_201_CREATED),
         )
@@ -225,5 +225,6 @@ class EventTest(BaseAPITestCase):
                     response.status_code,
                     expected_code,
                     f'{client.name} должен получить статус {expected_code}'
-                    f' для POST-запроса на api/v1/events/'
+                    f' для POST-запроса на api/v1/events/ '
+                    f'при попытке создать событие с календарем админа.'
                 )

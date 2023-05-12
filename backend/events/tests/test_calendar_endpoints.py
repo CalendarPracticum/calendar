@@ -109,7 +109,7 @@ class CalendarTest(BaseAPITestCase):
         calendar_id = Calendar.objects.get(owner_id=owner_id).id
         cases = (
             (self.anon, status.HTTP_401_UNAUTHORIZED),
-            (self.user, status.HTTP_403_FORBIDDEN),
+            (self.user, status.HTTP_404_NOT_FOUND),
             (self.owner, status.HTTP_200_OK),
             (self.admin, status.HTTP_200_OK),
         )
@@ -143,7 +143,7 @@ class CalendarTest(BaseAPITestCase):
         calendar_id = Calendar.objects.get(owner_id=owner_id).id
         cases = (
             (self.anon, status.HTTP_401_UNAUTHORIZED),
-            (self.user, status.HTTP_403_FORBIDDEN),
+            (self.user, status.HTTP_404_NOT_FOUND),
             (self.owner, status.HTTP_204_NO_CONTENT),
             (self.admin, status.HTTP_204_NO_CONTENT),
         )
