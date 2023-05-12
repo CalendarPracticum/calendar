@@ -13,6 +13,7 @@ import { YearCalendar } from '../YearCalendar/YearCalendar';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
+import { PopupLogin } from '../PopupLogin/PopupLogin';
 
 const locales = {
 	ru: ruLocale,
@@ -31,6 +32,7 @@ const culture = 'ru';
 function App() {
 	const [currentUser, setCurrentUser] = useState({});
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -54,9 +56,13 @@ function App() {
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
-				<Header />
+				<Header onLogin={setVisiblePopupLogin} />
 				<Main />
 				<YearCalendar localizer={localizer} culture={culture} />
+				<PopupLogin
+					visible={visiblePopupLogin}
+					setVisible={setVisiblePopupLogin}
+				/>
 			</div>
 		</CurrentUserContext.Provider>
 	);
