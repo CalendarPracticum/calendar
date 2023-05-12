@@ -34,8 +34,8 @@ class EventTest(BaseAPITestCase):
                 response = client.get(
                     reverse('events-list'),
                     data={
-                        'datetime_start_after': '2023-01-01',
-                        'datetime_start_before': '2023-12-01'
+                        'start_dt': '2023-01-01T00:00:00',
+                        'finish_dt': '2023-12-01T00:00:00'
                     }
                 )
                 self.assertEqual(
@@ -178,6 +178,7 @@ class EventTest(BaseAPITestCase):
                         reverse('events-detail', args=(1,)),
                         data={
                             'datetime_start': '2023-01-01T00:00:00',
+                            'datetime_finish': '2023-12-01T00:00:00',
                             'name': 'new_name',
                             'category': 1,
                             'calendar': 1,
@@ -213,6 +214,7 @@ class EventTest(BaseAPITestCase):
                     reverse('events-list'),
                     data={
                         'datetime_start': '2023-01-01T00:00:00',
+                        'datetime_finish': '2023-01-01T00:01:00',
                         'name': 'test_name',
                         'category': 1,
                         'calendar': 1,
