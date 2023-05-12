@@ -1,0 +1,24 @@
+.card {
+  min-width: 456px;
+}
+
+.form {
+  margin-top: 2.75rem;
+}
+
+.field {
+  margin-bottom: 2rem;
+}
+
+/* @media screen and (max-width: 960px) {
+  .card {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .card {
+    width: 100%;
+    min-width: 0;
+  }
+} */
