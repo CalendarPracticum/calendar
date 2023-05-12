@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
-import "primeflex/primeflex.css";
+import 'primeflex/primeflex.css';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import ruLocale from 'date-fns/locale/ru';
@@ -17,56 +17,56 @@ import CurrentUserContext from '../../context/CurrentUserContext';
 import { PopupLogin } from '../PopupLogin/PopupLogin';
 
 const locales = {
-  ru: ruLocale,
+	ru: ruLocale,
 };
 
 const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
+	format,
+	parse,
+	startOfWeek,
+	getDay,
+	locales,
 });
 
 const culture = 'ru';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState({});
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
+	const [currentUser, setCurrentUser] = useState({});
+	const [loggedIn, setLoggedIn] = useState(false);
+	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 
-  useEffect(() => {
-    if (loggedIn) {
-      setCurrentUser({
-        name: 'testName',
-        email: 'test@test.test',
-      });
-    }
-  }, [loggedIn]);
+	useEffect(() => {
+		if (loggedIn) {
+			setCurrentUser({
+				name: 'testName',
+				email: 'test@test.test',
+			});
+		}
+	}, [loggedIn]);
 
-  const user = useMemo(
-    () => ({
-      currentUser,
-      setCurrentUser,
-      loggedIn,
-      setLoggedIn,
-    }),
-    [currentUser, loggedIn]
-  );
+	const user = useMemo(
+		() => ({
+			currentUser,
+			setCurrentUser,
+			loggedIn,
+			setLoggedIn,
+		}),
+		[currentUser, loggedIn]
+	);
 
-  return (
-    <CurrentUserContext.Provider value={user}>
-      <div className={styles.app}>
-        <Header onLogin={setVisiblePopupLogin} />
-        <Main />
-        <YearCalendar localizer={localizer} culture={culture} />
-        <PopupLogin
-          visible={visiblePopupLogin}
-          setVisible={setVisiblePopupLogin}
-        />
-      </div>
-    </CurrentUserContext.Provider>
-  );
+	return (
+		<CurrentUserContext.Provider value={user}>
+			<div className={styles.app}>
+				<Header onLogin={setVisiblePopupLogin} />
+				<Main />
+				<YearCalendar localizer={localizer} culture={culture} />
+				<PopupLogin
+					visible={visiblePopupLogin}
+					setVisible={setVisiblePopupLogin}
+				/>
+			</div>
+		</CurrentUserContext.Provider>
+	);
 }
 
 export default App;
