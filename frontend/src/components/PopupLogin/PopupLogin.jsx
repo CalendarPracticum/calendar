@@ -5,7 +5,12 @@ import { FormLogin } from '../FormLogin/FormLogin';
 
 export function PopupLogin({ visible, setVisible }) {
 	return (
-		<Dialog visible={visible} onHide={() => setVisible(false)}>
+		<Dialog
+			visible={visible}
+			onHide={() => setVisible(false)}
+			onMaskClick={() => setVisible(false)}
+			modal
+		>
 			<FormLogin />
 		</Dialog>
 	);
