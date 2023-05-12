@@ -19,10 +19,10 @@ export function FormLogin() {
 
 	const {
 		control,
-		formState: { errors },
+		formState: { errors, isValid },
 		handleSubmit,
 		reset,
-	} = useForm({ defaultValues });
+	} = useForm({ defaultValues, mode: 'onBlur' });
 
 	const onSubmit = (data) => {
 		setFormData(data);
@@ -44,16 +44,16 @@ export function FormLogin() {
 			/>
 		</div>
 	);
-	const passwordHeader = <h6>Pick a password</h6>;
+	const passwordHeader = <h4>Введите пароль</h4>;
 	const passwordFooter = (
 		<>
 			<Divider />
-			<p className="mt-2">Suggestions</p>
+			<p className="mt-2">Правила для пароля:</p>
 			<ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
-				<li>At least one lowercase</li>
-				<li>At least one uppercase</li>
-				<li>At least one numeric</li>
-				<li>Minimum 8 characters</li>
+				<li>Хотя бы 1 маленькая буква английского алфавита</li>
+				<li>Хотя бы 1 заглавная буква английского алфавита</li>
+				<li>Хотя бы одна цифра</li>
+				<li>Минимум 8 символов</li>
 			</ul>
 		</>
 	);
@@ -74,9 +74,9 @@ export function FormLogin() {
 						className="pi pi-check-circle"
 						style={{ fontSize: '5rem', color: 'var(--green-500)' }}
 					/>
-					<h5>Registration Successful!</h5>
-					<p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
-						Your account is registered under name <b>{formData.name}</b>
+					<h4>И снова здравствуйте!</h4>
+					<p style={{ lineHeight: 1.5 }}>
+						Вы вошли под именем <b>{formData.name}</b>
 					</p>
 				</div>
 			</Dialog>
@@ -93,7 +93,17 @@ export function FormLogin() {
 								<Controller
 									name="name"
 									control={control}
-									rules={{ required: 'Name is required.' }}
+									rules={{
+										minLength: 1,
+										maxLength: {
+											value: 42,
+											message: 'Максимальная длина 42 символа.',
+										},
+										pattern: {
+											value: /^[A-Z0-9._%+-]{1,42}$/i,
+											message: 'Латинские буквы, цифры, точка, _, +, - или %',
+										},
+									}}
 									render={({ field, fieldState }) => (
 										<InputText
 											id={field.name}
@@ -110,7 +120,7 @@ export function FormLogin() {
 									htmlFor="name"
 									className={cn({ 'p-error': errors.name })}
 								>
-									Имя*
+									Имя
 								</label>
 							</span>
 							{getFormErrorMessage('name')}
@@ -122,10 +132,11 @@ export function FormLogin() {
 									name="email"
 									control={control}
 									rules={{
-										required: 'Email is required.',
+										required: 'Обязательное поле Email.',
 										pattern: {
 											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-											message: 'Invalid email address. E.g. example@email.com',
+											message:
+												'Не корректный email. Например: example@email.ru',
 										},
 									}}
 									render={({ field, fieldState }) => (
@@ -153,10 +164,10 @@ export function FormLogin() {
 									name="password"
 									control={control}
 									rules={{
-										required: 'Password is required.',
+										required: 'Обязательное поле Пароль.',
 										pattern: {
-											value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
-											message: 'Invalid password',
+											value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
+											message: 'Не корректный пароль',
 										},
 									}}
 									render={({ field, fieldState }) => (
@@ -182,7 +193,12 @@ export function FormLogin() {
 							{getFormErrorMessage('password')}
 						</div>
 
-						<Button type="submit" label="Войти" className="mt-2" />
+						<Button
+							type="submit"
+							label="Войти"
+							className="mt-2"
+							disabled={!isValid}
+						/>
 					</form>
 
 					<p>
