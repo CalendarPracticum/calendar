@@ -5,31 +5,31 @@ import { FormLogin } from '../FormLogin/FormLogin';
 import { FormRegistration } from '../FormRegistration/FormRegistration';
 
 export function PopupLogin({ visible, setVisible }) {
-  const [showFormLogin, setShowFormLogin] = useState(true);
+	const [showFormLogin, setShowFormLogin] = useState(true);
 
-  const handleOverlayClick = (evt) => {
-    if (evt.target === evt.currentTarget) {
-      setVisible(false);
-    }
-  };
+	const handleOverlayClick = (evt) => {
+		if (evt.target === evt.currentTarget) {
+			setVisible(false);
+		}
+	};
 
-  return (
-    <Dialog
-      visible={visible}
-      onHide={() => setVisible(false)}
-      onMaskClick={handleOverlayClick}
-      blockScroll
-    >
-      {showFormLogin
-        ?
-        <FormLogin showFormLogin={setShowFormLogin} />
-        :
-        <FormRegistration showFormLogin={setShowFormLogin} />}
-    </Dialog>
-  );
+	return (
+		<Dialog
+			visible={visible}
+			onHide={() => setVisible(false)}
+			onMaskClick={handleOverlayClick}
+			blockScroll
+		>
+			{showFormLogin ? (
+				<FormLogin showFormLogin={setShowFormLogin} />
+			) : (
+				<FormRegistration showFormLogin={setShowFormLogin} />
+			)}
+		</Dialog>
+	);
 }
 
 PopupLogin.propTypes = {
-  visible: PropTypes.bool.isRequired,
-  setVisible: PropTypes.func.isRequired,
+	visible: PropTypes.bool.isRequired,
+	setVisible: PropTypes.func.isRequired,
 };

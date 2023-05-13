@@ -5,13 +5,12 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const culture = 'ru';
 
-
 // eslint-disable-next-line react/prop-types
 export function CalendarBlock({ localizer, date, formats, dayPropGetter }) {
-  // const {views} = useMemo(() => ({views:[Views.MONTH],}),[]);
-  return (
+	// const {views} = useMemo(() => ({views:[Views.MONTH],}),[]);
+	return (
 		<Calendar
-      onDrillDown={()=>((0))}
+			onDrillDown={() => 0}
 			formats={formats}
 			culture={culture}
 			localizer={localizer}

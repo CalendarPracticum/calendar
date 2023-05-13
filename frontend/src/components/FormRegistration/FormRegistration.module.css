@@ -1,27 +1,27 @@
 .card {
-  width: 20rem;
+	width: 20rem;
 }
 
 .form {
-  margin: 2.75rem 0;
+	margin: 2.75rem 0;
 }
 
 .field {
-  margin-bottom: 2rem;
+	margin-bottom: 2rem;
 }
 
 .paddings {
-  padding: 0 1.25rem 2.25rem;
+	padding: 0 1.25rem 2.25rem;
 }
 
 .linkRegistry {
-  color: var(--primary-500);
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s linear;
+	color: var(--primary-500);
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	transition: all 0.3s linear;
 }
 
 .linkRegistry:hover {
-  box-shadow: 0 0.1rem 0 var(--primary-500);
+	box-shadow: 0 0.1rem 0 var(--primary-500);
 }
