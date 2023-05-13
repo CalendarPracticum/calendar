@@ -55,7 +55,7 @@ function App() {
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
 				<Header onLogin={setVisiblePopupLogin} />
-				<Main />
+				<Main localizer={localizer} />
 				<YearCalendar localizer={localizer} />
 				<PopupLogin
 					visible={visiblePopupLogin}
