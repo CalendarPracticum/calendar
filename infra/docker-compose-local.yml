@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  db:
+    container_name: database
+    image: postgres:14.0-alpine
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+
+  backend:
+      container_name: backend
+      build: ../backend
+      restart: always
+      volumes:
+        - ./data/static:/app/data/static/
+        - ./data/media:/app/data/media/
+      depends_on:
+        - db
+      env_file:
+        - .env
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.19.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./data/static:/var/html/static/
+      - ./data/media:/var/html/media/
+    depends_on:
+      - backend
