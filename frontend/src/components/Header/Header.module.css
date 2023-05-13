@@ -1,11 +1,11 @@
 .header {
 	width: 100%;
-	background-color: var(--primary-100);
-	box-shadow: 0 4px 10px rgba(2, 89, 192, 0.1);
+	background-color: var(--surface-ground);
+	/* box-shadow: 0 4px 10px rgba(2, 89, 192, 0.1); */
 }
 
 .wrapper {
-	min-height: 3.5rem;
+	min-height: 3.75rem;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
