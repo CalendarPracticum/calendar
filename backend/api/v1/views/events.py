@@ -3,8 +3,12 @@ from datetime import datetime
 from django.db.models import Q
 from rest_framework import mixins, viewsets
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
+from api.permissions import (
+    EventsOwnerOrAdminOrReadOnly,
+    IsAuthenticatedOrCalendarOwnerOrReadOnly,
+)
 from api.v1.serializers.events import (
     CalendarSerializer,
     CategorySerializer,
@@ -16,11 +20,13 @@ from events.models import Calendar, Category, Event
 
 
 class CalendarViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticatedOrCalendarOwnerOrReadOnly,)
     serializer_class = CalendarSerializer
     pagination_class = None
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Calendar.objects.all()
         return Calendar.objects.filter(owner=self.request.user)
 
 
@@ -34,7 +40,7 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
     lookup_field = 'id'
-    permission_classes = (AllowAny,)
+    permission_classes = (EventsOwnerOrAdminOrReadOnly,)
     pagination_class = None
     required_query_params = ['start_dt', 'finish_dt', ]
 
