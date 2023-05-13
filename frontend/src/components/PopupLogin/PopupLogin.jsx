@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
 import { FormLogin } from '../FormLogin/FormLogin';
+import { FormRegistration } from '../FormRegistration/FormRegistration';
 
 export function PopupLogin({ visible, setVisible }) {
+	const [showFormLogin, setShowFormLogin] = useState(true);
+
 	const handleOverlayClick = (evt) => {
 		if (evt.target === evt.currentTarget) {
 			setVisible(false);
@@ -15,9 +18,13 @@ export function PopupLogin({ visible, setVisible }) {
 			visible={visible}
 			onHide={() => setVisible(false)}
 			onMaskClick={handleOverlayClick}
-			modal
+			blockScroll
 		>
-			<FormLogin />
+			{showFormLogin ? (
+				<FormLogin showFormLogin={setShowFormLogin} />
+			) : (
+				<FormRegistration showFormLogin={setShowFormLogin} />
+			)}
 		</Dialog>
 	);
 }
