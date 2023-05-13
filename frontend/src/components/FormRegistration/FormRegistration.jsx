@@ -7,15 +7,15 @@ import { Password } from 'primereact/password';
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormLogin.module.css';
+import styles from './FormRegistration.module.css';
 
-export function FormLogin({ showFormLogin }) {
+export function FormRegistration({ showFormLogin }) {
 	const [showMessage, setShowMessage] = useState(false);
 	const [formData, setFormData] = useState({});
 	const defaultValues = {
-		name: '',
 		email: '',
 		password: '',
+		confirmPassword: '',
 	};
 
 	const {
@@ -23,7 +23,8 @@ export function FormLogin({ showFormLogin }) {
 		formState: { errors, isValid },
 		handleSubmit,
 		reset,
-	} = useForm({ defaultValues, mode: 'onBlur' });
+		watch,
+	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
 		setFormData(data);
@@ -75,58 +76,21 @@ export function FormLogin({ showFormLogin }) {
 						className="pi pi-check-circle"
 						style={{ fontSize: '5rem', color: 'var(--green-500)' }}
 					/>
-					<h4>И снова здравствуйте!</h4>
+					<h4>Поздравляем!</h4>
 					<p style={{ lineHeight: 1.5 }}>
-						Вы вошли под именем <b>{formData.name}</b>
+						Вы зарегистрировались c Email <b>{formData.email}</b>
 					</p>
 				</div>
 			</Dialog>
 
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Вход</h2>
+					<h2 className="text-center">Регистрация</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
 						className={`p-fluid ${styles.form}`}
 					>
-						<div className={styles.field}>
-							<span className="p-float-label">
-								<Controller
-									name="name"
-									control={control}
-									rules={{
-										minLength: 1,
-										maxLength: {
-											value: 42,
-											message: 'Максимальная длина 42 символа.',
-										},
-										pattern: {
-											value: /^[A-ZА-Я0-9._%+-]{1,42}$/i,
-											message: 'Буквы, цифры, точка, _, +, - или %',
-										},
-									}}
-									render={({ field, fieldState }) => (
-										<InputText
-											id={field.name}
-											{...field}
-											autoFocus
-											className={cn({
-												'p-invalid': fieldState.invalid,
-											})}
-										/>
-									)}
-								/>
-								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
-								<label
-									htmlFor="name"
-									className={cn({ 'p-error': errors.name })}
-								>
-									Имя
-								</label>
-							</span>
-							{getFormErrorMessage('name')}
-						</div>
 						<div className={styles.field}>
 							<span className="p-float-label p-input-icon-right">
 								<i className="pi pi-envelope" />
@@ -145,12 +109,14 @@ export function FormLogin({ showFormLogin }) {
 										<InputText
 											id={field.name}
 											{...field}
+											autoFocus
 											className={cn({
 												'p-invalid': fieldState.invalid,
 											})}
 										/>
 									)}
 								/>
+								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
 								<label
 									htmlFor="email"
 									className={cn({ 'p-error': !!errors.email })}
@@ -194,10 +160,41 @@ export function FormLogin({ showFormLogin }) {
 							</span>
 							{getFormErrorMessage('password')}
 						</div>
+						<div className={styles.field}>
+							<span className="p-float-label">
+								<Controller
+									name="confirmPassword"
+									control={control}
+									rules={{
+										required: 'Обязательное поле.',
+										validate: (value) =>
+											watch('password') === value || 'Пароли должны совпадать!',
+									}}
+									render={({ field, fieldState }) => (
+										<Password
+											id={field.name}
+											{...field}
+											feedback={false}
+											toggleMask
+											className={cn({
+												'p-invalid': fieldState.invalid,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="confirmPassword"
+									className={cn({ 'p-error': errors.confirmPassword })}
+								>
+									Повторите пароль*
+								</label>
+							</span>
+							{getFormErrorMessage('confirmPassword')}
+						</div>
 
 						<Button
 							type="submit"
-							label="Войти"
+							label="Зарегистрироваться"
 							className="mt-2"
 							disabled={!isValid}
 						/>
@@ -209,9 +206,9 @@ export function FormLogin({ showFormLogin }) {
 							className={styles.linkRegistry}
 							onClick={() => showFormLogin((prev) => !prev)}
 						>
-							Зарегистрируйтесь,
+							Войдите,
 						</button>
-						если ещё нет аккаунта
+						если у вас уже есть аккаунт
 					</p>
 				</div>
 			</div>
@@ -219,6 +216,6 @@ export function FormLogin({ showFormLogin }) {
 	);
 }
 
-FormLogin.propTypes = {
+FormRegistration.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
 };
