@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from events.models import Calendar, Category, Event
+from events.models import Calendar, Event
 
 
 class CalendarSerializer(serializers.ModelSerializer):
@@ -20,6 +20,7 @@ class CalendarSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'owner',
+            'color',
         )
         extra_kwargs = {
             'name':
@@ -56,19 +57,6 @@ class ShortCalendarSerializer(serializers.ModelSerializer):
         model = Calendar
         fields = (
             'id',
-            'name'
-        )
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    """
-    Сериализатор объекта Category
-    """
-
-    class Meta:
-        model = Category
-        fields = (
-            'id',
             'name',
             'color',
         )
@@ -76,7 +64,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ReadEventSerializer(serializers.ModelSerializer):
 
-    category = CategorySerializer(read_only=True)
     calendar = ShortCalendarSerializer(read_only=True)
 
     class Meta:
@@ -90,7 +77,6 @@ class ReadEventSerializer(serializers.ModelSerializer):
             'description',
             'day_off',
             'holiday',
-            'category',
             'calendar',
         )
 
@@ -112,7 +98,6 @@ class WriteEventSerializer(serializers.ModelSerializer):
             'description',
             'day_off',
             'holiday',
-            'category',
             'calendar',
         )
         extra_kwargs = {
@@ -121,13 +106,6 @@ class WriteEventSerializer(serializers.ModelSerializer):
                     {'required': 'Дата начала мероприятия отсутствует',
                      'invalid': 'Неправильный формат даты и времени',
                      'null': 'Дата начала мероприятия не может быть null',
-                     }
-                 },
-            'category':
-                {'required': True, 'error_messages':
-                    {'required': 'Не выбрана категория',
-                     'invalid': 'Укажите id категории',
-                     'null': 'Категория не может быть null',
                      }
                  },
             'calendar':

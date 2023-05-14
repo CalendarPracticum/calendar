@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from events.models import Calendar, Category, Event
+from events.models import Calendar, Event
 
 
 @admin.register(Calendar)
@@ -11,31 +11,7 @@ class CalendarAdmin(admin.ModelAdmin):
         'name',
         'description',
         'public',
-        'owner'
-    )
-    empty_value_display = '-пусто-'
-
-
-@admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
-    list_display = (
-        'datetime_start',
-        'datetime_finish',
-        'name',
-        'description',
-        'day_off',
-        'holiday',
-        'category',
-        'calendar',
-    )
-    empty_value_display = '-пусто-'
-
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'name',
+        'owner',
         'hex_color',
     )
     empty_value_display = '-пусто-'
@@ -51,3 +27,17 @@ class CategoryAdmin(admin.ModelAdmin):
             '<span style="color: {};">{}</span>',
             obj.color, obj.color
         )
+
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = (
+        'datetime_start',
+        'datetime_finish',
+        'name',
+        'description',
+        'day_off',
+        'holiday',
+        'calendar',
+    )
+    empty_value_display = '-пусто-'

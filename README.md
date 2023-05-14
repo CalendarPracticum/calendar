@@ -6,10 +6,11 @@ cd infra
 ```
 ##### 1. Создать файл .env и заполнить необходимыми данными:
 
-```
+```dotenv
 # Настройки DJANGO
 DJANGO_SECRET_KEY=secret_key # вставьте секретный ключ, которого у вас нет
 DEBUG=False # Режим дебагера
+ALLOWED_HOSTS='localhost 127.0.0.1'
 
 # База данных
 POSTGRES_DB=db # имя базы данных

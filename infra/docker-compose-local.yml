@@ -12,7 +12,7 @@ services:
 
   backend:
       container_name: backend
-      build: ../backend
+      image: calendaily/backend:mvp0.2.0
       restart: always
       volumes:
         - ./data/static:/app/data/static/

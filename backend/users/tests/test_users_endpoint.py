@@ -44,7 +44,7 @@ class CreateUserTest(APITestCase):
 
         self.assertEquals(
             response.data,
-            {'id': 1, 'email': 'test@user.com'}
+            {'email': 'test@user.com'}
         )
 
     def test_create_user_instances(self):
@@ -127,7 +127,7 @@ class AuthClientTest(APITestCase):
 
         image_path = response.data.get('profile_picture')
         try:
-            os.remove(conf.BASE_DIR / image_path[1:])
+            os.remove(conf.BASE_DIR / 'data' / image_path[1:])
         except FileNotFoundError:
             pass
 

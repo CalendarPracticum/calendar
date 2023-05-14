@@ -180,7 +180,6 @@ class EventTest(BaseAPITestCase):
                             'datetime_start': '2023-01-01T00:00:00',
                             'datetime_finish': '2023-12-01T00:00:00',
                             'name': 'new_name',
-                            'category': 1,
                             'calendar': 1,
                         }
                     )
@@ -216,7 +215,6 @@ class EventTest(BaseAPITestCase):
                         'datetime_start': '2023-01-01T00:00:00',
                         'datetime_finish': '2023-01-01T00:01:00',
                         'name': 'test_name',
-                        'category': 1,
                         'calendar': 1,
                     },
                     format='json',
