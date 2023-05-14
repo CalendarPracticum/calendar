@@ -14,6 +14,9 @@ import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import { PopupLogin } from '../PopupLogin/PopupLogin';
+import * as auth from '../../utils/api/auth';
+// import * as calendarApi from '../../utils/api/calendars';
+// import * as eventApi from '../../utils/api/events';
 
 const locales = {
 	ru: ruLocale,
@@ -51,6 +54,30 @@ function App() {
 		[currentUser, loggedIn]
 	);
 
+	const handleLogin = (formData) => {
+		auth
+			.authorize(formData.email, formData.password)
+			.then((data) => {
+				localStorage.setItem('jwtAccess', data.access);
+				localStorage.setItem('jwtRefresh', data.refresh);
+				setLoggedIn(true);
+			})
+			.catch((err) => {
+        // eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err);
+			});
+	};
+
+	const handleRegister = (formData) => {
+		auth
+			.register(formData.email, formData.password)
+			.then(() => handleLogin(formData))
+			.catch((err) => {
+        // eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err);
+			});
+	};
+
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
@@ -60,6 +87,8 @@ function App() {
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}
+					handleRegister={handleRegister}
+					handleLogin={handleLogin}
 				/>
 			</div>
 		</CurrentUserContext.Provider>
