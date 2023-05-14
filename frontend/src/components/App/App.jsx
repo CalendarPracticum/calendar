@@ -29,13 +29,13 @@ const localizer = dateFnsLocalizer({
 
 function App() {
 	const [currentUser, setCurrentUser] = useState({});
-	const [loggedIn, setLoggedIn] = useState(false);
+	const [loggedIn, setLoggedIn] = useState(true);
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 
 	useEffect(() => {
 		if (loggedIn) {
 			setCurrentUser({
-				name: 'testName',
+				name: 'Pink Elephant',
 				email: 'test@test.test',
 			});
 		}
