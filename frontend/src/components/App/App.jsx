@@ -14,6 +14,7 @@ import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import { PopupLogin } from '../PopupLogin/PopupLogin';
+import { PopupNewEvent } from '../PopupNewEvent/PopupNewEvent';
 
 const locales = {
 	ru: ruLocale,
@@ -31,6 +32,7 @@ function App() {
 	const [currentUser, setCurrentUser] = useState({});
 	const [loggedIn, setLoggedIn] = useState(true);
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
+	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -51,15 +53,22 @@ function App() {
 		[currentUser, loggedIn]
 	);
 
+	// TODO: closeAllPopups?
+	// TODO: custom hook useOverlayClick?
+
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
 				<Header onLogin={setVisiblePopupLogin} />
-				<Main localizer={localizer} />
+				<Main localizer={localizer} onNewEventClick={setVisiblePopupNewEvent} />
 				<YearCalendar localizer={localizer} />
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}
+				/>
+				<PopupNewEvent
+					visible={visiblePopupNewEvent}
+					setVisible={setVisiblePopupNewEvent}
 				/>
 			</div>
 		</CurrentUserContext.Provider>

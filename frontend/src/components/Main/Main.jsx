@@ -4,10 +4,10 @@ import { Sidebar } from '../Sidebar/Sidebar';
 import { BaseCalendar } from '../BaseCalendar/BaseCalendar';
 import styles from './Main.module.css';
 
-export function Main({ localizer }) {
+export function Main({ localizer, onNewEventClick }) {
 	return (
 		<main className={`${styles.main} container`}>
-			<Sidebar />
+			<Sidebar onNewEventClick={onNewEventClick} />
 			<div className={styles.content}>
 				<BaseCalendar localizer={localizer} />
 			</div>
@@ -17,4 +17,5 @@ export function Main({ localizer }) {
 
 Main.propTypes = {
 	localizer: PropTypes.element.isRequired,
+	onNewEventClick: PropTypes.func.isRequired,
 };

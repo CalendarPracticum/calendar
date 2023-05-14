@@ -40,7 +40,7 @@ export function Header({ onLogin }) {
 		<header className={styles.header}>
 			<div className={`${styles.wrapper} container`}>
 				<button type="button" onClick={() => setLoggedIn((prev) => !prev)}>
-					Logo
+					CalenDaiLy
 				</button>
 				<div className={styles.selectGroup}>
 					<SelectButton
