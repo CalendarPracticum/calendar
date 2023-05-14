@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import 'primeicons/primeicons.css';
 import { Button } from 'primereact/button';
 import { SelectButton } from 'primereact/selectbutton';
-import { Avatar } from 'primereact/avatar';
 import styles from './Header.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
+import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 
 export function Header({ onLogin }) {
 	const userContext = useContext(CurrentUserContext);
@@ -55,19 +55,14 @@ export function Header({ onLogin }) {
 						optionDisabled="constant"
 					/>
 				</div>
-				{!loggedIn ? (
+				{loggedIn ? (
+					<AvatarGroup />
+				) : (
 					<Button
 						label="Войти"
 						size="small"
 						className={styles.button}
 						onClick={() => onLogin(true)}
-					/>
-				) : (
-					<Avatar
-						icon="pi pi-user"
-						size="large"
-						style={{ backgroundColor: '#a5b4fc', color: '#1c2127' }}
-						shape="circle"
 					/>
 				)}
 			</div>

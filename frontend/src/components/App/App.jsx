@@ -35,7 +35,7 @@ function App() {
 	useEffect(() => {
 		if (loggedIn) {
 			setCurrentUser({
-				name: 'testName',
+				name: 'Pink Elephant',
 				email: 'test@test.test',
 			});
 		}
