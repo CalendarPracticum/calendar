@@ -32,41 +32,18 @@ class Calendar(models.Model):
         verbose_name='Владелец',
         related_name='calendars',
     )
-
-    class Meta:
-        verbose_name = 'Календарь'
-        verbose_name_plural = 'Календари'
-
-    def __str__(self):
-        return self.name
-
-
-class Category(models.Model):
-    """
-    Категория.
-    Содержит name - название категории и
-    hex_color - цветовая схема категории.
-    color дополнительно валедируется на предмет символов hex формата.
-    """
-
-    name = models.CharField(
-        'Название',
-        max_length=100,
-        unique=True
-    )
     color = models.CharField(
         'Код цвета в формате HEX',
         max_length=7,
-        unique=True,
         validators=[RegexValidator(
-            regex='^[#a-f0-9]+$',
+            regex='^[#a-fA-F0-9]+$',
             message='Недопустимые символы в коде цвета!'
         )]
     )
 
     class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
+        verbose_name = 'Календарь'
+        verbose_name_plural = 'Календари'
 
     def __str__(self):
         return self.name
@@ -112,12 +89,6 @@ class Event(models.Model):
     holiday = models.BooleanField(
         'Праздник',
         default=False
-    )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        verbose_name='Категория',
-        related_name='events'
     )
     calendar = models.ForeignKey(
         Calendar,
