@@ -1,12 +1,12 @@
 .sidebar {
-	width: 12rem;
-	min-height: 1rem;
-	flex-shrink: 0;
-	display: flex;
-	flex-direction: column;
-	background-color: var(--highlight-bg);
+  width: 12rem;
+  min-height: 1rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  /* background-color: var(--highlight-bg); */
 }
 
 .button {
-	width: 100%;
+  width: 100%;
 }
