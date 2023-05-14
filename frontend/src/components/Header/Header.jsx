@@ -22,9 +22,9 @@ export function Header({ onLogin }) {
 	useEffect(() => {
 		const themeLink = document.getElementById('app-theme');
 
-		const darkTheme = 'lara-dark-indigo';
+		const darkTheme = 'lara-dark-blue';
 
-		const lightTheme = 'lara-light-indigo';
+		const lightTheme = 'soho-light';
 
 		if (themeLink) {
 			themeLink.href = `${process.env.PUBLIC_URL}/themes/${
