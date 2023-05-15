@@ -9,65 +9,67 @@ import CurrentUserContext from '../../context/CurrentUserContext';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 
 export function Header({ onLogin }) {
-	const userContext = useContext(CurrentUserContext);
-	const { loggedIn } = userContext;
+  const userContext = useContext(CurrentUserContext);
+  const { loggedIn } = userContext;
 
-	const [value, setValue] = useState('light');
-	const [darkMode, setDarkMode] = useState(false);
-	const themeOptions = [
-		{ icon: 'pi pi-moon', value: 'dark', constant: darkMode },
-		{ icon: 'pi pi-sun', value: 'light', constant: !darkMode },
-	];
+  const [value, setValue] = useState('light');
+  const [darkMode, setDarkMode] = useState(false);
+  const themeOptions = [
+    { icon: 'pi pi-moon', value: 'dark', constant: darkMode },
+    { icon: 'pi pi-sun', value: 'light', constant: !darkMode },
+  ];
 
-	useEffect(() => {
-		const themeLink = document.getElementById('app-theme');
+  useEffect(() => {
+    const themeLink = document.getElementById('app-theme');
 
-		const darkTheme = 'lara-dark-blue';
+    const darkTheme = 'lara-dark-blue';
 
-		const lightTheme = 'soho-light';
+    const lightTheme = 'soho-light';
 
-		if (themeLink) {
-			themeLink.href = `${process.env.PUBLIC_URL}/themes/${
-				darkMode ? darkTheme : lightTheme
-			}/theme.css`;
-		}
-	}, [darkMode]);
+    if (themeLink) {
+      themeLink.href = `${process.env.PUBLIC_URL}/themes/${darkMode ? darkTheme : lightTheme
+        }/theme.css`;
+    }
+  }, [darkMode]);
 
-	const themeTemplate = (option) => <i className={option.icon} />;
+  const themeTemplate = (option) => <i className={option.icon} />;
 
-	// TODO: добавить логотип, удалить логику показа аватарки
-	return (
-		<header className={styles.header}>
-			<div className={`${styles.wrapper} container`}>
-				<button type="button">Logo</button>
-				<div className={styles.selectGroup}>
-					<SelectButton
-						value={value}
-						options={themeOptions}
-						onChange={(e) => {
-							setValue(e.value);
-							setDarkMode(!darkMode);
-						}}
-						itemTemplate={themeTemplate}
-						optionLabel="value"
-						optionDisabled="constant"
-					/>
-				</div>
-				{loggedIn ? (
-					<AvatarGroup />
-				) : (
-					<Button
-						label="Войти"
-						size="small"
-						className={styles.button}
-						onClick={() => onLogin(true)}
-					/>
-				)}
-			</div>
-		</header>
-	);
+  // TODO: добавить логотип, удалить логику показа аватарки
+
+  return (
+    <header className={styles.header}>
+      <div className={`${styles.wrapper} container`}>
+        <button type="button">
+          CalenDaiLy
+        </button>
+        <div className={styles.selectGroup}>
+          <SelectButton
+            value={value}
+            options={themeOptions}
+            onChange={(e) => {
+              setValue(e.value);
+              setDarkMode(!darkMode);
+            }}
+            itemTemplate={themeTemplate}
+            optionLabel="value"
+            optionDisabled="constant"
+          />
+        </div>
+        {loggedIn ? (
+          <AvatarGroup />
+        ) : (
+          <Button
+            label="Войти"
+            size="small"
+            className={styles.button}
+            onClick={() => onLogin(true)}
+          />
+        )}
+      </div>
+    </header>
+  );
 }
 
 Header.propTypes = {
-	onLogin: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
 };
