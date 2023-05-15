@@ -1,6 +1,11 @@
 from datetime import datetime
 
 from django.db.models import Q
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
@@ -17,6 +22,33 @@ from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
 from events.models import Calendar, Event
 
 
+@extend_schema(tags=['Календарь'])
+@extend_schema_view(
+    list=extend_schema(
+        summary='Список всех календарей пользователя',
+        description=' ',
+    ),
+    create=extend_schema(
+        summary='Создание нового календаря',
+        description=' '
+    ),
+    retrieve=extend_schema(
+        summary='Детальная информация о календаре',
+        description=' '
+    ),
+    update=extend_schema(
+        summary='Полное обновление календаря',
+        description=' '
+    ),
+    partial_update=extend_schema(
+        summary='Частичное обновление информации о календаре',
+        description=' '
+    ),
+    destroy=extend_schema(
+        summary='Удаление календаря',
+        description=' '
+    ),
+)
 class CalendarViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrCalendarOwnerOrReadOnly,)
     serializer_class = CalendarSerializer
@@ -28,6 +60,53 @@ class CalendarViewSet(viewsets.ModelViewSet):
         return Calendar.objects.filter(owner=self.request.user)
 
 
+@extend_schema(tags=['Событие'])
+@extend_schema_view(
+    list=extend_schema(
+        summary='Информация о мероприятиях за определенный промежуток времени',
+        description='Принимает обязательные параметры фильтрации и отдает '
+                    'список мероприятий. Если пользователь не авторизован '
+                    'то он получает мероприятия только из базового '
+                    'календарь. Если авторизован то и все мероприятия '
+                    'календарей пользователя.',
+        parameters=[
+            OpenApiParameter(
+                'start_dt',
+                datetime,
+                description='Дата начала фильтрации: 2023-01-01T00:00:00',
+                required=True,
+            ),
+            OpenApiParameter(
+                'finish_dt',
+                datetime,
+                description='Дата окончания фильтрации: 2023-12-31T00:00:00',
+                required=True,)
+        ]
+    ),
+    create=extend_schema(
+        summary='Создание нового события',
+        description=' ',
+        responses={201: ReadEventSerializer},
+    ),
+    retrieve=extend_schema(
+        summary='Детальная информация о событии',
+        description=' '
+    ),
+    update=extend_schema(
+        summary='Полное обновление события',
+        description=' ',
+        responses={200: ReadEventSerializer},
+    ),
+    partial_update=extend_schema(
+        summary='Частичное обновление информации о событии',
+        description=' ',
+        responses={200: ReadEventSerializer},
+    ),
+    destroy=extend_schema(
+        summary='Удаление события',
+        description=' '
+    ),
+)
 class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
     lookup_field = 'id'
