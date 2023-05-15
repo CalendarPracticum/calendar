@@ -1,8 +1,11 @@
 from datetime import datetime
 
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema, extend_schema_view, \
-    OpenApiParameter, OpenApiExample
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
