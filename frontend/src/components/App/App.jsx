@@ -32,17 +32,40 @@ const localizer = dateFnsLocalizer({
 
 function App() {
 	const [currentUser, setCurrentUser] = useState({});
-	const [loggedIn, setLoggedIn] = useState(true);
+	const [loggedIn, setLoggedIn] = useState(false);
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 
 	useEffect(() => {
 		if (loggedIn) {
-			setCurrentUser({
-				name: 'Pink Elephant',
-				email: 'test@test.test',
-			});
+			const jwtAccess = localStorage.getItem('jwtAccess');
+			auth
+				.getUserData(jwtAccess)
+				.then((result) => {
+					setCurrentUser(result);
+				})
+				.catch((err) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', err);
+				});
 		}
 	}, [loggedIn]);
+
+	useEffect(() => {
+		if (localStorage.getItem('jwtAccess')) {
+			const jwtAccess = localStorage.getItem('jwtAccess');
+			auth
+				.getUserData(jwtAccess)
+				.then((res) => {
+					if (res) {
+						setLoggedIn(true);
+					}
+				})
+				.catch((error) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', error);
+				});
+		}
+	}, []);
 
 	const user = useMemo(
 		() => ({
@@ -54,26 +77,27 @@ function App() {
 		[currentUser, loggedIn]
 	);
 
-	const handleLogin = (formData) => {
+	const handleLogin = ({ email, password }) => {
 		auth
-			.authorize(formData.email, formData.password)
+			.authorize(email, password)
 			.then((data) => {
 				localStorage.setItem('jwtAccess', data.access);
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
+				setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
 			})
 			.catch((err) => {
-        // eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
 			});
 	};
 
-	const handleRegister = (formData) => {
+	const handleRegister = ({ email, password }) => {
 		auth
-			.register(formData.email, formData.password)
-			.then(() => handleLogin(formData))
+			.register(email, password)
+			.then(() => handleLogin({ email, password }))
 			.catch((err) => {
-        // eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
 			});
 	};

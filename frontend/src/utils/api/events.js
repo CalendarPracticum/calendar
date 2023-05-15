@@ -10,24 +10,6 @@ const getJson = (response) => {
 };
 
 /*
-  Получение всех категорий
-  Вернёт:
-  [
-    {
-      "id": 0,
-      "name": "string",
-      "color": "12cc25a"
-    }
-  ]
-*/
-export const getAllCategories = () =>
-	fetch(`${BASE_URL}/v1/categories`, {
-		headers: {
-			authorization: getAccessToken(),
-		},
-	}).then(getJson);
-
-/*
   Получение всех ивентов
   Вернёт:
   [
@@ -40,11 +22,6 @@ export const getAllCategories = () =>
       "description": "string",
       "day_off": true,
       "holiday": true,
-      "category": {
-        "id": 0,
-        "name": "string",
-        "color": "8423f07"
-      },
       "calendar": {
         "id": 0,
         "name": "string"
@@ -71,21 +48,10 @@ export const getAllUserEvents = (start, finish) =>
     "description": "string",
     "day_off": true,
     "holiday": true,
-    "category": 0,
     "calendar": 0
   }
 */
-export const createNewEvent = (
-	start,
-	finish,
-	allDay,
-	name,
-	description,
-	dayOff,
-	holiday,
-	category,
-	calendar
-) =>
+export const createNewEvent = (formData) =>
 	fetch(`${BASE_URL}/v1/events/`, {
 		method: 'POST',
 		headers: {
@@ -93,14 +59,11 @@ export const createNewEvent = (
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			datetime_start: start,
-			datetime_finish: finish,
-			all_day: allDay,
-			name,
-			description,
-			day_off: dayOff,
-			holiday,
-			category,
-			calendar,
+			datetime_start: formData.timeStart,
+			datetime_finish: formData.timeFinish,
+			all_day: formData.allDay,
+			name: formData.name,
+			description: formData.description,
+			calendar: formData.calendar,
 		}),
 	}).then(getJson);

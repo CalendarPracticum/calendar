@@ -10,7 +10,7 @@ import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 
 export function Header({ onLogin }) {
 	const userContext = useContext(CurrentUserContext);
-	const { loggedIn, setLoggedIn } = userContext;
+	const { loggedIn } = userContext;
 
 	const [value, setValue] = useState('light');
 	const [darkMode, setDarkMode] = useState(false);
@@ -39,9 +39,7 @@ export function Header({ onLogin }) {
 	return (
 		<header className={styles.header}>
 			<div className={`${styles.wrapper} container`}>
-				<button type="button" onClick={() => setLoggedIn((prev) => !prev)}>
-					Logo
-				</button>
+				<button type="button">Logo</button>
 				<div className={styles.selectGroup}>
 					<SelectButton
 						value={value}

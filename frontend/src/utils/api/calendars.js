@@ -38,8 +38,8 @@ export const getAllUserCalendars = () =>
     "owner": "user@example.com"
   }
 */
-export const getUserCalendarById = (data) =>
-	fetch(`${BASE_URL}/v1/calendars/${data.id}`, {
+export const getUserCalendarById = (id) =>
+	fetch(`${BASE_URL}/v1/calendars/${id}`, {
 		headers: {
 			authorization: getAccessToken(),
 		},

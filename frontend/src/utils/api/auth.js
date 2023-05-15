@@ -54,3 +54,25 @@ export const verify = (accessToken) =>
 		headers: HEADERS,
 		body: JSON.stringify({ access: accessToken }),
 	}).then(getJson);
+
+/*
+  Получение пользовательских данных
+  Вернёт:
+  {
+    "id": 0,
+    "email": "user@example.com",
+    "username": "string",
+    "profile_picture": "string",
+    "settings": {
+      "dark_mode": true,
+      "background": "string"
+    }
+  }
+*/
+export const getUserData = (accessToken) =>
+	fetch(`${BASE_URL}/v1/users/me/`, {
+		headers: {
+			...HEADERS,
+			Authorization: `Bearer ${accessToken}`,
+		},
+	}).then(getJson);
