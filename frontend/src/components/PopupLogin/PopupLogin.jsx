@@ -4,7 +4,12 @@ import { Dialog } from 'primereact/dialog';
 import { FormLogin } from '../FormLogin/FormLogin';
 import { FormRegistration } from '../FormRegistration/FormRegistration';
 
-export function PopupLogin({ visible, setVisible }) {
+export function PopupLogin({
+	visible,
+	setVisible,
+	handleRegister,
+	handleLogin,
+}) {
 	const [showFormLogin, setShowFormLogin] = useState(true);
 
 	const handleOverlayClick = (evt) => {
@@ -21,9 +26,12 @@ export function PopupLogin({ visible, setVisible }) {
 			blockScroll
 		>
 			{showFormLogin ? (
-				<FormLogin showFormLogin={setShowFormLogin} />
+				<FormLogin showFormLogin={setShowFormLogin} handleLogin={handleLogin} />
 			) : (
-				<FormRegistration showFormLogin={setShowFormLogin} />
+				<FormRegistration
+					showFormLogin={setShowFormLogin}
+					handleRegister={handleRegister}
+				/>
 			)}
 		</Dialog>
 	);
@@ -32,4 +40,6 @@ export function PopupLogin({ visible, setVisible }) {
 PopupLogin.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
+	handleRegister: PropTypes.func.isRequired,
+	handleLogin: PropTypes.func.isRequired,
 };

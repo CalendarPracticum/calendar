@@ -15,6 +15,7 @@ export function AvatarGroup() {
 	const toastAvatar = useRef(null);
 
 	const logout = () => {
+		localStorage.clear();
 		setLoggedIn(false);
 		setCurrentUser({});
 	};
