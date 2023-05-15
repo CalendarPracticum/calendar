@@ -9,7 +9,7 @@ import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormLogin.module.css';
 
-export function FormLogin({ showFormLogin }) {
+export function FormLogin({ showFormLogin, handleLogin }) {
 	const [showMessage, setShowMessage] = useState(false);
 	const [formData, setFormData] = useState({});
 	const defaultValues = {
@@ -29,6 +29,7 @@ export function FormLogin({ showFormLogin }) {
 		setFormData(data);
 		setShowMessage(true);
 
+		handleLogin(data);
 		reset();
 	};
 
@@ -221,4 +222,5 @@ export function FormLogin({ showFormLogin }) {
 
 FormLogin.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
+	handleLogin: PropTypes.func.isRequired,
 };

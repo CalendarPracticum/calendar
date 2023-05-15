@@ -9,7 +9,7 @@ import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormRegistration.module.css';
 
-export function FormRegistration({ showFormLogin }) {
+export function FormRegistration({ showFormLogin, handleRegister }) {
 	const [showMessage, setShowMessage] = useState(false);
 	const [formData, setFormData] = useState({});
 	const defaultValues = {
@@ -30,6 +30,7 @@ export function FormRegistration({ showFormLogin }) {
 		setFormData(data);
 		setShowMessage(true);
 
+		handleRegister(data);
 		reset();
 	};
 
@@ -218,4 +219,5 @@ export function FormRegistration({ showFormLogin }) {
 
 FormRegistration.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
+	handleRegister: PropTypes.func.isRequired,
 };

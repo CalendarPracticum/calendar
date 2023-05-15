@@ -13,6 +13,7 @@ export function AvatarGroup() {
 	const toast = useRef(null);
 
 	const logout = () => {
+		localStorage.clear();
 		setLoggedIn(false);
 		setCurrentUser({});
 	};

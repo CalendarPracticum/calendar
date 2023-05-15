@@ -14,6 +14,9 @@ import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import { PopupLogin } from '../PopupLogin/PopupLogin';
+import * as auth from '../../utils/api/auth';
+// import * as calendarApi from '../../utils/api/calendars';
+// import * as eventApi from '../../utils/api/events';
 
 const locales = {
 	ru: ruLocale,
@@ -29,17 +32,40 @@ const localizer = dateFnsLocalizer({
 
 function App() {
 	const [currentUser, setCurrentUser] = useState({});
-	const [loggedIn, setLoggedIn] = useState(true);
+	const [loggedIn, setLoggedIn] = useState(false);
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 
 	useEffect(() => {
 		if (loggedIn) {
-			setCurrentUser({
-				name: 'Pink Elephant',
-				email: 'test@test.test',
-			});
+			const jwtAccess = localStorage.getItem('jwtAccess');
+			auth
+				.getUserData(jwtAccess)
+				.then((result) => {
+					setCurrentUser(result);
+				})
+				.catch((err) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', err);
+				});
 		}
 	}, [loggedIn]);
+
+	useEffect(() => {
+		if (localStorage.getItem('jwtAccess')) {
+			const jwtAccess = localStorage.getItem('jwtAccess');
+			auth
+				.getUserData(jwtAccess)
+				.then((res) => {
+					if (res) {
+						setLoggedIn(true);
+					}
+				})
+				.catch((error) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', error);
+				});
+		}
+	}, []);
 
 	const user = useMemo(
 		() => ({
@@ -51,6 +77,31 @@ function App() {
 		[currentUser, loggedIn]
 	);
 
+	const handleLogin = ({ email, password }) => {
+		auth
+			.authorize(email, password)
+			.then((data) => {
+				localStorage.setItem('jwtAccess', data.access);
+				localStorage.setItem('jwtRefresh', data.refresh);
+				setLoggedIn(true);
+				setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err);
+			});
+	};
+
+	const handleRegister = ({ email, password }) => {
+		auth
+			.register(email, password)
+			.then(() => handleLogin({ email, password }))
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err);
+			});
+	};
+
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
@@ -60,6 +111,8 @@ function App() {
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}
+					handleRegister={handleRegister}
+					handleLogin={handleLogin}
 				/>
 			</div>
 		</CurrentUserContext.Provider>
