@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,6 +10,13 @@ from api.v1.serializers.users import UsersCreateSerializer, UsersSerializer
 User = get_user_model()
 
 
+@extend_schema(tags=['Пользователь'])
+@extend_schema_view(
+    create=extend_schema(
+        summary='Создание нового пользователя',
+        description=' '
+    ),
+)
 class UsersViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     Вьюсет для работы с пользователями.
@@ -22,6 +30,21 @@ class UsersViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = UsersCreateSerializer
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        methods=['GET'],
+        summary='Детальная информация о текущем пользователе',
+        description=' ',
+    )
+    @extend_schema(
+        methods=['PATCH'],
+        summary='Частичное обновление информации о текущем пользователе',
+        description=' ',
+    )
+    @extend_schema(
+        methods=['DELETE'],
+        summary='Удаление пользователя',
+        description=' ',
+    )
     @action(
         ['get', 'patch', 'delete'],
         detail=False,
