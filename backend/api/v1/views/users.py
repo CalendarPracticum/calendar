@@ -43,7 +43,8 @@ class UsersViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     @extend_schema(
         methods=['DELETE'],
         summary='Удаление пользователя',
-        description=' ',
+        description='**!!! В теле запроса обязательно нужно передать параметр '
+                    '{"current_password": "user current password"} !!!**',
     )
     @action(
         ['get', 'patch', 'delete'],
