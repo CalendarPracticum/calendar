@@ -1,22 +1,16 @@
 .sidebar {
-	width: 12rem;
-	min-height: 1rem;
-	flex-shrink: 0;
-	display: flex;
-	flex-direction: column;
-	/* background-color: var(--highlight-bg); */
+  width: 29rem;
+  min-height: 1rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  /* background-color: var(--highlight-bg); */
 }
 
 .button {
-	width: 100%;
+  width: 100%;
 }
 
 .calendar {
-	margin-top: 1rem;
-}
-
-.calendarBlock {
-	width: 12rem;
-	height: 12rem;
-	display: flex;
+  margin-top: 1rem;
 }
