@@ -1,4 +1,4 @@
-const BASE_URL = 'http://193.107.236.224/api'; // 'http://localhost/api'
+const BASE_URL = 'http://localhost/api'; // 'http://193.107.236.224/api'
 
 const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
 
@@ -64,6 +64,6 @@ export const createNewEvent = (formData) =>
 			all_day: formData.allDay,
 			name: formData.name,
 			description: formData.description,
-			calendar: formData.calendar,
+			calendar: formData.calendar.id,
 		}),
 	}).then(getJson);
