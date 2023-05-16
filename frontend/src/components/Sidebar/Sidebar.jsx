@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'primereact/button';
+import { Calendar } from 'primereact/calendar';
 import styles from './Sidebar.module.css';
 
 export function Sidebar({ onNewEventClick }) {
@@ -13,6 +13,9 @@ export function Sidebar({ onNewEventClick }) {
 				className={styles.button}
 				onClick={() => onNewEventClick(true)}
 			/>
+			<div className={styles.calendarBlock}>
+				<Calendar inline showWeek className={styles.calendar} />
+			</div>
 		</div>
 	);
 }

@@ -1,4 +1,24 @@
 .calendar {
-	max-width: 1646px;
-	min-height: 831px;
+  max-width: 1646px;
+  min-height: 831px;
+}
+
+.calendar .div {
+  border: 1px solid var(--surface-100);
+}
+
+.calendar button {
+  color: var(--text-color);
+}
+
+.holiday {
+  background-color: var(--surface-ground);
+}
+
+.today {
+  background-color: var(--highlight-bg);
+}
+
+.otherMonth {
+  background-color: var(--surface-100);
 }
