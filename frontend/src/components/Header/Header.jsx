@@ -7,6 +7,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import styles from './Header.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
+import logo from '../../images/logo.svg';
 
 export function Header({ onLogin }) {
 	const userContext = useContext(CurrentUserContext);
@@ -40,7 +41,9 @@ export function Header({ onLogin }) {
 	return (
 		<header className={styles.header}>
 			<div className={`${styles.wrapper} container`}>
-				<button type="button">CalenDaiLy</button>
+				<div>
+					<img className={styles.logo} src={logo} alt="Логотип MyCalenDaily" />
+				</div>
 				<div className={styles.selectGroup}>
 					<SelectButton
 						value={value}
