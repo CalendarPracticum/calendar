@@ -1,4 +1,5 @@
 .year {
+	background-color: var(--surface-e);
 	margin: 50px 0 167px 0;
 	text-align: left;
 	max-width: 952px;
@@ -13,7 +14,7 @@
 
 	/* Black */
 
-	color: #121214;
+	color: var(--text-color);
 }
 
 .quarter {
@@ -32,4 +33,24 @@
 	margin: 50px 0 50px 0;
 	text-align: left;
 	max-width: 952px;
+}
+
+.calendar .div {
+	border: 1px solid var(--surface-100);
+}
+
+.calendar button {
+	color: var(--text-color);
+}
+
+.holiday {
+	background-color: var(--surface-ground);
+}
+
+.today {
+	background-color: var(--highlight-bg);
+}
+
+.otherMonth {
+	background-color: var(--surface-100);
 }

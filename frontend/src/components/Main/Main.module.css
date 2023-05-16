@@ -4,6 +4,7 @@
 	display: flex;
 	justify-content: space-between;
 	gap: 24px;
+	background-color: var(--surface-e);
 }
 
 .content {

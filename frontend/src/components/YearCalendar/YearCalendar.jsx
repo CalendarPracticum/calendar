@@ -7,9 +7,9 @@ import { CalendarBlock } from '../CalendarBlock/CalendarBlock';
 const year = '2023';
 
 // взяла у Жени переделать!!!
-const weekendStyle = {
-	backgroundColor: '#008EF4',
-};
+// const weekendStyle = {
+// 	backgroundColor: '#008EF4',
+// };
 
 // eslint-disable-next-line react/prop-types
 export function YearCalendar({ localizer }) {
@@ -34,13 +34,26 @@ export function YearCalendar({ localizer }) {
 					<li className={styles.month} key={month}>
 						<p>{month}</p>
 						<CalendarBlock
+							className={styles.year}
 							formats={formats}
 							localizer={localizer}
 							date={defaultDate.setFullYear(year, index, 1)}
 							dayPropGetter={(date) => {
 								const dayOfWeek = date.getDay();
+								const dateOfMonth = date.getMonth();
+								const nowMonth = new Date().getMonth();
+								const nowDay = new Date().getDate();
+								const dayOfMonth = date.getDate();
+
+								if (dateOfMonth !== index) {
+									return { className: styles.otherMonth };
+								}
+								if (nowDay === dayOfMonth && dateOfMonth === nowMonth) {
+									return { className: styles.today };
+								}
+
 								return dayOfWeek === 0 || dayOfWeek === 6
-									? { style: weekendStyle }
+									? { className: styles.holiday }
 									: {};
 							}}
 						/>
