@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost/api'; // 'http://193.107.236.224/api/'
+const BASE_URL = 'http://localhost/api'; // 'http://193.107.236.224/api'
 
 const HEADERS = {
 	'Content-Type': 'application/json',

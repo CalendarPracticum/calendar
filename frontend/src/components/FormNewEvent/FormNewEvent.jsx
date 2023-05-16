@@ -8,7 +8,6 @@ import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
-// import { addLocale } from "primereact/api";
 import styles from './FormNewEvent.module.css';
 
 export function FormNewEvent({ setVisible }) {
@@ -106,7 +105,7 @@ export function FormNewEvent({ setVisible }) {
 											value={field.value}
 											onChange={field.onChange}
 											showTime
-											// locale="ru"
+											locale='ru'
 											{...field}
 										/>
 									)}
@@ -133,7 +132,7 @@ export function FormNewEvent({ setVisible }) {
 											value={field.value}
 											onChange={field.onChange}
 											showTime
-											// locale="ru"
+											locale='ru'
 											{...field}
 										/>
 									)}
