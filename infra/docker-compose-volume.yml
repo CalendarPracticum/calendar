@@ -9,6 +9,18 @@ services:
       - "5432:5432"
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
 
   backend:
       container_name: backend
@@ -18,7 +30,8 @@ services:
         - static_value:/app/data/static/
         - media_value:/app/data/media/
       depends_on:
-        - db
+        db:
+          condition: service_healthy
       env_file:
         - .env
 
