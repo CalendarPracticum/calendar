@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -69,6 +70,7 @@ class Event(models.Model):
     )
     description = models.TextField(
         'Описание',
+        max_length=300,
         null=True,
         blank=True
     )
@@ -103,3 +105,8 @@ class Event(models.Model):
 
     def __str__(self):
         return str(self.datetime_start)
+
+    def clean(self):
+        if self.datetime_start >= self.datetime_finish:
+            message = 'Мероприятие не может начинаться после даты окончания.'
+            raise ValidationError(message)
