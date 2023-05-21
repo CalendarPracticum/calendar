@@ -63,8 +63,9 @@ class ShortCalendarSerializer(serializers.ModelSerializer):
 
 
 class ReadEventSerializer(serializers.ModelSerializer):
-
     calendar = ShortCalendarSerializer(read_only=True)
+    datetime_start = serializers.DateTimeField(format='%Y-%m-%dT%H:%M')
+    datetime_finish = serializers.DateTimeField(format='%Y-%m-%dT%H:%M')
 
     class Meta:
         model = Event

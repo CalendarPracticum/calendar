@@ -36,7 +36,7 @@ class Calendar(models.Model):
         'Код цвета в формате HEX',
         max_length=7,
         validators=[RegexValidator(
-            regex='^[#a-fA-F0-9]+$',
+            regex='^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$',
             message='Недопустимые символы в коде цвета!'
         )]
     )

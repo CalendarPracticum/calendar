@@ -88,7 +88,7 @@ class CalendarTest(BaseAPITestCase):
                     reverse('calendars-list'),
                     {
                         'name': 'test_calendar',
-                        'color': '#FFF00',
+                        'color': '#FFF000',
                     }
                 )
                 self.assertEqual(
@@ -121,7 +121,7 @@ class CalendarTest(BaseAPITestCase):
                     response = method(
                         reverse('calendars-detail', args=(calendar_id,)),
                         {'name': 'new_calendar_name',
-                         'color': '#FFF00'}
+                         'color': '#FFF000'}
                     )
                     self.assertEqual(
                         response.status_code, expected_code,
