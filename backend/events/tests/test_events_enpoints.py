@@ -34,8 +34,8 @@ class EventTest(BaseAPITestCase):
                 response = client.get(
                     reverse('events-list'),
                     data={
-                        'start_dt': '2023-01-01T00:00',
-                        'finish_dt': '2023-12-01T00:00',
+                        'start_dt': '2023-01-01',
+                        'finish_dt': '2023-12-01',
                         'calendar': 1,
                     }
                 )

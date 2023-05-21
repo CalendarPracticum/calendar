@@ -142,14 +142,14 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
             try:
                 start = datetime.strptime(
                     self.request.query_params.get(
-                        'start_dt'), '%Y-%m-%dT%H:%M')
+                        'start_dt'), '%Y-%m-%d')
                 finish = datetime.strptime(
                     self.request.query_params.get(
-                        'finish_dt'), '%Y-%m-%dT%H:%M')
+                        'finish_dt'), '%Y-%m-%d')
             except ValueError:
                 raise ValidationError(
-                    'Invalid date format. '
-                    'Please provide dates in the format YYYY-MM-DDTHH:MM')
+                    'Неправильный формат даты. '
+                    'Пожалуйста, укажите дату в формате YYYY-MM-DD')
 
             if start >= finish:
                 raise ValidationError(

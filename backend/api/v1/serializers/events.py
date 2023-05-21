@@ -113,7 +113,7 @@ class WriteEventSerializer(serializers.ModelSerializer):
                 {'required': True, 'error_messages':
                     {'required': 'Дата завершения мероприятия отсутствует',
                      'invalid': 'Неправильный формат даты и времени',
-                     'null': 'Дата начала мероприятия не может быть null',
+                     'null': 'Дата завершения мероприятия не может быть null',
                      }
                  },
             'calendar':
@@ -149,7 +149,7 @@ class WriteEventSerializer(serializers.ModelSerializer):
                 hour=0, minute=0
             )
             validated_data['datetime_finish'] = finish.replace(
-                hour=23, minute=59
+                hour=23, minute=59, second=59,
             )
 
         return super().create(validated_data)
