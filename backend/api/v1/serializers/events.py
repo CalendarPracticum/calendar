@@ -134,3 +134,13 @@ class WriteEventSerializer(serializers.ModelSerializer):
                 {'calendar': 'Можно использовать только свой календарь'}
             )
         return super().create(validated_data)
+
+    def validate(self, data):
+        datatime_start = data.get('datetime_start')
+        datetime_finish = data.get('datetime_finish')
+
+        if datatime_start >= datetime_finish:
+            message = 'Мероприятие не может начинаться после даты окончания.'
+            raise serializers.ValidationError(message)
+
+        return data
