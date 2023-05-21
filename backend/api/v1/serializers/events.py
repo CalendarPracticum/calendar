@@ -109,6 +109,13 @@ class WriteEventSerializer(serializers.ModelSerializer):
                      'null': 'Дата начала мероприятия не может быть null',
                      }
                  },
+            'datetime_finish':
+                {'required': True, 'error_messages':
+                    {'required': 'Дата завершения мероприятия отсутствует',
+                     'invalid': 'Неправильный формат даты и времени',
+                     'null': 'Дата начала мероприятия не может быть null',
+                     }
+                 },
             'calendar':
                 {'required': True, 'error_messages':
                     {'required': 'Не выбран календарь',
@@ -134,4 +141,15 @@ class WriteEventSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'calendar': 'Можно использовать только свой календарь'}
             )
+
+        keys = ('all_day', 'datetime_start', 'datetime_finish')
+        all_day, start, finish = [validated_data.get(key) for key in keys]
+        if all_day:
+            validated_data['datetime_start'] = start.replace(
+                hour=0, minute=0
+            )
+            validated_data['datetime_finish'] = finish.replace(
+                hour=23, minute=59
+            )
+
         return super().create(validated_data)
