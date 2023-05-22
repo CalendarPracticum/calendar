@@ -75,13 +75,13 @@ class CalendarViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 'start_dt',
                 datetime,
-                description='Дата начала фильтрации: 2023-01-01T00:00',
+                description='Дата начала фильтрации: 2023-01-01',
                 required=True,
             ),
             OpenApiParameter(
                 'finish_dt',
                 datetime,
-                description='Дата окончания фильтрации: 2023-12-31T00:00',
+                description='Дата окончания фильтрации: 2023-12-31',
                 required=True,),
             OpenApiParameter(
                 'calendar',
