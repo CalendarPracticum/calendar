@@ -134,9 +134,10 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
         Авторизованный пользователь ивенты из своего календаря
         и календаря админа.
         """
+
+        qs = super().get_queryset()
         if self.action == 'list':
             self.filterset_class = EventFilter
-            qs = super().get_queryset()
 
             # Проверка на правильность передаваемого формата даты в запрос.
             try:
@@ -162,13 +163,14 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
             qs = qs.exclude(
                 Q(datetime_start__gt=finish) | Q(datetime_finish__lt=start))
 
+            global_events = Q(calendar__owner__is_superuser=True,
+                              calendar__public=True)
             if self.request.user.is_authenticated:
                 return qs.filter(
-                    calendar__owner__username__in=[
-                        'admin', self.request.user.username])
-            return qs.filter(calendar__owner__username='admin')
+                    Q(calendar__owner=self.request.user) | global_events)
+            return qs.filter(global_events)
 
-        return super().get_queryset()
+        return qs
 
     def get_serializer_class(self):
         """
