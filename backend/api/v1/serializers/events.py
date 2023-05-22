@@ -63,8 +63,9 @@ class ShortCalendarSerializer(serializers.ModelSerializer):
 
 
 class ReadEventSerializer(serializers.ModelSerializer):
-
     calendar = ShortCalendarSerializer(read_only=True)
+    datetime_start = serializers.DateTimeField(format='%Y-%m-%dT%H:%M')
+    datetime_finish = serializers.DateTimeField(format='%Y-%m-%dT%H:%M')
 
     class Meta:
         model = Event
@@ -108,6 +109,13 @@ class WriteEventSerializer(serializers.ModelSerializer):
                      'null': 'Дата начала мероприятия не может быть null',
                      }
                  },
+            'datetime_finish':
+                {'required': True, 'error_messages':
+                    {'required': 'Дата завершения мероприятия отсутствует',
+                     'invalid': 'Неправильный формат даты и времени',
+                     'null': 'Дата завершения мероприятия не может быть null',
+                     }
+                 },
             'calendar':
                 {'required': True, 'error_messages':
                     {'required': 'Не выбран календарь',
@@ -133,6 +141,17 @@ class WriteEventSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'calendar': 'Можно использовать только свой календарь'}
             )
+
+        keys = ('all_day', 'datetime_start', 'datetime_finish')
+        all_day, start, finish = [validated_data.get(key) for key in keys]
+        if all_day:
+            validated_data['datetime_start'] = start.replace(
+                hour=0, minute=0
+            )
+            validated_data['datetime_finish'] = finish.replace(
+                hour=23, minute=59, second=59,
+            )
+
         return super().create(validated_data)
 
     def validate(self, data):

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import (
     OpenApiParameter,
     extend_schema,
@@ -9,6 +10,7 @@ from drf_spectacular.utils import (
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
+from api.filters import EventFilter
 from api.permissions import (
     EventsOwnerOrAdminOrReadOnly,
     IsAuthenticatedOrCalendarOwnerOrReadOnly,
@@ -68,19 +70,24 @@ class CalendarViewSet(viewsets.ModelViewSet):
                     'список мероприятий. Если пользователь не авторизован '
                     'то он получает мероприятия только из базового '
                     'календарь. Если авторизован то и все мероприятия '
-                    'календарей пользователя.',
+                    'календарей пользователя. Незначащие нули необязательны.',
         parameters=[
             OpenApiParameter(
                 'start_dt',
                 datetime,
-                description='Дата начала фильтрации: 2023-01-01T00:00:00',
+                description='Дата начала фильтрации: 2023-01-01',
                 required=True,
             ),
             OpenApiParameter(
                 'finish_dt',
                 datetime,
-                description='Дата окончания фильтрации: 2023-12-31T00:00:00',
-                required=True,)
+                description='Дата окончания фильтрации: 2023-12-31',
+                required=True,),
+            OpenApiParameter(
+                'calendar',
+                int,
+                description='Несколько значений могут быть разделены запятыми',
+            )
         ]
     ),
     create=extend_schema(
@@ -109,10 +116,10 @@ class CalendarViewSet(viewsets.ModelViewSet):
 )
 class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
-    lookup_field = 'id'
     permission_classes = (EventsOwnerOrAdminOrReadOnly,)
     pagination_class = None
     required_query_params = ['start_dt', 'finish_dt', ]
+    filter_backends = (DjangoFilterBackend,)
 
     def get_queryset(self):
         """
@@ -128,20 +135,26 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
         и календаря админа.
         """
         if self.action == 'list':
+            self.filterset_class = EventFilter
             qs = super().get_queryset()
 
             # Проверка на правильность передаваемого формата даты в запрос.
             try:
                 start = datetime.strptime(
                     self.request.query_params.get(
-                        'start_dt'), '%Y-%m-%dT%H:%M:%S')
+                        'start_dt'), '%Y-%m-%d')
                 finish = datetime.strptime(
                     self.request.query_params.get(
-                        'finish_dt'), '%Y-%m-%dT%H:%M:%S')
+                        'finish_dt'), '%Y-%m-%d')
             except ValueError:
                 raise ValidationError(
-                    'Invalid date format. '
-                    'Please provide dates in the format YYYY-MM-DDTHH:MM:SS')
+                    'Неправильный формат даты. '
+                    'Пожалуйста, укажите дату в формате YYYY-MM-DD')
+
+            if start >= finish:
+                raise ValidationError(
+                    'Начальная дата не может быть больше конечной'
+                )
 
             # Исключаются события, которые начались позже,
             # либо закончились раньше
@@ -155,7 +168,7 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                         'admin', self.request.user.username])
             return qs.filter(calendar__owner__username='admin')
 
-        return Event.objects.filter(id=self.kwargs.get('id'))
+        return super().get_queryset()
 
     def get_serializer_class(self):
         """
