@@ -41,8 +41,8 @@ export function Header({ onLogin }) {
 	return (
 		<header className={styles.header}>
 			<div className={`${styles.wrapper} container`}>
-				<div className={styles.logo}>
-					<img src={logo} alt="Логотип MyCalenDaily" />
+				<div>
+					<img className={styles.logo} src={logo} alt="Логотип MyCalenDaily" />
 				</div>
 				<div className={styles.selectGroup}>
 					<SelectButton
