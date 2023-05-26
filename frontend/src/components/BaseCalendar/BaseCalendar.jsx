@@ -2,7 +2,7 @@ import { React, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
-import {culture, messages} from '../../utils/constants'
+import { culture, messages } from '../../utils/constants';
 
 export function BaseCalendar({ localizer }) {
 	const { defaultDate, formats } = useMemo(

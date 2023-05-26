@@ -26,8 +26,8 @@ export function Sidebar({ onNewEventClick, localizer }) {
 				onClick={() => onNewEventClick(true)}
 			/>
 			<Calendar
-        className={styles.calendar}
-        toolbar={false}
+				className={styles.calendar}
+				toolbar={false}
 				culture={culture}
 				onDrillDown={noop}
 				onNavigate={noop}

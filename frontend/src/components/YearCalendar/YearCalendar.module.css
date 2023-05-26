@@ -1,108 +1,107 @@
 .year {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--surface-e);
-  margin: 0;
-  text-align: left;
-  max-width: 1295px;
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 300;
-  font-size: 16px;
-  line-height: 150%;
-  /* or 24px */
-  align-items: center;
-  color: var(--text-color);
+	display: flex;
+	flex-direction: column;
+	background-color: var(--surface-e);
+	margin: 0;
+	text-align: left;
+	max-width: 1295px;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 16px;
+	line-height: 150%;
+	/* or 24px */
+	align-items: center;
+	color: var(--text-color);
 }
 
-
 .year h1 {
-  text-align: center;
-  margin: 0;
-  margin-bottom: 60px;
+	text-align: center;
+	margin: 0;
+	margin-bottom: 60px;
 }
 
 .about {
-  margin-top: 44px;
-  display: flex;
-  flex-direction: column;
-  max-width: 952px;
+	margin-top: 44px;
+	display: flex;
+	flex-direction: column;
+	max-width: 952px;
 }
 
 .about h2 {
-  text-align: center;
+	text-align: center;
 }
 
 .about h3 {
-  text-align: center;
+	text-align: center;
 }
 
 .months {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 1fr;
-  grid-column-gap: 100px;
-  grid-row-gap: 100px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: 1fr;
+	grid-column-gap: 100px;
+	grid-row-gap: 100px;
 }
 
 .month p {
-  margin: 0;
-  text-align: center;
+	margin: 0;
+	text-align: center;
 }
 
 @media screen and (max-width: 1650px) {
-  .months {
-    grid-column-gap: 50px;
-    grid-row-gap: 50px;
-  }
+	.months {
+		grid-column-gap: 50px;
+		grid-row-gap: 50px;
+	}
 }
 
 @media screen and (max-width: 1500px) {
-  .months {
-    grid-template-columns: repeat(2, 1fr);
-  }
+	.months {
+		grid-template-columns: repeat(2, 1fr);
+	}
 }
 
 @media screen and (max-width: 1100px) {
-  .months {
-    grid-column-gap: 20px;
-    grid-row-gap: 20px;
-  }
+	.months {
+		grid-column-gap: 20px;
+		grid-row-gap: 20px;
+	}
 }
 
 @media screen and (max-width: 1050px) {
-  .months {
-    grid-template-columns: repeat(1, 1fr);
-  }
+	.months {
+		grid-template-columns: repeat(1, 1fr);
+	}
 }
 
 .month {
-  list-style: none;
+	list-style: none;
 }
 
 .commentsBlock {
-  margin: 0;
-  text-align: left;
-  max-width: 952px;
+	margin: 0;
+	text-align: left;
+	max-width: 952px;
 }
 
 .calendar .div {
-  border: none;
-  /* border: 1px solid var(--surface-200); */
+	border: none;
+	/* border: 1px solid var(--surface-200); */
 }
 
 .calendar button {
-  color: var(--text-color);
+	color: var(--text-color);
 }
 
 .holiday {
-  background-color: var(--surface-ground);
+	background-color: var(--surface-ground);
 }
 
 .today {
-  background-color: var(--highlight-bg);
+	background-color: var(--highlight-bg);
 }
 
 .otherMonth {
-  background-color: var(--surface-50);
+	background-color: var(--surface-50);
 }
