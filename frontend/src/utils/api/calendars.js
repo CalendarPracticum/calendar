@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost/api'; // 'http://193.107.236.224/api'
+const BASE_URL = 'http://193.107.236.224/api'; // http://localhost/api
 
 const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
 
@@ -59,7 +59,7 @@ export const createNewCalendar = (name, description, color) =>
 	fetch(`${BASE_URL}/v1/calendars/`, {
 		method: 'POST',
 		headers: {
-			authorization: getAccessToken(),
+			Authorization: getAccessToken(),
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({ name, description, color }),

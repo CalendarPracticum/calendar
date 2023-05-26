@@ -7,7 +7,7 @@ import CurrentUserContext from '../../context/CurrentUserContext';
 
 export function AvatarGroup() {
 	const userContext = useContext(CurrentUserContext);
-	const { setLoggedIn, setCurrentUser, currentUser } = userContext;
+	const { setLoggedIn, setCurrentUser, setAllUserCalendars, setAllUserEvents, currentUser } = userContext;
 	const { name, email } = currentUser;
 
 	const menu = useRef(null);
@@ -18,6 +18,8 @@ export function AvatarGroup() {
 		localStorage.clear();
 		setLoggedIn(false);
 		setCurrentUser({});
+    setAllUserCalendars([]);
+    setAllUserEvents([]);
 	};
 
 	const items = [

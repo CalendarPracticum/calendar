@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost/api'; // 'http://193.107.236.224/api'
+const BASE_URL = 'http://193.107.236.224/api'; // http://localhost/api
 
 const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
 
@@ -29,12 +29,17 @@ const getJson = (response) => {
     }
   ]
 */
-export const getAllUserEvents = (start, finish) =>
-	fetch(`${BASE_URL}/v1/events/?start_dt=${start}&finish_dt=${finish}`, {
-		headers: {
-			authorization: getAccessToken(),
-		},
-	}).then(getJson);
+export const getAllUserEvents = (start, finish, calendar) => {
+  if (getAccessToken() === 'Bearer null') {
+    return fetch(`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=1`).then(getJson);
+  }
+
+  return fetch(`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`, {
+      headers: {
+        authorization: getAccessToken(),
+      },
+    }).then(getJson);
+}
 
 /*
   Создание нового ивента

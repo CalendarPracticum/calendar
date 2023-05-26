@@ -42,8 +42,8 @@ function App() {
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
-	const start = '2023-01-01T00:00:00';
-	const finish = '2024-01-01T00:00:00';
+	const start = '2023-01-01';
+	const finish = '2024-01-01';
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -56,19 +56,27 @@ function App() {
 				.catch((err) => {
 					// eslint-disable-next-line no-console
 					console.log('ОШИБКА: ', err);
-				});
-
-			eventApi
-				.getAllUserEvents(start, finish)
-				.then((result) => {
-					setAllUserEvents(result);
 				})
-				.catch((error) => {
-					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', error);
-				});
-		}
-	}, [loggedIn]);
+    }
+
+    eventApi
+    // жутчаий хардкод на получение личного календря т.к. пока возможности переключения между ними нету
+      .getAllUserEvents(start, finish, allUserCalendars.length !== 0 ? allUserCalendars[0].id : '')
+      .then((result) => {
+        setAllUserEvents(result.map(event => {
+          /* eslint-disable no-param-reassign */
+          event.title = event.name;
+          event.start = event.datetime_start;
+          event.end = event.datetime_finish;
+          event.allDay = event.all_day;
+          return event;
+        }));
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.log('ОШИБКА: ', error);
+      });
+	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
@@ -78,6 +86,8 @@ function App() {
 				.then((res) => {
 					if (res) {
 						setLoggedIn(true);
+            // eslint-disable-next-line
+            handleGetAllCalendars();
 					}
 				})
 				.catch((error) => {
@@ -95,8 +105,10 @@ function App() {
 			setLoggedIn,
 			allUserCalendars,
 			setAllUserCalendars,
+      allUserEvents,
+      setAllUserEvents,
 		}),
-		[currentUser, loggedIn, allUserCalendars]
+		[currentUser, loggedIn, allUserCalendars, allUserEvents]
 	);
 
 	// TODO: closeAllPopups?
@@ -105,7 +117,9 @@ function App() {
 	const handleGetAllCalendars = () => {
 		calendarApi
 			.getAllUserCalendars()
-			.then((data) => setAllUserCalendars(data))
+			.then((data) => {
+				setAllUserCalendars(data)
+			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
@@ -122,11 +136,15 @@ function App() {
 			});
 	};
 
-	const handleCreateEvent = ({ data }) => {
+	const handleCreateEvent = (data) => {
 		eventApi
 			.createNewEvent(data)
-			.then((res) => {
-				setAllUserEvents([res.data, ...allUserEvents]);
+			.then((event) => {
+        event.title = event.name;
+        event.start = event.datetime_start;
+        event.end = event.datetime_finish;
+        event.allDay = event.all_day;
+				setAllUserEvents([event, ...allUserEvents]);
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
@@ -143,7 +161,7 @@ function App() {
 				setLoggedIn(true);
 				handleGetAllCalendars();
 				setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-			})
+      })
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
@@ -153,10 +171,22 @@ function App() {
 	const handleRegister = ({ email, password }) => {
 		auth
 			.register(email, password)
-			.then(() => {
-				handleLogin({ email, password });
-				handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-			})
+			.then(
+        auth
+				.authorize(email, password)
+				.then((data) => {
+					localStorage.setItem('jwtAccess', data.access);
+					localStorage.setItem('jwtRefresh', data.refresh);
+					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					setLoggedIn(true);
+					handleGetAllCalendars();
+					setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+				})
+				.catch((err) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', err);
+				})
+      )
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);

@@ -5,7 +5,7 @@ import styles from './BaseCalendar.module.css';
 
 const culture = 'ru';
 
-export function BaseCalendar({ localizer }) {
+export function BaseCalendar({ localizer, events }) {
 	const { defaultDate, formats } = useMemo(
 		() => ({
 			defaultDate: new Date(),
@@ -42,7 +42,7 @@ export function BaseCalendar({ localizer }) {
 			endAccessor="end"
 			culture={culture}
 			formats={formats}
-			events={[]}
+			events={events}
 			className={styles.calendar}
 			messages={{
 				date: 'Дата',
@@ -67,4 +67,6 @@ export function BaseCalendar({ localizer }) {
 BaseCalendar.propTypes = {
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+	events: PropTypes.array.isRequired,
 };
