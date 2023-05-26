@@ -85,7 +85,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 required=True,),
             OpenApiParameter(
                 'calendar',
-                int,
+                str,
                 description='Несколько значений могут быть разделены запятыми',
             )
         ]
