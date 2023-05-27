@@ -16,35 +16,37 @@ export function BaseCalendar({ localizer }) {
 	);
 
 	return (
-		<Calendar
-			dayPropGetter={(date) => {
-				const dayOfWeek = date.getDay();
-				const dateOfMonth = date.getMonth();
-				const nowMonth = new Date().getMonth();
-				const nowDay = new Date().getDate();
-				const dayOfMonth = date.getDate();
+		<div className={styles.baseCalendar}>
+			<Calendar
+				dayPropGetter={(date) => {
+					const dayOfWeek = date.getDay();
+					const dateOfMonth = date.getMonth();
+					const nowMonth = new Date().getMonth();
+					const nowDay = new Date().getDate();
+					const dayOfMonth = date.getDate();
 
-				if (dateOfMonth !== nowMonth) {
-					return { className: styles.otherMonth };
-				}
-				if (nowDay === dayOfMonth) {
-					return { className: styles.today };
-				}
+					if (dateOfMonth !== nowMonth) {
+						return { className: styles.otherMonth };
+					}
+					if (nowDay === dayOfMonth) {
+						return { className: styles.today };
+					}
 
-				return dayOfWeek === 0 || dayOfWeek === 6
-					? { className: styles.holiday }
-					: {};
-			}}
-			defaultDate={defaultDate}
-			localizer={localizer}
-			startAccessor="start"
-			endAccessor="end"
-			culture={culture}
-			formats={formats}
-			events={[]}
-			className={styles.calendar}
-			messages={messages}
-		/>
+					return dayOfWeek === 0 || dayOfWeek === 6
+						? { className: styles.holiday }
+						: {};
+				}}
+				defaultDate={defaultDate}
+				localizer={localizer}
+				startAccessor="start"
+				endAccessor="end"
+				culture={culture}
+				formats={formats}
+				events={[]}
+				className={styles.calendar}
+				messages={messages}
+			/>
+		</div>
 	);
 }
 
