@@ -110,3 +110,52 @@ class Event(models.Model):
         if self.datetime_start >= self.datetime_finish:
             message = 'Мероприятие не может начинаться после даты окончания.'
             raise ValidationError(message)
+
+
+class ShareTheCalendar(models.Model):
+    """
+    Шеринг календаря владельцем, пользователю, который есть в базе.
+    Owner - Владелец календаря.
+    User - Пользователь которому открыт доступ.
+    Calendar - календарь, которым поделился владелец.
+    User и Calendar уникальные поля и не могут повторяться.
+    """
+
+    owner = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='owner_of_calendars'
+    )
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь кому открыт доступ',
+        related_name='share_to_user'
+    )
+    calendar = models.ForeignKey(
+        Calendar,
+        on_delete=models.CASCADE,
+        verbose_name='Календарь',
+        related_name='share_the_calendars',
+    )
+
+    class Meta:
+        verbose_name = 'Доступ к календарю'
+        verbose_name_plural = 'Доступ к календарям'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'calendar'],
+                name='unique_calendar_name',
+                violation_error_message='Поля calendar и user должны '
+                                        'быть уникальными.'
+            )
+        ]
+
+    def __str__(self):
+        return str(self.calendar)
+
+    def clean(self):
+        if self.owner == self.user:
+            message = 'Нельзя поделиться календарем с самим собой.'
+            raise ValidationError(message)
