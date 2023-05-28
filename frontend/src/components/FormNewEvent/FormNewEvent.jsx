@@ -8,12 +8,11 @@ import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
-// import { addLocale } from "primereact/api";
 import styles from './FormNewEvent.module.css';
 
-export function FormNewEvent({ setVisible }) {
+export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 	const circle = useRef(null);
-	const calendars = [{ name: 'Личное', color: '#91DED3' }];
+	// const calendars = [{ name: 'Личное', color: '#91DED3' }];
 
 	const defaultValues = {
 		name: '',
@@ -33,7 +32,7 @@ export function FormNewEvent({ setVisible }) {
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		console.log({ data });
+		onCreateEvent(data);
 		setVisible(false);
 
 		reset();
@@ -106,7 +105,7 @@ export function FormNewEvent({ setVisible }) {
 											value={field.value}
 											onChange={field.onChange}
 											showTime
-											// locale="ru"
+											locale="ru"
 											{...field}
 										/>
 									)}
@@ -133,7 +132,7 @@ export function FormNewEvent({ setVisible }) {
 											value={field.value}
 											onChange={field.onChange}
 											showTime
-											// locale="ru"
+											locale="ru"
 											{...field}
 										/>
 									)}
@@ -192,7 +191,7 @@ export function FormNewEvent({ setVisible }) {
 											value={field.value}
 											optionLabel="name"
 											placeholder="Выберите календарь*"
-											options={calendars}
+											options={allUserCalendars}
 											focusInputRef={field.ref}
 											{...field}
 											onChange={(e) => {
@@ -249,4 +248,7 @@ export function FormNewEvent({ setVisible }) {
 
 FormNewEvent.propTypes = {
 	setVisible: PropTypes.func.isRequired,
+	onCreateEvent: PropTypes.func.isRequired,
+	// eslint-disable-next-line react/forbid-prop-types
+	allUserCalendars: PropTypes.array.isRequired,
 };

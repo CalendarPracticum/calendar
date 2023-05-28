@@ -4,7 +4,7 @@ import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
 import { culture, messages } from '../../utils/constants';
 
-export function BaseCalendar({ localizer }) {
+export function BaseCalendar({ localizer, events }) {
 	const { defaultDate, formats } = useMemo(
 		() => ({
 			defaultDate: new Date(),
@@ -41,7 +41,7 @@ export function BaseCalendar({ localizer }) {
 			endAccessor="end"
 			culture={culture}
 			formats={formats}
-			events={[]}
+			events={events}
 			className={styles.calendar}
 			messages={messages}
 		/>
@@ -51,4 +51,6 @@ export function BaseCalendar({ localizer }) {
 BaseCalendar.propTypes = {
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+	events: PropTypes.array.isRequired,
 };
