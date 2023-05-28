@@ -1,16 +1,39 @@
 .sidebar {
-	width: 29rem;
+	width: 240px;
 	min-height: 1rem;
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	/* background-color: var(--highlight-bg); */
 }
 
 .button {
-	width: 100%;
+	width: 80%;
+	margin-bottom: 24px;
+	background: var(--primary-color);
 }
 
 .calendar {
 	margin-top: 1rem;
+}
+
+.calendar .div {
+	border: 1px solid var(--surface-200);
+}
+
+.calendar button {
+	color: var(--text-color);
+}
+
+.holiday {
+	background-color: var(--surface-ground);
+}
+
+.today {
+	background-color: var(--highlight-bg);
+}
+
+.otherMonth {
+	background-color: var(--surface-50);
 }
