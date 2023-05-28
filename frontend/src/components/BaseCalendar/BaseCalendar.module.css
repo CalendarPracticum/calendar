@@ -4,7 +4,7 @@
 }
 
 .calendar .div {
-	border: 1px solid var(--surface-100);
+	border: 1px solid var(--surface-200);
 }
 
 .calendar button {
@@ -20,5 +20,5 @@
 }
 
 .otherMonth {
-	background-color: var(--surface-100);
+	background-color: var(--surface-50);
 }

@@ -10,7 +10,6 @@ import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
 import { Main } from '../Main/Main';
-import { YearCalendar } from '../YearCalendar/YearCalendar';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
@@ -202,7 +201,6 @@ function App() {
 					onNewEventClick={setVisiblePopupNewEvent}
 					events={allUserEvents}
 				/>
-				<YearCalendar localizer={localizer} />
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}

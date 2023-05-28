@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { BaseCalendar } from '../BaseCalendar/BaseCalendar';
 import styles from './Main.module.css';
+import { YearCalendar } from '../YearCalendar/YearCalendar';
 
 export function Main({ localizer, onNewEventClick, events }) {
 	return (
 		<main className={`${styles.main} container`}>
-			<Sidebar onNewEventClick={onNewEventClick} />
+			<Sidebar onNewEventClick={onNewEventClick} localizer={localizer} />
 			<div className={styles.content}>
 				<BaseCalendar localizer={localizer} events={events} />
+        <YearCalendar localizer={localizer} />
 			</div>
 		</main>
 	);
