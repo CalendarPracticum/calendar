@@ -92,6 +92,7 @@
 
 .calendar button {
 	color: var(--text-color);
+	cursor: default;
 }
 
 .holiday {

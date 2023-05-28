@@ -10,7 +10,7 @@ export function Main({ onNewEventClick, localizer }) {
 		<main className={`${styles.main} container`}>
 			<Sidebar onNewEventClick={onNewEventClick} localizer={localizer} />
 			<div className={styles.content}>
-				<BaseCalendar localizer={localizer} />¸
+				<BaseCalendar localizer={localizer} />
 				<YearCalendar localizer={localizer} />
 			</div>
 		</main>
