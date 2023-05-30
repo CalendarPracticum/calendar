@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from events.models import Calendar, Event
+from events.models import Calendar, Event, ShareTheCalendar
 
 
 class CalendarSerializer(serializers.ModelSerializer):
@@ -188,3 +188,48 @@ class WriteEventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(message)
 
         return data
+
+
+class ShareTheCalendarSerializer(serializers.ModelSerializer):
+    """
+    Сериализация данных шеринга календаря.
+    Owner - владелец календаря.
+    user (share_to) - пользователь которому предоставляется доступ.
+    calendar - календарь, которым делится владелец.
+
+    Создание:
+    При создании записи в бд owner и calendar подставляются автоматически и
+    являются текущим календарем и текущим пользователем.
+
+    Валидация:
+    1. owner != user
+    2. Поля user и calendar уникальные
+    3. calendar является календарем созданным owner'ом
+    """
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    calendar = serializers.SlugRelatedField(read_only=True, slug_field='name')
+
+    class Meta:
+        model = ShareTheCalendar
+        fields = (
+            'owner',
+            'user',
+            'calendar',
+        )
+
+    # def create(self, validated_data):
+    # todo не пойму почему, но этот метод не вызывается. Пытался дебажить
+    #  но сюда так и не дошли операции.
+    #
+    #     request = self.context.get('request')
+    #     calendar_id = self.context['request'].parser_context['kwargs'].get(
+    #         'id')
+    #     calendar = get_object_or_404(Calendar, id=calendar_id)
+    #
+    #     if request and request.user.is_authenticated:
+    #         validated_data['owner'] = request.user
+    #         validated_data['calendar'] = calendar
+    #         instance = super().create(validated_data)
+    #         return instance
+    #     raise serializers.ValidationError(
+    #         'Пользователь не аутентифицирован.')
