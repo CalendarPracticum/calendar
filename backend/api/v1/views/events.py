@@ -25,8 +25,7 @@ from api.v1.serializers.events import (
     WriteEventSerializer,
 )
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
-from events.models import Calendar, Event, ShareTheCalendar
-from users.models import User
+from events.models import Calendar, Event, ShareCalendar
 
 
 @extend_schema(tags=['Календарь'])
@@ -76,24 +75,26 @@ class CalendarViewSet(viewsets.ModelViewSet):
         return CalendarSerializer
 
     @action(methods=['post', 'delete'], detail=True)
-    def share(self, request, id):
-        owner = request.user
-        user_id = request.data.get('user')
-        share_to = get_object_or_404(User, id=user_id)
-        calendar = get_object_or_404(Calendar, id=id)
+    def share(self, request, pk):
+        calendar = get_object_or_404(Calendar, pk=pk)
 
         if request.method == 'POST':
+            owner = request.user
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            ShareTheCalendar.objects.create(
-                owner=owner,
-                calendar=calendar,
-                user=share_to
-            )
+            serializer.save(owner=owner, calendar=calendar)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            user = request.data.get('user')
+            share = ShareCalendar.objects.filter(user=user, calendar=calendar)
+            if share.exists():
+                share.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {'error': 'Такой подписки не существует'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
