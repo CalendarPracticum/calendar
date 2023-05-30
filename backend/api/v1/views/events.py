@@ -1,14 +1,17 @@
 from datetime import datetime
 
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import (
     OpenApiParameter,
     extend_schema,
     extend_schema_view,
 )
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 from api.filters import EventFilter
 from api.permissions import (
@@ -18,10 +21,12 @@ from api.permissions import (
 from api.v1.serializers.events import (
     CalendarSerializer,
     ReadEventSerializer,
+    ShareTheCalendarSerializer,
     WriteEventSerializer,
 )
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
-from events.models import Calendar, Event
+from events.models import Calendar, Event, ShareTheCalendar
+from users.models import User
 
 
 @extend_schema(tags=['Календарь'])
@@ -50,16 +55,47 @@ from events.models import Calendar, Event
         summary='Удаление календаря',
         description=' '
     ),
+    share=extend_schema(
+        tags=['Шеринг календаря'],
+        summary='Шеринг календаря',
+        description=' '
+    ),
 )
 class CalendarViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrCalendarOwnerOrReadOnly,)
-    serializer_class = CalendarSerializer
     pagination_class = None
 
     def get_queryset(self):
         if self.request.user.is_superuser:
             return Calendar.objects.all()
         return Calendar.objects.filter(owner=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'share':
+            return ShareTheCalendarSerializer
+        return CalendarSerializer
+
+    @action(methods=['post', 'delete'], detail=True)
+    def share(self, request, id):
+        owner = request.user
+        user_id = request.data.get('user')
+        share_to = get_object_or_404(User, id=user_id)
+        calendar = get_object_or_404(Calendar, id=id)
+
+        if request.method == 'POST':
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            ShareTheCalendar.objects.create(
+                owner=owner,
+                calendar=calendar,
+                user=share_to
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if request.method == 'DELETE':
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=['Событие'])
