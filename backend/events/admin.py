@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from events.models import Calendar, Event, ShareTheCalendar
+from events.models import Calendar, Event, ShareCalendar
 
 
 @admin.register(Calendar)
@@ -43,7 +43,7 @@ class EventAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-@admin.register(ShareTheCalendar)
+@admin.register(ShareCalendar)
 class ShareTheCalendarAdmin(admin.ModelAdmin):
     list_display = (
         'owner',

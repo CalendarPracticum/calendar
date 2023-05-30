@@ -112,7 +112,7 @@ class Event(models.Model):
             raise ValidationError(message)
 
 
-class ShareTheCalendar(models.Model):
+class ShareCalendar(models.Model):
     """
     Шеринг календаря владельцем, пользователю, который есть в базе.
     Owner - Владелец календаря.

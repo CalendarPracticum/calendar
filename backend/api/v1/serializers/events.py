@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from events.models import Calendar, Event, ShareTheCalendar
+from events.models import Calendar, Event, ShareCalendar
 
 
 class CalendarSerializer(serializers.ModelSerializer):
@@ -210,26 +210,29 @@ class ShareTheCalendarSerializer(serializers.ModelSerializer):
     calendar = serializers.SlugRelatedField(read_only=True, slug_field='name')
 
     class Meta:
-        model = ShareTheCalendar
+        model = ShareCalendar
         fields = (
             'owner',
             'user',
             'calendar',
         )
 
-    # def create(self, validated_data):
-    # todo не пойму почему, но этот метод не вызывается. Пытался дебажить
-    #  но сюда так и не дошли операции.
-    #
-    #     request = self.context.get('request')
-    #     calendar_id = self.context['request'].parser_context['kwargs'].get(
-    #         'id')
-    #     calendar = get_object_or_404(Calendar, id=calendar_id)
-    #
-    #     if request and request.user.is_authenticated:
-    #         validated_data['owner'] = request.user
-    #         validated_data['calendar'] = calendar
-    #         instance = super().create(validated_data)
-    #         return instance
-    #     raise serializers.ValidationError(
-    #         'Пользователь не аутентифицирован.')
+    def validate(self, data):
+        request = self.context.get('request')
+        calendar_pk = request.parser_context.get('kwargs').get('pk')
+
+        owner = request.user
+        user = data.get('user')
+        calendar = owner.calendars.filter(pk=calendar_pk)
+        share = ShareCalendar.objects.filter(user=user, calendar=calendar_pk)
+
+        if not calendar:
+            raise ValidationError('Нельзя поделиться чужим календарем')
+        if user == owner:
+            raise ValidationError('Нельзя поделиться календарем с собой')
+        if share.exists():
+            raise ValidationError(
+                'Вы уже поделились этим календарем с этим пользователем'
+            )
+
+        return data
