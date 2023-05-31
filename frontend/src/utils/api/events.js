@@ -30,16 +30,21 @@ const getJson = (response) => {
   ]
 */
 export const getAllUserEvents = (start, finish, calendar) => {
-  if (getAccessToken() === 'Bearer null') {
-    return fetch(`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=1`).then(getJson);
-  }
+	if (getAccessToken() === 'Bearer null') {
+		return fetch(
+			`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=1`
+		).then(getJson);
+	}
 
-  return fetch(`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`, {
-      headers: {
-        authorization: getAccessToken(),
-      },
-    }).then(getJson);
-}
+	return fetch(
+		`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`,
+		{
+			headers: {
+				authorization: getAccessToken(),
+			},
+		}
+	).then(getJson);
+};
 
 /*
   Создание нового ивента
