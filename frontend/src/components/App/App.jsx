@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
@@ -19,6 +20,7 @@ import ruPrime from '../../utils/ruPrime.json';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
+import { NotFound } from '../NotFound/NotFound';
 
 const locales = {
 	ru: ruLocale,
@@ -201,18 +203,31 @@ function App() {
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
-				<Header onLogin={setVisiblePopupLogin} />
-				<Main
-					localizer={localizer}
-					onNewEventClick={setVisiblePopupNewEvent}
-					events={allUserEvents}
-				/>
+				<Routes>
+					<Route
+						exact
+						path="/"
+						element={
+							<>
+								<Header onLogin={setVisiblePopupLogin} />
+								<Main
+									localizer={localizer}
+									onNewEventClick={setVisiblePopupNewEvent}
+									events={allUserEvents}
+								/>
+							</>
+						}
+					/>
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}
 					handleRegister={handleRegister}
 					handleLogin={handleLogin}
 				/>
+
 				<PopupNewEvent
 					visible={visiblePopupNewEvent}
 					setVisible={setVisiblePopupNewEvent}
