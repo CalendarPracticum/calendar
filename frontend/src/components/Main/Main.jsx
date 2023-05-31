@@ -11,7 +11,7 @@ export function Main({ localizer, onNewEventClick, events }) {
 			<Sidebar onNewEventClick={onNewEventClick} localizer={localizer} />
 			<div className={styles.content}>
 				<BaseCalendar localizer={localizer} events={events} />
-        <YearCalendar localizer={localizer} />
+				<YearCalendar localizer={localizer} />
 			</div>
 		</main>
 	);
