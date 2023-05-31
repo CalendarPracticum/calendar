@@ -136,11 +136,11 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 									control={control}
 									rules={{
 										required: 'Обязательное поле Email.',
-										pattern: {
-											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-											message:
-												'Не корректный email. Например: example@email.ru',
-										},
+										// pattern: {
+										// 	value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+										// 	message:
+										// 		'Не корректный email. Например: example@email.ru',
+										// },
 									}}
 									render={({ field, fieldState }) => (
 										<InputText
@@ -168,10 +168,10 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 									control={control}
 									rules={{
 										required: 'Обязательное поле Пароль.',
-										pattern: {
-											value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
-											message: 'Не корректный пароль',
-										},
+										// pattern: {
+										// 	value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
+										// 	message: 'Не корректный пароль',
+										// },
 									}}
 									render={({ field, fieldState }) => (
 										<Password
