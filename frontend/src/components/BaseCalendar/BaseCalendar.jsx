@@ -51,6 +51,6 @@ export function BaseCalendar({ localizer, events }) {
 BaseCalendar.propTypes = {
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
+	// eslint-disable-next-line react/forbid-prop-types
 	events: PropTypes.array.isRequired,
 };

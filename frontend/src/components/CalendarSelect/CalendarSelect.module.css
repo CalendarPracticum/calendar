@@ -1,0 +1,49 @@
+.calendarContainer {
+	margin: 0;
+	margin-top: 32px;
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+}
+
+.acordion {
+	display: flex;
+	justify-content: left;
+	color: var(--text-color);
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 16px;
+	line-height: 18px;
+}
+
+.button {
+	padding: 0;
+	border: none;
+	font: inherit;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.allCalendars {
+	display: flex;
+	flex-direction: column;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 14px;
+	line-height: 125%;
+	color: var(--text-color);
+}
+
+.list {
+	margin: 12px 0 0 0;
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.list input {
+	cursor: pointer;
+	background-color: var(--primary-color);
+}
