@@ -47,6 +47,31 @@
 
 .list input {
 	cursor: pointer;
-	background-color: var(--primary-color);
 	margin-top: 1.5px;
+	display: none;
+}
+
+.checkbox {
+	height: 13px;
+	width: 13px;
+	margin-top: 1.5px;
+	border: 1px solid var(--surface-200);
+	display: inline-block;
+	position: relative;
+	border-radius: 2px;
+	position: relative;
+	cursor: pointer;
+}
+
+.checkbox::before {
+	content: '';
+}
+
+label input:checked ~ .checkbox::before {
+	content: '\2714';
+	color: var(--primary-color-text);
+	position: relative;
+	font-size: 11px;
+	top: -5px;
+	left: 1px;
 }

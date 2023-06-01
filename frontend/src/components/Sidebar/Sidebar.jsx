@@ -61,7 +61,7 @@ export function Sidebar({ onNewEventClick, localizer }) {
 						: {};
 				}}
 			/>
-			<CalendarSelect />
+			{loggedIn && <CalendarSelect />}
 		</div>
 	);
 }
