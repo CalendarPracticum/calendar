@@ -1,13 +1,17 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import { useMemo, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { Calendar } from 'react-big-calendar';
 import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './Sidebar.module.css';
 import { culture, noop } from '../../utils/constants';
+import CurrentUserContext from '../../context/CurrentUserContext';
 
 export function Sidebar({ onNewEventClick, localizer }) {
+	const userContext = useContext(CurrentUserContext);
+	const { loggedIn } = userContext;
+
 	const { defaultDate, formats } = useMemo(
 		() => ({
 			defaultDate: new Date(),
@@ -17,6 +21,7 @@ export function Sidebar({ onNewEventClick, localizer }) {
 		}),
 		[localizer]
 	);
+
 	return (
 		<div className={styles.sidebar}>
 			<Button
@@ -25,6 +30,7 @@ export function Sidebar({ onNewEventClick, localizer }) {
 				iconPos="right"
 				className={styles.button}
 				onClick={() => onNewEventClick(true)}
+				disabled={!loggedIn}
 			/>
 			<Calendar
 				className={styles.calendar}
@@ -32,7 +38,7 @@ export function Sidebar({ onNewEventClick, localizer }) {
 				culture={culture}
 				onDrillDown={noop}
 				onNavigate={noop}
-				style={{ height: 210, margin: 0, padding: 0, width: 210 }}
+				style={{ height: 210, margin: 0, padding: 0, width: '100%' }}
 				formats={formats}
 				localizer={localizer}
 				defaultDate={defaultDate}
