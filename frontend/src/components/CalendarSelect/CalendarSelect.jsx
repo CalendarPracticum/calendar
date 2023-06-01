@@ -3,32 +3,7 @@ import styles from './CalendarSelect.module.css';
 
 export function CalendarSelect() {
 	// список календарей придет с бэка
-	const list = {color
-:
-"#91DED3"
-description
-:
-null
-id
-:
-16
-name
-:
-"Личное"
-owner
-:
-"yandex@yandex.com"
-[[Prototype]]
-:
-Object
-length
-:
-1
-[[Prototype]]
-:
-Array(0)
-
-  }
+	const list = [
 		'Личный',
 		'Рабочий',
 		'Нужное',
