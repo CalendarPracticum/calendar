@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useMemo, useContext } from 'react';
 import { Button } from 'primereact/button';
+import { classNames as cn } from 'primereact/utils';
 import { Calendar } from 'react-big-calendar';
 import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -61,7 +62,26 @@ export function Sidebar({ onNewEventClick, localizer }) {
 						: {};
 				}}
 			/>
-			{loggedIn && <CalendarSelect />}
+			{loggedIn && (
+				<>
+					<CalendarSelect />
+					<Button
+						label="Новый календарь"
+						icon="pi pi-plus"
+						iconPos="left"
+						className={cn(
+							`p-button-sm p-button-outlined ${styles.btnNewCalendar}`
+						)}
+						onClick={() => console.log('click1')}
+						disabled={!loggedIn}
+					/>
+				</>
+			)}
+			<Button
+				label="Показать производственный календарь"
+				className={cn(`p-button-sm p-button-link  ${styles.btnProdCalendar}`)}
+				onClick={() => console.log('click2')}
+			/>
 		</div>
 	);
 }
