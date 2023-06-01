@@ -9,14 +9,14 @@ import ruLocale from 'date-fns/locale/ru';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
-// import { addLocale } from 'primereact/api';
+import { addLocale } from 'primereact/api';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import { PopupLogin } from '../PopupLogin/PopupLogin';
 import { PopupNewEvent } from '../PopupNewEvent/PopupNewEvent';
-// import ruPrime from '../../utils/ruPrime.json';
+import ruPrime from '../../utils/ruPrime.json';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
@@ -34,7 +34,7 @@ const localizer = dateFnsLocalizer({
 	locales,
 });
 
-// addLocale('ru', ruPrime);
+addLocale('ru', ruPrime);
 
 function App() {
 	const [currentUser, setCurrentUser] = useState({});
