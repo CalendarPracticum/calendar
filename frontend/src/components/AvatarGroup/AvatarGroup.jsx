@@ -4,6 +4,7 @@ import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
 import { classNames as cn } from 'primereact/utils';
 import CurrentUserContext from '../../context/CurrentUserContext';
+import styles from './AvatarGroup.module.css';
 
 export function AvatarGroup() {
 	const userContext = useContext(CurrentUserContext);
@@ -14,7 +15,7 @@ export function AvatarGroup() {
 		setAllUserEvents,
 		currentUser,
 	} = userContext;
-	const { name, email } = currentUser;
+	const { name, email, avatar } = currentUser;
 
 	const menu = useRef(null);
 	const toast = useRef(null);
@@ -49,7 +50,8 @@ export function AvatarGroup() {
 					)}
 				>
 					<Avatar
-						image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png"
+						icon={avatar ? '' : 'pi pi-user'}
+						image={avatar || ''}
 						className="mr-2"
 						shape="circle"
 					/>
@@ -100,16 +102,23 @@ export function AvatarGroup() {
 		<div className="card flex justify-content-center">
 			<Toast ref={toastAvatar} />
 			<Toast ref={toast} />
-			<Menu model={items} popup ref={menu} />
+			<Menu
+				model={items}
+				popup
+				ref={menu}
+				id="popup_menu"
+				appendTo="self"
+				className={styles.top}
+			/>
 			<Avatar
-				icon="pi pi-user"
+				icon={avatar ? '' : 'pi pi-user'}
 				size="large"
-				style={{
-					backgroundColor: 'var(--primary-color)',
-					color: 'var(--surface-f)',
-				}}
+				image={avatar || ''}
 				shape="circle"
 				onClick={(e) => menu.current.toggle(e)}
+				aria-controls="popup_menu"
+				aria-haspopup
+				className={styles.avatar}
 			/>
 		</div>
 	);

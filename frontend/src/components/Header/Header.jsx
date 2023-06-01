@@ -39,7 +39,7 @@ export function Header({ onLogin }) {
 	// TODO: добавить логотип, удалить логику показа аватарки
 
 	return (
-		<header className={styles.header}>
+		<header className={styles.header} id="header">
 			<div className={`${styles.wrapper} container`}>
 				<div>
 					<img className={styles.logo} src={logo} alt="Логотип MyCalenDaily" />
