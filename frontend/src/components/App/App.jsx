@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
@@ -19,6 +20,7 @@ import ruPrime from '../../utils/ruPrime.json';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
+import { NotFound } from '../NotFound/NotFound';
 
 const locales = {
 	ru: ruLocale,
@@ -55,26 +57,32 @@ function App() {
 				.catch((err) => {
 					// eslint-disable-next-line no-console
 					console.log('ОШИБКА: ', err);
-				})
-    }
+				});
+		}
 
-    eventApi
-    // жутчаий хардкод на получение личного календря т.к. пока возможности переключения между ними нету
-      .getAllUserEvents(start, finish, allUserCalendars.length !== 0 ? allUserCalendars[0].id : '')
-      .then((result) => {
-        setAllUserEvents(result.map(event => {
-          /* eslint-disable no-param-reassign */
-          event.title = event.name;
-          event.start = event.datetime_start;
-          event.end = event.datetime_finish;
-          event.allDay = event.all_day;
-          return event;
-        }));
-      })
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.log('ОШИБКА: ', error);
-      });
+		eventApi
+			// жутчаий хардкод на получение личного календря т.к. пока возможности переключения между ними нету
+			.getAllUserEvents(
+				start,
+				finish,
+				allUserCalendars.length !== 0 ? allUserCalendars[0].id : ''
+			)
+			.then((result) => {
+				setAllUserEvents(
+					result.map((event) => {
+						/* eslint-disable no-param-reassign */
+						event.title = event.name;
+						event.start = event.datetime_start;
+						event.end = event.datetime_finish;
+						event.allDay = event.all_day;
+						return event;
+					})
+				);
+			})
+			.catch((error) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', error);
+			});
 	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
@@ -85,8 +93,8 @@ function App() {
 				.then((res) => {
 					if (res) {
 						setLoggedIn(true);
-            // eslint-disable-next-line
-            handleGetAllCalendars();
+						// eslint-disable-next-line
+						handleGetAllCalendars();
 					}
 				})
 				.catch((error) => {
@@ -104,8 +112,8 @@ function App() {
 			setLoggedIn,
 			allUserCalendars,
 			setAllUserCalendars,
-      allUserEvents,
-      setAllUserEvents,
+			allUserEvents,
+			setAllUserEvents,
 		}),
 		[currentUser, loggedIn, allUserCalendars, allUserEvents]
 	);
@@ -117,7 +125,7 @@ function App() {
 		calendarApi
 			.getAllUserCalendars()
 			.then((data) => {
-				setAllUserCalendars(data)
+				setAllUserCalendars(data);
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
@@ -139,10 +147,10 @@ function App() {
 		eventApi
 			.createNewEvent(data)
 			.then((event) => {
-        event.title = event.name;
-        event.start = event.datetime_start;
-        event.end = event.datetime_finish;
-        event.allDay = event.all_day;
+				event.title = event.name;
+				event.start = event.datetime_start;
+				event.end = event.datetime_finish;
+				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
 			})
 			.catch((err) => {
@@ -160,7 +168,7 @@ function App() {
 				setLoggedIn(true);
 				handleGetAllCalendars();
 				setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-      })
+			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
@@ -171,21 +179,21 @@ function App() {
 		auth
 			.register(email, password)
 			.then(
-        auth
-				.authorize(email, password)
-				.then((data) => {
-					localStorage.setItem('jwtAccess', data.access);
-					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-					setLoggedIn(true);
-					handleGetAllCalendars();
-					setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-				})
-				.catch((err) => {
-					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', err);
-				})
-      )
+				auth
+					.authorize(email, password)
+					.then((data) => {
+						localStorage.setItem('jwtAccess', data.access);
+						localStorage.setItem('jwtRefresh', data.refresh);
+						handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+						setLoggedIn(true);
+						handleGetAllCalendars();
+						setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+					})
+					.catch((err) => {
+						// eslint-disable-next-line no-console
+						console.log('ОШИБКА: ', err);
+					})
+			)
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
@@ -195,18 +203,31 @@ function App() {
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
-				<Header onLogin={setVisiblePopupLogin} />
-				<Main
-					localizer={localizer}
-					onNewEventClick={setVisiblePopupNewEvent}
-					events={allUserEvents}
-				/>
+				<Routes>
+					<Route
+						exact
+						path="/"
+						element={
+							<>
+								<Header onLogin={setVisiblePopupLogin} />
+								<Main
+									localizer={localizer}
+									onNewEventClick={setVisiblePopupNewEvent}
+									events={allUserEvents}
+								/>
+							</>
+						}
+					/>
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+
 				<PopupLogin
 					visible={visiblePopupLogin}
 					setVisible={setVisiblePopupLogin}
 					handleRegister={handleRegister}
 					handleLogin={handleLogin}
 				/>
+
 				<PopupNewEvent
 					visible={visiblePopupNewEvent}
 					setVisible={setVisiblePopupNewEvent}
