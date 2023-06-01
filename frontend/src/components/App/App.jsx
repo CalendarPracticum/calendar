@@ -124,6 +124,7 @@ function App() {
 			.getAllUserCalendars()
 			.then((data) => {
 				setAllUserCalendars(data);
+        console.log(data);
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
