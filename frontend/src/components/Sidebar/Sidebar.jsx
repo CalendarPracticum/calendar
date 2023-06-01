@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useMemo, useContext } from 'react';
 import { Button } from 'primereact/button';
 import { Calendar } from 'react-big-calendar';
+import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './Sidebar.module.css';
 import { culture, noop } from '../../utils/constants';
@@ -60,6 +61,7 @@ export function Sidebar({ onNewEventClick, localizer }) {
 						: {};
 				}}
 			/>
+			{loggedIn && <CalendarSelect />}
 		</div>
 	);
 }
