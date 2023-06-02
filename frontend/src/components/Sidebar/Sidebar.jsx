@@ -9,7 +9,12 @@ import styles from './Sidebar.module.css';
 import { culture, noop } from '../../utils/constants';
 import CurrentUserContext from '../../context/CurrentUserContext';
 
-export function Sidebar({ onNewEventClick, localizer }) {
+export function Sidebar({
+	onNewEventClick,
+	localizer,
+	visibleProdCalendar,
+	showProdCalendar,
+}) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn } = userContext;
 
@@ -78,9 +83,11 @@ export function Sidebar({ onNewEventClick, localizer }) {
 				</>
 			)}
 			<Button
-				label="Показать производственный календарь"
+				label={`${
+					visibleProdCalendar ? 'Скрыть' : 'Показать'
+				} производственный календарь`}
 				className={cn(`p-button-sm p-button-link  ${styles.btnProdCalendar}`)}
-				onClick={() => console.log('click2')}
+				onClick={() => showProdCalendar((prevState) => !prevState)}
 			/>
 		</div>
 	);
@@ -90,4 +97,6 @@ Sidebar.propTypes = {
 	onNewEventClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
+	visibleProdCalendar: PropTypes.bool.isRequired,
+	showProdCalendar: PropTypes.func.isRequired,
 };

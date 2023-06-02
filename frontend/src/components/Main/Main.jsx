@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { BaseCalendar } from '../BaseCalendar/BaseCalendar';
@@ -6,12 +6,19 @@ import styles from './Main.module.css';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
 
 export function Main({ localizer, onNewEventClick, events }) {
+	const [visibleProdCalendar, setVisibleProdCalendar] = useState(false);
+
 	return (
 		<main className={`${styles.main} container`}>
-			<Sidebar onNewEventClick={onNewEventClick} localizer={localizer} />
+			<Sidebar
+				onNewEventClick={onNewEventClick}
+				localizer={localizer}
+				showProdCalendar={setVisibleProdCalendar}
+				visibleProdCalendar={visibleProdCalendar}
+			/>
 			<div className={styles.content}>
 				<BaseCalendar localizer={localizer} events={events} />
-				<YearCalendar localizer={localizer} />
+				{visibleProdCalendar && <YearCalendar localizer={localizer} />}
 			</div>
 		</main>
 	);
