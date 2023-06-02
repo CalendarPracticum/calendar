@@ -1,0 +1,8 @@
+.top {
+	top: 54px !important;
+}
+
+.avatar {
+	background-color: var(--primary-color);
+	color: var(--surface-f);
+}

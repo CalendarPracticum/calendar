@@ -91,7 +91,7 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 						onSubmit={handleSubmit(onSubmit)}
 						className={`p-fluid ${styles.form}`}
 					>
-						<div className={styles.field}>
+						{/* <div className={styles.field}>
 							<span className="p-float-label">
 								<Controller
 									name="name"
@@ -117,9 +117,9 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 											})}
 										/>
 									)}
-								/>
-								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
-								<label
+								/> */}
+						{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
+						{/* <label
 									htmlFor="name"
 									className={cn({ 'p-error': errors.name })}
 								>
@@ -127,7 +127,7 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 								</label>
 							</span>
 							{getFormErrorMessage('name')}
-						</div>
+						</div> */}
 						<div className={styles.field}>
 							<span className="p-float-label p-input-icon-right">
 								<i className="pi pi-envelope" />

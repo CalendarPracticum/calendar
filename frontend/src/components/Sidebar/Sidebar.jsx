@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useMemo, useContext } from 'react';
 import { Button } from 'primereact/button';
+import { classNames as cn } from 'primereact/utils';
 import { Calendar } from 'react-big-calendar';
 import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -8,7 +9,13 @@ import styles from './Sidebar.module.css';
 import { culture, noop } from '../../utils/constants';
 import CurrentUserContext from '../../context/CurrentUserContext';
 
-export function Sidebar({ onNewEventClick, localizer }) {
+export function Sidebar({
+	onNewEventClick,
+	onNewCalendarClick,
+	localizer,
+	visibleProdCalendar,
+	showProdCalendar,
+}) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn } = userContext;
 
@@ -61,13 +68,37 @@ export function Sidebar({ onNewEventClick, localizer }) {
 						: {};
 				}}
 			/>
-			{loggedIn && <CalendarSelect />}
+			{loggedIn && (
+				<>
+					<CalendarSelect />
+					<Button
+						label="Новый календарь"
+						icon="pi pi-plus"
+						iconPos="left"
+						className={cn(
+							`p-button-sm p-button-outlined ${styles.btnNewCalendar}`
+						)}
+						onClick={() => onNewCalendarClick(true)}
+						disabled={!loggedIn}
+					/>
+				</>
+			)}
+			<Button
+				label={`${
+					visibleProdCalendar ? 'Скрыть' : 'Показать'
+				} производственный календарь`}
+				className={cn(`p-button-sm p-button-link  ${styles.btnProdCalendar}`)}
+				onClick={() => showProdCalendar((prevState) => !prevState)}
+			/>
 		</div>
 	);
 }
 
 Sidebar.propTypes = {
 	onNewEventClick: PropTypes.func.isRequired,
+	onNewCalendarClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
+	visibleProdCalendar: PropTypes.bool.isRequired,
+	showProdCalendar: PropTypes.func.isRequired,
 };

@@ -5,13 +5,11 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	/* background-color: var(--highlight-bg); */
 }
 
 .button {
 	width: 100%;
-	margin-bottom: 24px;
-	background: var(--primary-color);
+	margin-bottom: 1.5rem;
 }
 
 .calendar {
@@ -36,4 +34,22 @@
 
 .otherMonth {
 	background-color: var(--surface-50);
+}
+
+.btnNewCalendar {
+	margin-top: 1rem;
+	width: 100%;
+}
+
+.btnProdCalendar {
+	margin-top: 3rem;
+	width: 100%;
+	text-align: left;
+	text-decoration: underline;
+	transition: all 0.3s ease-out;
+	outline: none;
+}
+
+.btnProdCalendar:hover {
+	opacity: 0.75;
 }
