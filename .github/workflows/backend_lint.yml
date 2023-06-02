@@ -1,10 +1,9 @@
-name: Calendar backend workflows
+name: Calendar backend tests workflows
 
 on:
   push:
     branches:
       - backend
-      - feature/compose_ci_cd
   pull_request:
     branches:
       - backend
