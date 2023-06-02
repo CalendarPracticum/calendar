@@ -179,12 +179,12 @@ EMAIL_ADMIN = [EMAIL_HOST_USER]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/back_static/'
 STATIC_ROOT = BASE_DIR / 'data/static'
 
 # Media files
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/back_media/'
 MEDIA_ROOT = BASE_DIR / 'data/media'
 
 # Default primary key field type

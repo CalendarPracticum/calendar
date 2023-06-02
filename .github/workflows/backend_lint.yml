@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - backend
+      - feature/compose_ci_cd
   pull_request:
     branches:
       - backend
@@ -26,5 +27,7 @@ jobs:
           pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort flake8-quotes
 
       - name: Test with flake8
-        run: |
-          python -m flake8 backend
+        run: cd backend && python -m flake8
+
+      - name: Test with Django Unittest
+        run: python manage.py test --verbosity 2

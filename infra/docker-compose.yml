@@ -1,10 +1,16 @@
 version: '3.9'
 services:
+  frontend:
+    build: ../frontend
+    volumes:
+      - ../frontend:/app/result_build/
+
+
   db:
     container_name: database
     image: postgres:14.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./data/postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
     env_file:
@@ -22,8 +28,8 @@ services:
       build: ../backend
       restart: always
       volumes:
-        - static_value:/app/data/static/
-        - media_value:/app/data/media/
+        - ./data/back_static:/app/data/back_static/
+        - ./data/back_media:/app/data/back_media/
       depends_on:
         db:
           condition: service_healthy
@@ -37,12 +43,8 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - static_value:/var/html/static/
-      - media_value:/var/html/media/
+      - ../frontend/build:/usr/share/nginx/html/
+      - ./data/back_static:/var/html/back_static/
+      - ./data/back_media:/var/html/back_media/
     depends_on:
       - backend
-
-volumes:
-  postgres_data:
-  static_value:
-  media_value:
