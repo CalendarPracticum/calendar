@@ -5,13 +5,19 @@ import { BaseCalendar } from '../BaseCalendar/BaseCalendar';
 import styles from './Main.module.css';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
 
-export function Main({ localizer, onNewEventClick, events }) {
+export function Main({
+	localizer,
+	onNewEventClick,
+	onNewCalendarClick,
+	events,
+}) {
 	const [visibleProdCalendar, setVisibleProdCalendar] = useState(false);
 
 	return (
 		<main className={`${styles.main} container`}>
 			<Sidebar
 				onNewEventClick={onNewEventClick}
+				onNewCalendarClick={onNewCalendarClick}
 				localizer={localizer}
 				showProdCalendar={setVisibleProdCalendar}
 				visibleProdCalendar={visibleProdCalendar}
@@ -28,6 +34,7 @@ Main.propTypes = {
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
+	onNewCalendarClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types
 	events: PropTypes.array.isRequired,
 };

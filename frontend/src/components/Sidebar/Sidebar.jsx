@@ -11,6 +11,7 @@ import CurrentUserContext from '../../context/CurrentUserContext';
 
 export function Sidebar({
 	onNewEventClick,
+	onNewCalendarClick,
 	localizer,
 	visibleProdCalendar,
 	showProdCalendar,
@@ -77,7 +78,7 @@ export function Sidebar({
 						className={cn(
 							`p-button-sm p-button-outlined ${styles.btnNewCalendar}`
 						)}
-						onClick={() => console.log('click1')}
+						onClick={() => onNewCalendarClick(true)}
 						disabled={!loggedIn}
 					/>
 				</>
@@ -95,6 +96,7 @@ export function Sidebar({
 
 Sidebar.propTypes = {
 	onNewEventClick: PropTypes.func.isRequired,
+	onNewCalendarClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
 	visibleProdCalendar: PropTypes.bool.isRequired,

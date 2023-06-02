@@ -21,6 +21,7 @@ import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
+import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
 
 const locales = {
 	ru: ruLocale,
@@ -41,6 +42,7 @@ function App() {
 	const [loggedIn, setLoggedIn] = useState(false);
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
+	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const start = '2023-01-01';
@@ -136,7 +138,7 @@ function App() {
 	const handleCreateCalendar = ({ name, description, color }) => {
 		calendarApi
 			.createNewCalendar(name, description, color)
-			.then()
+			.then((data) => console.log('handleCreateCalendar', data))
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);
@@ -213,6 +215,7 @@ function App() {
 								<Main
 									localizer={localizer}
 									onNewEventClick={setVisiblePopupNewEvent}
+									onNewCalendarClick={setVisiblePopupNewCalendar}
 									events={allUserEvents}
 								/>
 							</>
@@ -233,6 +236,12 @@ function App() {
 					setVisible={setVisiblePopupNewEvent}
 					onCreateEvent={handleCreateEvent}
 					allUserCalendars={allUserCalendars}
+				/>
+
+				<PopupNewCalendar
+					visible={visiblePopupNewCalendar}
+					setVisible={setVisiblePopupNewCalendar}
+					onCreateCalendar={handleCreateCalendar}
 				/>
 			</div>
 		</CurrentUserContext.Provider>
