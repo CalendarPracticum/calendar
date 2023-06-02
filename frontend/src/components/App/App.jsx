@@ -138,7 +138,9 @@ function App() {
 	const handleCreateCalendar = ({ name, description, color }) => {
 		calendarApi
 			.createNewCalendar(name, description, color)
-			.then((data) => console.log('handleCreateCalendar', data))
+			.then((newCalendar) =>
+				setAllUserCalendars((prevState) => [newCalendar, ...prevState])
+			)
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err);

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormNewCalendar.module.css';
+import { Color } from '../../utils/calendarColors';
 
 export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 	const defaultValues = {
@@ -42,7 +44,7 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 					>
 						<div className={styles.field}>
 							<span className="p-float-label p-input-icon-right">
-								<i className="pi pi-calendar-plus" />
+								<i className="pi pi-pencil" />
 								<Controller
 									name="name"
 									control={control}
@@ -74,6 +76,38 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 								</label>
 							</span>
 							{getFormErrorMessage('name')}
+						</div>
+
+						<div className={styles.field}>
+							<fieldset className={styles.colorTable}>
+								<legend>Выберите один из вариантов*</legend>
+								{Object.values(Color).map((hexColor) => (
+									<div key={hexColor} className="field-radiobutton">
+										<Controller
+											name="color"
+											control={control}
+											rules={{ required: true }}
+											render={({ field, fieldState }) => (
+												<RadioButton
+													value={hexColor}
+													inputId={hexColor}
+													onChange={(e) => field.onChange(e.value)}
+													className={cn({ 'p-invalid': fieldState.invalid })}
+													checked={field.value === hexColor}
+												/>
+											)}
+										/>
+										<label
+											htmlFor={hexColor}
+											className={styles.color}
+											style={{ backgroundColor: `${hexColor}` }}
+										>
+											{/* `${hexColor}` */}
+										</label>
+									</div>
+								))}
+							</fieldset>
+							{getFormErrorMessage('color')}
 						</div>
 
 						<Button
