@@ -26,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', default='secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv('DEBUG', default=True)
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split()
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='localhost').split()
 
 
 # Application definition
