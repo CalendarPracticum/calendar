@@ -9,7 +9,7 @@ import CurrentUserContext from '../../context/CurrentUserContext';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 import logo from '../../images/logo.svg';
 
-export function Header({ onLogin }) {
+export function Header({ onLogin, onEditUser }) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn } = userContext;
 
@@ -58,7 +58,7 @@ export function Header({ onLogin }) {
 					/>
 				</div>
 				{loggedIn ? (
-					<AvatarGroup />
+					<AvatarGroup onEditUser={onEditUser} />
 				) : (
 					<Button
 						label="Войти"
@@ -74,4 +74,5 @@ export function Header({ onLogin }) {
 
 Header.propTypes = {
 	onLogin: PropTypes.func.isRequired,
+	onEditUser: PropTypes.func.isRequired,
 };

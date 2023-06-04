@@ -22,6 +22,7 @@ import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
+import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
 
 const locales = {
 	ru: ruLocale,
@@ -43,6 +44,7 @@ function App() {
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
+	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const start = '2023-01-01';
@@ -213,7 +215,10 @@ function App() {
 						path="/"
 						element={
 							<>
-								<Header onLogin={setVisiblePopupLogin} />
+								<Header
+									onLogin={setVisiblePopupLogin}
+									onEditUser={setVisiblePopupEditUser}
+								/>
 								<Main
 									localizer={localizer}
 									onNewEventClick={setVisiblePopupNewEvent}
@@ -244,6 +249,11 @@ function App() {
 					visible={visiblePopupNewCalendar}
 					setVisible={setVisiblePopupNewCalendar}
 					onCreateCalendar={handleCreateCalendar}
+				/>
+
+				<PopupEditUser
+					visible={visiblePopupEditUser}
+					setVisible={setVisiblePopupEditUser}
 				/>
 			</div>
 		</CurrentUserContext.Provider>

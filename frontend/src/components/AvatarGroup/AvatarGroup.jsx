@@ -1,4 +1,5 @@
 import React, { useRef, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
@@ -6,7 +7,7 @@ import { classNames as cn } from 'primereact/utils';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import styles from './AvatarGroup.module.css';
 
-export function AvatarGroup() {
+export function AvatarGroup({ onEditUser }) {
 	const userContext = useContext(CurrentUserContext);
 	const {
 		setLoggedIn,
@@ -18,8 +19,7 @@ export function AvatarGroup() {
 	const { name, email, avatar } = currentUser;
 
 	const menu = useRef(null);
-	const toast = useRef(null);
-	const toastAvatar = useRef(null);
+	const toastExit = useRef(null);
 
 	const logout = () => {
 		localStorage.clear();
@@ -32,12 +32,7 @@ export function AvatarGroup() {
 	const items = [
 		{
 			command: () => {
-				toastAvatar.current.show({
-					severity: 'info',
-					summary: 'Info',
-					detail: 'Item Selected',
-					life: 3000,
-				});
+				onEditUser(true);
 			},
 			// eslint-disable-next-line react/no-unstable-nested-components
 			template: (item, options) => (
@@ -66,32 +61,32 @@ export function AvatarGroup() {
 		{
 			// label: name,
 			items: [
-				{
-					label: 'Личные данные',
-					icon: 'pi pi-user',
-					command: () => {},
-				},
-				{
-					label: 'Настройки',
-					icon: 'pi pi-cog',
-					command: () => {},
-				},
-				{
-					label: 'Пароли и безопасность',
-					icon: 'pi pi-lock',
-					command: () => {},
-				},
+				// {
+				//   label: 'Личные данные',
+				//   icon: 'pi pi-user',
+				//   command: () => { },
+				// },
+				// {
+				//   label: 'Настройки',
+				//   icon: 'pi pi-cog',
+				//   command: () => { },
+				// },
+				// {
+				//   label: 'Пароли и безопасность',
+				//   icon: 'pi pi-lock',
+				//   command: () => { },
+				// },
 				{
 					label: 'Выход',
 					icon: 'pi pi-sign-out',
 					command: () => {
-						toast.current.show({
+						toastExit.current.show({
 							severity: 'success',
 							summary: 'Выход',
 							detail: 'Вы вышли из приложения',
-							life: 3000,
+							life: 2000,
 						});
-						logout();
+						setTimeout(() => logout(), 2001);
 					},
 				},
 			],
@@ -100,8 +95,7 @@ export function AvatarGroup() {
 
 	return (
 		<div className="card flex justify-content-center">
-			<Toast ref={toastAvatar} />
-			<Toast ref={toast} />
+			<Toast ref={toastExit} />
 			<Menu
 				model={items}
 				popup
@@ -123,3 +117,7 @@ export function AvatarGroup() {
 		</div>
 	);
 }
+
+AvatarGroup.propTypes = {
+	onEditUser: PropTypes.func.isRequired,
+};
