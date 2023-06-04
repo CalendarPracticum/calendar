@@ -1,4 +1,4 @@
-name: Calendar backend tests workflows
+name: backend tests
 
 on:
   push:

@@ -1,3 +1,5 @@
+![tests](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/backend_lint.yml/badge.svg?branche=backend)
+
 ### Запуск проекта
 
 Клонировать репозиторий и перейти в директорию infra:
