@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   frontend:
-    build: ../frontend
+    image: calendaily/frontend:latest
     volumes:
       - ../frontend:/app/result_build/
 
@@ -25,7 +25,7 @@ services:
 
   backend:
       container_name: backend
-      build: ../backend
+      image: calendaily/backend:latest
       restart: always
       volumes:
         - ./data/back_static:/app/data/back_static/
