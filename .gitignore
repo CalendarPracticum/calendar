@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# editors
+.idea
+*.sublime*
+.vscode
+
+# temporary ignore
+*migrations
+*/media/
