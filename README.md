@@ -3,7 +3,7 @@
 ### Запуск проекта
 
 ##### 1. Клонировать репозиторий и перейти в директорию infra:
-```
+```bash
 git clone git@github.com:AcceleratorYandexPracticum/calendar.git
 cd infra
 ```
@@ -32,7 +32,7 @@ EMAIL_HOST_PASSWORD='your_smtp_password'
 - `docker-compose up -d --build`
 - media загружается с локальной машины снаружи контейнера
 
-```
+```text
 backend:
   volumes:
     - <Путь до директории на локальной машине>:/app/back_media/
@@ -44,7 +44,7 @@ nginx:
 
 ##### 4. Выполните миграции, соберите статику:
 
-```
+```bash
 docker-compose exec backend python manage.py collectstatic --no-input
 docker-compose exec backend python manage.py makemigrations
 docker-compose exec backend python manage.py migrate
@@ -53,7 +53,7 @@ docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py loaddata ./dump.json
 ```
 #### 4. Создайте суперпользователя или войдите используя данные пользователя admin
-```
+```bash
 docker-compose exec backend python manage.py createsuperuser
 ```
 (если вы заполняли базу данных тестовыми данными из dump.json):
