@@ -180,12 +180,12 @@ EMAIL_ADMIN = [EMAIL_HOST_USER]
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/back_static/'
-STATIC_ROOT = BASE_DIR / 'data/static'
+STATIC_ROOT = BASE_DIR / 'data/back_static'
 
 # Media files
 
 MEDIA_URL = '/back_media/'
-MEDIA_ROOT = BASE_DIR / 'data/media'
+MEDIA_ROOT = BASE_DIR / 'data/back_media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
