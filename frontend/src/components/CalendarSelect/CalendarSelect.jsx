@@ -74,7 +74,14 @@ export function CalendarSelect() {
 								className={styles.checkbox}
 								style={{ backgroundColor: calendar.color }}
 							/>
-							<span>{calendar.name}</span>
+							<span className={styles.text}>{calendar.name}</span>
+							<button
+								className={styles.edit}
+								type="button"
+								onClick={() => console.log(calendar.name)}
+							>
+								{'\u270E'}
+							</button>
 						</label>
 					))}
 			</div>
