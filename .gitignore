@@ -132,3 +132,7 @@ dmypy.json
 .idea
 *.sublime*
 .vscode
+
+# temporary ignore
+*migrations
+*/media/
