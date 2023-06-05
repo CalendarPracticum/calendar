@@ -71,11 +71,11 @@ export function AvatarGroup({ onEditUser }) {
 				//   icon: 'pi pi-cog',
 				//   command: () => { },
 				// },
-				// {
-				//   label: 'Пароли и безопасность',
-				//   icon: 'pi pi-lock',
-				//   command: () => { },
-				// },
+				{
+					label: 'Пароли и безопасность',
+					icon: 'pi pi-lock',
+					command: () => {},
+				},
 				{
 					label: 'Выход',
 					icon: 'pi pi-sign-out',
