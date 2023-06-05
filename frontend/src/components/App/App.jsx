@@ -48,6 +48,18 @@ function App() {
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
 
+	const handleGetAllCalendars = () => {
+		calendarApi
+			.getAllUserCalendars()
+			.then((data) => {
+				setAllUserCalendars(data);
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
 	useEffect(() => {
 		if (loggedIn) {
 			auth
@@ -93,7 +105,6 @@ function App() {
 				.then((res) => {
 					if (res) {
 						setLoggedIn(true);
-						// eslint-disable-next-line
 						handleGetAllCalendars();
 					}
 				})
@@ -121,21 +132,9 @@ function App() {
 	// TODO: closeAllPopups?
 	// TODO: custom hook useOverlayClick?
 
-	const handleGetAllCalendars = () => {
-		calendarApi
-			.getAllUserCalendars()
-			.then((data) => {
-				setAllUserCalendars(data);
-			})
-			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
-			});
-	};
-
 	const handleCreateCalendar = ({ name, description, color }) => {
 		calendarApi
-			.createNewCalendar(name, description, color)
+			.createNewCalendar({ name, description, color })
 			.then((newCalendar) =>
 				setAllUserCalendars((prevState) => [newCalendar, ...prevState])
 			)
@@ -180,7 +179,7 @@ function App() {
 	const handleRegister = ({ email, password }) => {
 		auth
 			.register(email, password)
-			.then(
+			.then(() =>
 				auth.authorize(email, password).then((data) => {
 					localStorage.setItem('jwtAccess', data.access);
 					localStorage.setItem('jwtRefresh', data.refresh);
