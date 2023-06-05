@@ -109,7 +109,7 @@ export const fullChangeCalendar = ({ name, description, color, id }) =>
 */
 export const partChangeCalendar = ({ name, description, color, id }) =>
 	fetch(`${BASE_URL}/v1/calendars/${id}`, {
-		method: 'PUT',
+		method: 'PATCH',
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),

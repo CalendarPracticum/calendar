@@ -104,7 +104,6 @@ export const updateUserData = ({
 	username,
 	picture,
 	darkMode,
-	background,
 }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
@@ -118,7 +117,6 @@ export const updateUserData = ({
 			profile_picture: picture,
 			settings: {
 				dark_mode: darkMode,
-				background,
 			},
 		}),
 	}).then(getJson);

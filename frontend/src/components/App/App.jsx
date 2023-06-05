@@ -180,14 +180,15 @@ function App() {
 		auth
 			.register(email, password)
 			.then(() =>
-				auth.authorize(email, password).then((data) => {
-					localStorage.setItem('jwtAccess', data.access);
-					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-					setLoggedIn(true);
-					handleGetAllCalendars();
-					setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-				})
+				auth.authorize(email, password)
+          .then((data) => {
+            localStorage.setItem('jwtAccess', data.access);
+            localStorage.setItem('jwtRefresh', data.refresh);
+            handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+            setLoggedIn(true);
+            handleGetAllCalendars();
+            setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+          })
 			)
 			.catch((err) => {
 				// eslint-disable-next-line no-console
