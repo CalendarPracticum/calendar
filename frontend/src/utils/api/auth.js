@@ -11,7 +11,11 @@ const getJson = (response) => {
 		return response.json();
 	}
 	return response.json().then((errorText) => {
-		throw new Error(errorText[Object.keys(errorText)[0]][0]);
+		throw new Error(
+			Array.isArray(errorText[Object.keys(errorText)[0]])
+				? errorText[Object.keys(errorText)[0]][0]
+				: 'Произошла ошибка на сервере'
+		);
 	});
 };
 
