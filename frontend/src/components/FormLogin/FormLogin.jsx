@@ -9,9 +9,8 @@ import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormLogin.module.css';
 
-export function FormLogin({ showFormLogin, handleLogin }) {
+export function FormLogin({ showFormLogin, handleLogin, message, isError }) {
 	const [showMessage, setShowMessage] = useState(false);
-	const [formData, setFormData] = useState({});
 	const defaultValues = {
 		name: '',
 		email: '',
@@ -26,10 +25,7 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 	} = useForm({ defaultValues, mode: 'onBlur' });
 
 	const onSubmit = (data) => {
-		setFormData(data);
-		setShowMessage(true);
-
-		handleLogin(data);
+		handleLogin(data).then(() => setShowMessage(true));
 		reset();
 	};
 
@@ -60,27 +56,43 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 		</>
 	);
 
+	function handleDialog() {
+		if (isError) {
+			return (
+				<div className="flex justify-content-center flex-column pt-6 px-3">
+					<i
+						className="pi pi-times-circle"
+						style={{ fontSize: '5rem', color: 'var(--red-500)' }}
+					/>
+					<h4>Произошла ошибка!</h4>
+					<p style={{ lineHeight: 1.5 }}>{message}</p>
+				</div>
+			);
+		}
+
+		return (
+			<div className="flex justify-content-center flex-column pt-6 px-3">
+				<i
+					className="pi pi-check-circle"
+					style={{ fontSize: '5rem', color: 'var(--green-500)' }}
+				/>
+				<h4>И снова здравствуйте!</h4>
+			</div>
+		);
+	}
+
 	return (
 		<div className={styles.paddings}>
 			<Dialog
 				visible={showMessage}
 				onHide={() => setShowMessage(false)}
 				position="top"
-				footer={dialogFooter}
+				footer={isError ? dialogFooter : ''}
 				showHeader={false}
 				breakpoints={{ '960px': '80vw' }}
 				style={{ width: '30vw' }}
 			>
-				<div className="flex justify-content-center flex-column pt-6 px-3">
-					<i
-						className="pi pi-check-circle"
-						style={{ fontSize: '5rem', color: 'var(--green-500)' }}
-					/>
-					<h4>И снова здравствуйте!</h4>
-					<p style={{ lineHeight: 1.5 }}>
-						Вы вошли под именем <b>{formData.name}</b>
-					</p>
-				</div>
+				<>{handleDialog()}</>
 			</Dialog>
 
 			<div className="flex justify-content-center">
@@ -223,4 +235,6 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 FormLogin.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
 	handleLogin: PropTypes.func.isRequired,
+	message: PropTypes.string.isRequired,
+	isError: PropTypes.bool.isRequired,
 };

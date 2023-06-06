@@ -35,8 +35,7 @@
 	font-size: 14px;
 	line-height: 125%;
 	color: var(--text-color);
-  grid-row-gap: 12px;
-
+	grid-row-gap: 12px;
 }
 
 .list {
@@ -87,7 +86,7 @@ label input:checked ~ .checkbox::before {
 	background-color: transparent;
 	color: var(--text-color);
 	cursor: pointer;
-  padding: 0;
+	padding: 0;
 }
 
 .edit:hover {

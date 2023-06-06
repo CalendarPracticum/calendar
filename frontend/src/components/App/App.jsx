@@ -45,6 +45,8 @@ function App() {
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
+	const [dialogMessage, setDialogMessage] = useState('');
+	const [isDialogError, setIsDialogError] = useState(false);
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
 
@@ -160,7 +162,7 @@ function App() {
 			});
 	};
 
-	const handleLogin = ({ email, password }) => {
+	const handleLogin = async ({ email, password }) =>
 		auth
 			.authorize(email, password)
 			.then((data) => {
@@ -168,33 +170,36 @@ function App() {
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
 				handleGetAllCalendars();
-				setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+				setTimeout(() => {
+					setVisiblePopupLogin(false);
+				}, 1000);
+				setIsDialogError(false);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
 			});
-	};
 
-	const handleRegister = ({ email, password }) => {
+	const handleRegister = async ({ email, password }) =>
 		auth
 			.register(email, password)
 			.then(() =>
-				auth.authorize(email, password)
-          .then((data) => {
-            localStorage.setItem('jwtAccess', data.access);
-            localStorage.setItem('jwtRefresh', data.refresh);
-            handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-            setLoggedIn(true);
-            handleGetAllCalendars();
-            setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-          })
+				auth.authorize(email, password).then((data) => {
+					localStorage.setItem('jwtAccess', data.access);
+					localStorage.setItem('jwtRefresh', data.refresh);
+					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					setLoggedIn(true);
+					handleGetAllCalendars();
+					setTimeout(() => {
+						setVisiblePopupLogin(false);
+					}, 1000);
+					setIsDialogError(false);
+				})
 			)
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
 			});
-	};
 
 	return (
 		<CurrentUserContext.Provider value={user}>
@@ -223,6 +228,8 @@ function App() {
 					setVisible={setVisiblePopupLogin}
 					handleRegister={handleRegister}
 					handleLogin={handleLogin}
+					message={dialogMessage}
+					isError={isDialogError}
 				/>
 
 				<PopupNewEvent

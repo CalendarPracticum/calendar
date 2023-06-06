@@ -1,4 +1,4 @@
-const BASE_URL = 'http://193.107.236.224/api'; // http://localhost/api
+const BASE_URL = 'http://193.107.236.224/api';
 
 const HEADERS = {
 	'Content-Type': 'application/json',
@@ -99,12 +99,7 @@ export const getUserData = () =>
     }
   }
 */
-export const updateUserData = ({
-	email,
-	username,
-	picture,
-	darkMode,
-}) =>
+export const updateUserData = ({ email, username, picture, darkMode }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
 		headers: {

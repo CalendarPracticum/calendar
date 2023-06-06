@@ -1,4 +1,4 @@
-const BASE_URL = 'http://193.107.236.224/api'; // http://localhost/api
+const BASE_URL = 'http://193.107.236.224/api';
 
 const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
 
