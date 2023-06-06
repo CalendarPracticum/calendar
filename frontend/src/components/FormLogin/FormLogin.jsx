@@ -91,43 +91,6 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 						onSubmit={handleSubmit(onSubmit)}
 						className={`p-fluid ${styles.form}`}
 					>
-						{/* <div className={styles.field}>
-							<span className="p-float-label">
-								<Controller
-									name="name"
-									control={control}
-									rules={{
-										minLength: 1,
-										maxLength: {
-											value: 42,
-											message: 'Максимальная длина 42 символа.',
-										},
-										pattern: {
-											value: /^[A-ZА-Я0-9._%+-]{1,42}$/i,
-											message: 'Буквы, цифры, точка, _, +, - или %',
-										},
-									}}
-									render={({ field, fieldState }) => (
-										<InputText
-											id={field.name}
-											{...field}
-											autoFocus
-											className={cn({
-												'p-invalid': fieldState.invalid,
-											})}
-										/>
-									)}
-								/> */}
-						{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
-						{/* <label
-									htmlFor="name"
-									className={cn({ 'p-error': errors.name })}
-								>
-									Имя
-								</label>
-							</span>
-							{getFormErrorMessage('name')}
-						</div> */}
 						<div className={styles.field}>
 							<span className="p-float-label p-input-icon-right">
 								<i className="pi pi-envelope" />
@@ -152,6 +115,7 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 										/>
 									)}
 								/>
+								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
 								<label
 									htmlFor="email"
 									className={cn({ 'p-error': !!errors.email })}

@@ -67,7 +67,12 @@ function App() {
 			auth
 				.getUserData()
 				.then((result) => {
-					setCurrentUser(result);
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture,
+						darkMode: result.settings.dark_mode,
+					});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
@@ -90,6 +95,7 @@ function App() {
 						event.start = event.datetime_start;
 						event.end = event.datetime_finish;
 						event.allDay = event.all_day;
+						// TODO: почистить объект от лишних полей
 						return event;
 					})
 				);
@@ -182,21 +188,54 @@ function App() {
 		auth
 			.register(email, password)
 			.then(() =>
-				auth.authorize(email, password)
-          .then((data) => {
-            localStorage.setItem('jwtAccess', data.access);
-            localStorage.setItem('jwtRefresh', data.refresh);
-            handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-            setLoggedIn(true);
-            handleGetAllCalendars();
-            setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-          })
+				auth.authorize(email, password).then((data) => {
+					localStorage.setItem('jwtAccess', data.access);
+					localStorage.setItem('jwtRefresh', data.refresh);
+					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					setLoggedIn(true);
+					handleGetAllCalendars();
+					setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+				})
 			)
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
 			});
 	};
+
+	const handleUpdateUser = (userData) => {
+		auth
+			.updateUserData(userData)
+			.then((result) => {
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture: result.profile_picture,
+					darkMode: result.settings.dark_mode,
+				});
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const logout = () => {
+		localStorage.clear();
+		setLoggedIn(false);
+		setCurrentUser({});
+		setAllUserCalendars([]);
+		setAllUserEvents([]);
+	};
+
+	// const handleDeleteUser = (password) => {
+	//   auth
+	//     .deleteUser(password)
+	//     .then(() => {
+	//       logout();
+	//     })
+	//     .catch((err) => console.log(err))
+	// }
 
 	return (
 		<CurrentUserContext.Provider value={user}>
@@ -209,7 +248,8 @@ function App() {
 							<>
 								<Header
 									onLogin={setVisiblePopupLogin}
-									onEditUser={setVisiblePopupEditUser}
+									onUserClick={setVisiblePopupEditUser}
+									logout={logout}
 								/>
 								<Main
 									localizer={localizer}
@@ -246,6 +286,7 @@ function App() {
 				<PopupEditUser
 					visible={visiblePopupEditUser}
 					setVisible={setVisiblePopupEditUser}
+					onUpdateUser={handleUpdateUser}
 				/>
 			</div>
 		</CurrentUserContext.Provider>

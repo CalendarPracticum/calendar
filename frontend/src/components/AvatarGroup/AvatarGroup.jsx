@@ -7,32 +7,18 @@ import { classNames as cn } from 'primereact/utils';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import styles from './AvatarGroup.module.css';
 
-export function AvatarGroup({ onEditUser }) {
+export function AvatarGroup({ onUserClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
-	const {
-		setLoggedIn,
-		setCurrentUser,
-		setAllUserCalendars,
-		setAllUserEvents,
-		currentUser,
-	} = userContext;
-	const { name, email, avatar } = currentUser;
+	const { currentUser } = userContext;
+	const { username, email, picture } = currentUser;
 
 	const menu = useRef(null);
 	const toastExit = useRef(null);
 
-	const logout = () => {
-		localStorage.clear();
-		setLoggedIn(false);
-		setCurrentUser({});
-		setAllUserCalendars([]);
-		setAllUserEvents([]);
-	};
-
 	const items = [
 		{
 			command: () => {
-				onEditUser(true);
+				onUserClick(true);
 			},
 			// eslint-disable-next-line react/no-unstable-nested-components
 			template: (item, options) => (
@@ -45,13 +31,13 @@ export function AvatarGroup({ onEditUser }) {
 					)}
 				>
 					<Avatar
-						icon={avatar ? '' : 'pi pi-user'}
-						image={avatar || ''}
+						icon={picture ? '' : 'pi pi-user'}
+						image={picture || ''}
 						className="mr-2"
 						shape="circle"
 					/>
 					<div className="flex flex-column align">
-						<span className="font-bold">{name}</span>
+						<span className="font-bold">{username}</span>
 						<span className="text-sm">{email}</span>
 					</div>
 				</button>
@@ -66,11 +52,11 @@ export function AvatarGroup({ onEditUser }) {
 				//   icon: 'pi pi-user',
 				//   command: () => { },
 				// },
-				// {
-				//   label: 'Настройки',
-				//   icon: 'pi pi-cog',
-				//   command: () => { },
-				// },
+				{
+					label: 'Настройки',
+					icon: 'pi pi-cog',
+					command: () => {},
+				},
 				{
 					label: 'Пароли и безопасность',
 					icon: 'pi pi-lock',
@@ -105,9 +91,9 @@ export function AvatarGroup({ onEditUser }) {
 				className={styles.top}
 			/>
 			<Avatar
-				icon={avatar ? '' : 'pi pi-user'}
+				icon={picture ? '' : 'pi pi-user'}
 				size="large"
-				image={avatar || ''}
+				image={picture || ''}
 				shape="circle"
 				onClick={(e) => menu.current.toggle(e)}
 				aria-controls="popup_menu"
@@ -119,5 +105,6 @@ export function AvatarGroup({ onEditUser }) {
 }
 
 AvatarGroup.propTypes = {
-	onEditUser: PropTypes.func.isRequired,
+	onUserClick: PropTypes.func.isRequired,
+	logout: PropTypes.func.isRequired,
 };
