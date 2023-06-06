@@ -125,6 +125,7 @@ export const deleteUser = (password) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'DELETE',
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({

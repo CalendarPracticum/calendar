@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
@@ -10,6 +10,7 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
+import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
@@ -49,6 +50,17 @@ function App() {
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
+
+	// TODO: локальное решение, найти общее решение для вывода ошибок
+	const toast = useRef(null);
+	const showError = (message) => {
+		toast.current.show({
+			severity: 'error',
+			summary: 'Error',
+			detail: message,
+			life: 3000,
+		});
+	};
 
 	const handleGetAllCalendars = () => {
 		calendarApi
@@ -137,7 +149,6 @@ function App() {
 		[currentUser, loggedIn, allUserCalendars, allUserEvents]
 	);
 
-	// TODO: closeAllPopups?
 	// TODO: custom hook useOverlayClick?
 
 	const handleCreateCalendar = ({ name, description, color }) => {
@@ -228,14 +239,21 @@ function App() {
 		setAllUserEvents([]);
 	};
 
-	// const handleDeleteUser = (password) => {
-	//   auth
-	//     .deleteUser(password)
-	//     .then(() => {
-	//       logout();
-	//     })
-	//     .catch((err) => console.log(err))
-	// }
+	const handleDeleteUser = (password) => {
+		auth
+			.deleteUser(password)
+			.then((res) => {
+				if (res.status === 204) {
+					logout();
+				} else {
+					// console.log({ res });
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showError(err.message);
+			});
+	};
 
 	return (
 		<CurrentUserContext.Provider value={user}>
@@ -287,7 +305,10 @@ function App() {
 					visible={visiblePopupEditUser}
 					setVisible={setVisiblePopupEditUser}
 					onUpdateUser={handleUpdateUser}
+					onDeleteUser={handleDeleteUser}
 				/>
+
+				<Toast ref={toast} />
 			</div>
 		</CurrentUserContext.Provider>
 	);

@@ -13,3 +13,13 @@
 .paddings {
 	padding: 0 1.25rem 2.25rem;
 }
+
+.dangerZone {
+	margin-top: 2.75rem;
+}
+
+.dangerBtn,
+.dangerInput,
+.dangerInput input {
+	width: 100%;
+}

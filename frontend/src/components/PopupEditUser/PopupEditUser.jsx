@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
 import { FormEditUser } from '../FormEditUser/FormEditUser';
 
-export function PopupEditUser({ visible, setVisible, onUpdateUser }) {
+export function PopupEditUser({
+	visible,
+	setVisible,
+	onUpdateUser,
+	onDeleteUser,
+}) {
 	const handleOverlayClick = (evt) => {
 		if (evt.target === evt.currentTarget) {
 			setVisible(false);
@@ -17,7 +22,11 @@ export function PopupEditUser({ visible, setVisible, onUpdateUser }) {
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormEditUser setVisible={setVisible} onUpdateUser={onUpdateUser} />
+			<FormEditUser
+				setVisible={setVisible}
+				onUpdateUser={onUpdateUser}
+				onDeleteUser={onDeleteUser}
+			/>
 		</Dialog>
 	);
 }
@@ -26,4 +35,5 @@ PopupEditUser.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
 	onUpdateUser: PropTypes.func.isRequired,
+	onDeleteUser: PropTypes.func.isRequired,
 };

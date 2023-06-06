@@ -5,7 +5,6 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { Dialog } from 'primereact/dialog';
-import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormLogin.module.css';
 
@@ -45,19 +44,6 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 				onClick={() => setShowMessage(false)}
 			/>
 		</div>
-	);
-	const passwordHeader = <h4>Введите пароль</h4>;
-	const passwordFooter = (
-		<>
-			<Divider />
-			<p className="mt-2">Правила для пароля:</p>
-			<ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
-				<li>Хотя бы 1 маленькая буква английского алфавита</li>
-				<li>Хотя бы 1 заглавная буква английского алфавита</li>
-				<li>Хотя бы одна цифра</li>
-				<li>Минимум 8 символов</li>
-			</ul>
-		</>
 	);
 
 	return (
@@ -99,11 +85,6 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 									control={control}
 									rules={{
 										required: 'Обязательное поле Email.',
-										// pattern: {
-										// 	value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-										// 	message:
-										// 		'Не корректный email. Например: example@email.ru',
-										// },
 									}}
 									render={({ field, fieldState }) => (
 										<InputText
@@ -131,11 +112,8 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 									name="password"
 									control={control}
 									rules={{
+										minLength: 8,
 										required: 'Обязательное поле Пароль.',
-										// pattern: {
-										// 	value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
-										// 	message: 'Не корректный пароль',
-										// },
 									}}
 									render={({ field, fieldState }) => (
 										<Password
@@ -145,8 +123,7 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 											className={cn({
 												'p-invalid': fieldState.invalid,
 											})}
-											header={passwordHeader}
-											footer={passwordFooter}
+											feedback={false}
 										/>
 									)}
 								/>

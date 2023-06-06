@@ -1,17 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
+import { Divider } from 'primereact/divider';
+import { Password } from 'primereact/password';
 import { classNames as cn } from 'primereact/utils';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import styles from './FormEditUser.module.css';
 
-export function FormEditUser({ setVisible, onUpdateUser }) {
+export function FormEditUser({ setVisible, onUpdateUser, onDeleteUser }) {
 	const userContext = useContext(CurrentUserContext);
 	const { currentUser } = userContext;
 	const { username, email, darkMode, picture } = currentUser;
+
+	// const [isShowPasswordInput, setIsShowPasswordInput] = useState(false);
+	const [passwordValue, setPasswordValue] = useState('');
 
 	const defaultValues = {
 		email,
@@ -31,11 +36,18 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 	const onSubmit = (data) => {
 		const preparedData = {
 			email: data.email,
-			username: data.username,
+			username: data.username || null,
 			picture: data.picture || null,
 			// darkMode: data.darkMode,
 		};
 		onUpdateUser(preparedData);
+		setVisible(false);
+
+		reset();
+	};
+
+	const handleDeleteUserClick = (password) => {
+		onDeleteUser(password);
 		setVisible(false);
 
 		reset();
@@ -46,11 +58,13 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 			<small className="p-error">{errors[fieldName].message}</small>
 		);
 
+	// const passwordHeader = <h4>Введите свой пароль</h4>;
+
 	return (
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Редактируйте свои данные</h2>
+					<h2 className="text-center">Редактировать данные</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -101,6 +115,7 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 									name="email"
 									control={control}
 									rules={{
+										required: 'Обязательное поле Email.',
 										pattern: {
 											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 											message:
@@ -123,7 +138,7 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 									htmlFor="email"
 									className={cn({ 'p-error': errors.email })}
 								>
-									Email
+									Email*
 								</label>
 							</span>
 							{getFormErrorMessage('email')}
@@ -138,6 +153,7 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 										<Checkbox
 											id={field.name}
 											onChange={(e) => field.onChange(e.checked)}
+											disabled
 											checked={field.value}
 											inputRef={field.ref}
 											{...field}
@@ -160,6 +176,72 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 							disabled={!isValid}
 						/>
 					</form>
+
+					<Divider />
+					<h2 className="text-center">
+						Для удаления аккаунта введите свой пароль
+					</h2>
+
+					<div className={styles.dangerZone}>
+						{/* {isShowPasswordInput && <div className={styles.field}>
+              <span className="p-float-label">
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{
+                    minLength: 8,
+                    // pattern: {
+                    // 	value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
+                    // 	message: 'Не корректный пароль',
+                    // },
+                  }}
+                  render={({ field, fieldState }) => (
+                    <Password
+                      id={field.name}
+                      {...field}
+                      toggleMask
+                      className={cn(styles.dangerInput, {
+                        'p-invalid': fieldState.invalid,
+                      })}
+                      header={passwordHeader}
+                      feedback={false}
+                    />
+                  )}
+                />
+                <label
+                  htmlFor="password"
+                  className={cn({ 'p-error': errors.password })}
+                >
+                  Пароль
+                </label>
+              </span>
+              {getFormErrorMessage('password')}
+            </div>} */}
+
+						<div className={styles.field}>
+							<span className="p-float-label">
+								<Password
+									className={cn(styles.dangerInput, {
+										'p-invalid': passwordValue.length < 8,
+									})}
+									toggleMask
+									inputId="password"
+									feedback={false}
+									value={passwordValue || ''}
+									onChange={(e) => setPasswordValue(e.target.value)}
+								/>
+								<label htmlFor="password">Пароль</label>
+							</span>
+						</div>
+
+						<Button
+							type="button"
+							label="Удалить аккаунт"
+							className={cn('p-button-danger', styles.dangerBtn)}
+							disabled={passwordValue.length < 8}
+							onClick={() => handleDeleteUserClick(passwordValue)}
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -169,4 +251,5 @@ export function FormEditUser({ setVisible, onUpdateUser }) {
 FormEditUser.propTypes = {
 	setVisible: PropTypes.func.isRequired,
 	onUpdateUser: PropTypes.func.isRequired,
+	onDeleteUser: PropTypes.func.isRequired,
 };
