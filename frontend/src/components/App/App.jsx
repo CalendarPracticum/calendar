@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
@@ -10,6 +10,7 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
+import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
@@ -22,6 +23,7 @@ import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
+import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
 
 const locales = {
 	ru: ruLocale,
@@ -43,10 +45,22 @@ function App() {
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
+	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
+
+	// TODO: локальное решение, найти общее решение для вывода ошибок
+	const toast = useRef(null);
+	const showError = (message) => {
+		toast.current.show({
+			severity: 'error',
+			summary: 'Error',
+			detail: message,
+			life: 3000,
+		});
+	};
 
 	const handleGetAllCalendars = () => {
 		calendarApi
@@ -65,7 +79,12 @@ function App() {
 			auth
 				.getUserData()
 				.then((result) => {
-					setCurrentUser(result);
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture,
+						darkMode: result.settings.dark_mode,
+					});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
@@ -88,6 +107,7 @@ function App() {
 						event.start = event.datetime_start;
 						event.end = event.datetime_finish;
 						event.allDay = event.all_day;
+						// TODO: почистить объект от лишних полей
 						return event;
 					})
 				);
@@ -129,7 +149,6 @@ function App() {
 		[currentUser, loggedIn, allUserCalendars, allUserEvents]
 	);
 
-	// TODO: closeAllPopups?
 	// TODO: custom hook useOverlayClick?
 
 	const handleCreateCalendar = ({ name, description, color }) => {
@@ -180,19 +199,59 @@ function App() {
 		auth
 			.register(email, password)
 			.then(() =>
-				auth.authorize(email, password)
-          .then((data) => {
-            localStorage.setItem('jwtAccess', data.access);
-            localStorage.setItem('jwtRefresh', data.refresh);
-            handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-            setLoggedIn(true);
-            handleGetAllCalendars();
-            setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-          })
+				auth.authorize(email, password).then((data) => {
+					localStorage.setItem('jwtAccess', data.access);
+					localStorage.setItem('jwtRefresh', data.refresh);
+					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					setLoggedIn(true);
+					handleGetAllCalendars();
+					setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+				})
 			)
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const handleUpdateUser = (userData) => {
+		auth
+			.updateUserData(userData)
+			.then((result) => {
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture: result.profile_picture,
+					darkMode: result.settings.dark_mode,
+				});
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const logout = () => {
+		localStorage.clear();
+		setLoggedIn(false);
+		setCurrentUser({});
+		setAllUserCalendars([]);
+		setAllUserEvents([]);
+	};
+
+	const handleDeleteUser = (password) => {
+		auth
+			.deleteUser(password)
+			.then((res) => {
+				if (res.status === 204) {
+					logout();
+				} else {
+					// console.log({ res });
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showError(err.message);
 			});
 	};
 
@@ -205,7 +264,11 @@ function App() {
 						path="/"
 						element={
 							<>
-								<Header onLogin={setVisiblePopupLogin} />
+								<Header
+									onLogin={setVisiblePopupLogin}
+									onUserClick={setVisiblePopupEditUser}
+									logout={logout}
+								/>
 								<Main
 									localizer={localizer}
 									onNewEventClick={setVisiblePopupNewEvent}
@@ -237,6 +300,15 @@ function App() {
 					setVisible={setVisiblePopupNewCalendar}
 					onCreateCalendar={handleCreateCalendar}
 				/>
+
+				<PopupEditUser
+					visible={visiblePopupEditUser}
+					setVisible={setVisiblePopupEditUser}
+					onUpdateUser={handleUpdateUser}
+					onDeleteUser={handleDeleteUser}
+				/>
+
+				<Toast ref={toast} />
 			</div>
 		</CurrentUserContext.Provider>
 	);

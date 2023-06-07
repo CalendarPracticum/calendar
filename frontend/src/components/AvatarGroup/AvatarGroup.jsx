@@ -1,4 +1,5 @@
 import React, { useRef, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
@@ -6,38 +7,18 @@ import { classNames as cn } from 'primereact/utils';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import styles from './AvatarGroup.module.css';
 
-export function AvatarGroup() {
+export function AvatarGroup({ onUserClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
-	const {
-		setLoggedIn,
-		setCurrentUser,
-		setAllUserCalendars,
-		setAllUserEvents,
-		currentUser,
-	} = userContext;
-	const { name, email, avatar } = currentUser;
+	const { currentUser } = userContext;
+	const { username, email, picture } = currentUser;
 
 	const menu = useRef(null);
-	const toast = useRef(null);
-	const toastAvatar = useRef(null);
-
-	const logout = () => {
-		localStorage.clear();
-		setLoggedIn(false);
-		setCurrentUser({});
-		setAllUserCalendars([]);
-		setAllUserEvents([]);
-	};
+	const toastExit = useRef(null);
 
 	const items = [
 		{
 			command: () => {
-				toastAvatar.current.show({
-					severity: 'info',
-					summary: 'Info',
-					detail: 'Item Selected',
-					life: 3000,
-				});
+				onUserClick(true);
 			},
 			// eslint-disable-next-line react/no-unstable-nested-components
 			template: (item, options) => (
@@ -50,13 +31,13 @@ export function AvatarGroup() {
 					)}
 				>
 					<Avatar
-						icon={avatar ? '' : 'pi pi-user'}
-						image={avatar || ''}
+						icon={picture ? '' : 'pi pi-user'}
+						image={picture || ''}
 						className="mr-2"
 						shape="circle"
 					/>
 					<div className="flex flex-column align">
-						<span className="font-bold">{name}</span>
+						<span className="font-bold">{username}</span>
 						<span className="text-sm">{email}</span>
 					</div>
 				</button>
@@ -66,11 +47,11 @@ export function AvatarGroup() {
 		{
 			// label: name,
 			items: [
-				{
-					label: 'Личные данные',
-					icon: 'pi pi-user',
-					command: () => {},
-				},
+				// {
+				//   label: 'Личные данные',
+				//   icon: 'pi pi-user',
+				//   command: () => { },
+				// },
 				{
 					label: 'Настройки',
 					icon: 'pi pi-cog',
@@ -85,13 +66,13 @@ export function AvatarGroup() {
 					label: 'Выход',
 					icon: 'pi pi-sign-out',
 					command: () => {
-						toast.current.show({
+						toastExit.current.show({
 							severity: 'success',
 							summary: 'Выход',
 							detail: 'Вы вышли из приложения',
-							life: 3000,
+							life: 2000,
 						});
-						logout();
+						setTimeout(() => logout(), 2001);
 					},
 				},
 			],
@@ -100,8 +81,7 @@ export function AvatarGroup() {
 
 	return (
 		<div className="card flex justify-content-center">
-			<Toast ref={toastAvatar} />
-			<Toast ref={toast} />
+			<Toast ref={toastExit} />
 			<Menu
 				model={items}
 				popup
@@ -111,9 +91,9 @@ export function AvatarGroup() {
 				className={styles.top}
 			/>
 			<Avatar
-				icon={avatar ? '' : 'pi pi-user'}
+				icon={picture ? '' : 'pi pi-user'}
 				size="large"
-				image={avatar || ''}
+				image={picture || ''}
 				shape="circle"
 				onClick={(e) => menu.current.toggle(e)}
 				aria-controls="popup_menu"
@@ -123,3 +103,8 @@ export function AvatarGroup() {
 		</div>
 	);
 }
+
+AvatarGroup.propTypes = {
+	onUserClick: PropTypes.func.isRequired,
+	logout: PropTypes.func.isRequired,
+};
