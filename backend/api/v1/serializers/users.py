@@ -2,6 +2,7 @@ import base64
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
@@ -62,7 +63,7 @@ class UsersSerializer(UserSerializer):
     """
 
     settings = SettingsSerializer(required=False)
-    profile_picture = Base64ImageField(required=False)
+    profile_picture = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = User
@@ -73,3 +74,9 @@ class UsersSerializer(UserSerializer):
             'profile_picture',
             'settings',
         )
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        settings = validated_data.pop('settings')
+        SettingsUser.objects.update(**settings)
+        return super().update(instance, validated_data)
