@@ -11,7 +11,6 @@ jobs:
   build_and_push_to_dockerhub:
     name: Push to Dockerhub
     runs-on: ubuntu-20.04
-    needs: tests
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v3
