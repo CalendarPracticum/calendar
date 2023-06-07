@@ -44,6 +44,7 @@
 	grid-column-gap: 8px;
 	align-items: start;
 	cursor: pointer;
+	transition: all 0.2s ease-out;
 }
 
 .list:hover {
@@ -87,6 +88,7 @@ label input:checked ~ .checkbox::before {
 	color: var(--text-color);
 	cursor: pointer;
 	padding: 0;
+	transition: all 0.2s ease-out;
 }
 
 .edit:hover {
