@@ -162,7 +162,7 @@ function App() {
 			});
 	};
 
-	const handleLogin = async ({ email, password }) =>
+	const handleLogin = ({ email, password }) =>
 		auth
 			.authorize(email, password)
 			.then((data) => {
@@ -180,7 +180,7 @@ function App() {
 				setIsDialogError(true);
 			});
 
-	const handleRegister = async ({ email, password }) =>
+	const handleRegister = ({ email, password }) =>
 		auth
 			.register(email, password)
 			.then(() =>
