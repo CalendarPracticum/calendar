@@ -3,9 +3,13 @@ name: backend tests
 on:
   push:
     branches:
+      - main
+      - develop
       - backend
   pull_request:
     branches:
+      - main
+      - develop
       - backend
 
 jobs:
