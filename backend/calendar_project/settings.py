@@ -33,7 +33,6 @@ DEBUG = os.getenv('DEBUG', default=True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='localhost').split()
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -160,6 +159,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
 
 # smtp conf
 

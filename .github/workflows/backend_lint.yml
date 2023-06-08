@@ -5,10 +5,10 @@ on:
     branches:
       - main
       - develop
+
       - backend
 
 jobs:
-
   tests:
     runs-on: ubuntu-20.04
     steps:

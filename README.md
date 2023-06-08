@@ -55,6 +55,7 @@ docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py loaddata ./dump.json
 ```
 #### 4. Создайте суперпользователя или войдите используя данные пользователя admin
+
 ```bash
 docker-compose exec backend python manage.py createsuperuser
 ```
