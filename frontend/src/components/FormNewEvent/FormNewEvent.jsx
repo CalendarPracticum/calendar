@@ -54,7 +54,6 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 	const onAllDayMouseDown = () => {
 		// const values = getValues();
 		const { timeStart, allDay } = getValues();
-		// console.log(2, { values })
 
 		if (!allDay) {
 			const endCurrentDay = endOfDay(timeStart);
@@ -66,6 +65,16 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 
 	const getFormErrorMessage = (name) =>
 		errors[name] && <small className="p-error">{errors[name].message}</small>;
+
+	const optionItemTemplate = (option) => (
+		<div className={styles.item}>
+			<div
+				style={{ backgroundColor: `${option.color}` }}
+				className={styles.marker}
+			/>
+			<div>{option.name}</div>
+		</div>
+	);
 
 	return (
 		<div className={styles.paddings}>
@@ -223,9 +232,12 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 										<Dropdown
 											id={field.name}
 											value={field.value}
-											optionLabel="name"
 											placeholder="Выберите календарь*"
 											options={allUserCalendars}
+											optionLabel="name"
+											filter
+											filterBy="name"
+											itemTemplate={optionItemTemplate}
 											focusInputRef={field.ref}
 											{...field}
 											onChange={(e) => {
