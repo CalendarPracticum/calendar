@@ -1,4 +1,6 @@
 ![tests](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/backend_lint.yml/badge.svg?branche=backend)
+![frontend lint](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/frontend_lint.yml/badge.svg)
+![deploy](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/deploy.yml/badge.svg)
 
 ### Запуск проекта
 

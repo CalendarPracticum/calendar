@@ -1,4 +1,4 @@
-name: Calendar backend build workflows
+name: deploy
 
 on:
   push:
