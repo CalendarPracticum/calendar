@@ -1,4 +1,4 @@
-name:  Calendar frontend workflows
+name: frontend lint
 
 on:
   push:
