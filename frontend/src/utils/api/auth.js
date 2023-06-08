@@ -100,8 +100,7 @@ export const getUserData = () =>
   }
 */
 
-// TODO: вернуть проп darkMode в updateUserData
-export const updateUserData = ({ email, username, picture }) =>
+export const updateUserData = ({ email, username, picture, darkMode }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
 		headers: {
@@ -112,9 +111,9 @@ export const updateUserData = ({ email, username, picture }) =>
 			email,
 			username,
 			profile_picture: picture,
-			// settings: {
-			// 	dark_mode: darkMode,
-			// },
+			settings: {
+				dark_mode: darkMode,
+			},
 		}),
 	}).then(getJson);
 
