@@ -11,7 +11,8 @@ import logo from '../../images/logo.svg';
 
 export function Header({ onLogin, onUserClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
-	const { loggedIn } = userContext;
+	const { loggedIn, currentUser } = userContext;
+	const { darkMode: userDarkMode } = currentUser;
 
 	const [value, setValue] = useState('light');
 	const [darkMode, setDarkMode] = useState(false);
@@ -33,6 +34,12 @@ export function Header({ onLogin, onUserClick, logout }) {
 			}/theme.css`;
 		}
 	}, [darkMode]);
+
+	useEffect(() => {
+		if (loggedIn) {
+			setDarkMode(userDarkMode);
+		}
+	}, [loggedIn, userDarkMode]);
 
 	const themeTemplate = (option) => <i className={option.icon} />;
 

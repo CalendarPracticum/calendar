@@ -1,4 +1,4 @@
-const BASE_URL = 'http://193.107.236.224/api'; // http://localhost/api
+const BASE_URL = 'http://193.107.236.224/api';
 
 const HEADERS = {
 	'Content-Type': 'application/json',
@@ -100,8 +100,7 @@ export const getUserData = () =>
   }
 */
 
-// TODO: вернуть проп darkMode в updateUserData
-export const updateUserData = ({ email, username, picture }) =>
+export const updateUserData = ({ email, username, picture, darkMode }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
 		headers: {
@@ -112,9 +111,9 @@ export const updateUserData = ({ email, username, picture }) =>
 			email,
 			username,
 			profile_picture: picture,
-			// settings: {
-			// 	dark_mode: darkMode,
-			// },
+			settings: {
+				dark_mode: darkMode,
+			},
 		}),
 	}).then(getJson);
 

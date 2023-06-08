@@ -9,7 +9,12 @@ import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormRegistration.module.css';
 
-export function FormRegistration({ showFormLogin, handleRegister }) {
+export function FormRegistration({
+	showFormLogin,
+	handleRegister,
+	message,
+	isError,
+}) {
 	const [showMessage, setShowMessage] = useState(false);
 	const [formData, setFormData] = useState({});
 	const defaultValues = {
@@ -28,9 +33,7 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 
 	const onSubmit = (data) => {
 		setFormData(data);
-		setShowMessage(true);
-
-		handleRegister(data);
+		handleRegister(data).then(() => setShowMessage(true));
 		reset();
 	};
 
@@ -61,27 +64,46 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 		</>
 	);
 
+	function handleDialog() {
+		if (isError) {
+			return (
+				<div className="flex justify-content-center flex-column pt-6 px-3">
+					<i
+						className="pi pi-times-circle"
+						style={{ fontSize: '5rem', color: 'var(--red-500)' }}
+					/>
+					<h4>Произошла ошибка!</h4>
+					<p style={{ lineHeight: 1.5 }}>{message}</p>
+				</div>
+			);
+		}
+
+		return (
+			<div className="flex justify-content-center flex-column pt-6 px-3">
+				<i
+					className="pi pi-check-circle"
+					style={{ fontSize: '5rem', color: 'var(--green-500)' }}
+				/>
+				<h4>Поздравляем!</h4>
+				<p style={{ lineHeight: 1.5 }}>
+					Вы зарегистрировались c Email <b>{formData.email}</b>
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className={styles.paddings}>
 			<Dialog
 				visible={showMessage}
 				onHide={() => setShowMessage(false)}
 				position="top"
-				footer={dialogFooter}
+				footer={isError ? dialogFooter : ''}
 				showHeader={false}
 				breakpoints={{ '960px': '80vw' }}
 				style={{ width: '30vw' }}
 			>
-				<div className="flex justify-content-center flex-column pt-6 px-3">
-					<i
-						className="pi pi-check-circle"
-						style={{ fontSize: '5rem', color: 'var(--green-500)' }}
-					/>
-					<h4>Поздравляем!</h4>
-					<p style={{ lineHeight: 1.5 }}>
-						Вы зарегистрировались c Email <b>{formData.email}</b>
-					</p>
-				</div>
+				<>{handleDialog()}</>
 			</Dialog>
 
 			<div className="flex justify-content-center">
@@ -220,4 +242,6 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 FormRegistration.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
 	handleRegister: PropTypes.func.isRequired,
+	message: PropTypes.string.isRequired,
+	isError: PropTypes.bool.isRequired,
 };
