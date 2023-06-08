@@ -10,6 +10,8 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
@@ -48,6 +50,7 @@ function App() {
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
+  const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const start = '2023-01-01';
@@ -160,6 +163,7 @@ function App() {
 				setAllUserCalendars((prevState) => [newCalendar, ...prevState])
 			)
 			.catch((err) => {
+        // TODO: добавить оповещение
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
 			});
@@ -176,6 +180,7 @@ function App() {
 				setAllUserEvents([event, ...allUserEvents]);
 			})
 			.catch((err) => {
+        // TODO: добавить оповещение
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
 			});
@@ -189,9 +194,11 @@ function App() {
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
 				handleGetAllCalendars();
+				setVisiblePopupLogin(false);
+        setDialogMessage('Вы успешно вошли!');
 				setTimeout(() => {
-					setVisiblePopupLogin(false);
-				}, 1000);
+          setShowMessage(false);
+				}, 1500);
 				setIsDialogError(false);
 			})
 			.catch((err) => {
@@ -209,9 +216,11 @@ function App() {
 					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
 					setLoggedIn(true);
 					handleGetAllCalendars();
+          setVisiblePopupLogin(false);
+          setDialogMessage('Регистрация прошла успешно!')
 					setTimeout(() => {
-						setVisiblePopupLogin(false);
-					}, 1000);
+            setShowMessage(false);
+					}, 1500);
 					setIsDialogError(false);
 				})
 			)
@@ -232,6 +241,7 @@ function App() {
 				});
 			})
 			.catch((err) => {
+        // TODO: добавить оповещение пользователя
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
 			});
@@ -257,9 +267,56 @@ function App() {
 				}
 			})
 			.catch((err) => {
+        // TODO: переделать под попап
 				showError(err.message);
 			});
 	};
+
+  const dialogFooter = (
+		<div className="flex justify-content-center">
+			<Button
+				label="OK"
+				className="p-button-text"
+				autoFocus
+				onClick={() => setShowMessage(false)}
+			/>
+		</div>
+	);
+
+  // внести доработки в текст, чтобы всё зависело от типа ошибки и т.д.
+  const handleDialog = () => (
+    <div className="flex justify-content-center flex-column pt-6 px-3">
+      <i
+        className={`pi pi-${isDialogError ? 'times': 'check'}-circle`}
+        style={{ fontSize: '5rem', color: `var(--${isDialogError ? 'red' : 'green'}-500)` }}
+      />
+      <h4>{isDialogError ? 'Произошла ошибка!' : 'Успех!'}</h4>
+      <p style={{ lineHeight: 1.5 }}>{dialogMessage}</p>
+    </div>
+  );
+
+		/* if (isDialogError) {
+			return (
+				<div className="flex justify-content-center flex-column pt-6 px-3">
+					<i
+						className="pi pi-times-circle"
+						style={{ fontSize: '5rem', color: 'var(--red-500)' }}
+					/>
+					<h4>Произошла ошибка!</h4>
+					<p style={{ lineHeight: 1.5 }}>{dialogMessage}</p>
+				</div>
+			);
+		}
+
+		return (
+			<div className="flex justify-content-center flex-column pt-6 px-3">
+				<i
+					className="pi pi-check-circle"
+					style={{ fontSize: '5rem', color: 'var(--green-500)' }}
+				/>
+				<h4>И снова здравствуйте!</h4>
+			</div>
+		); */
 
 	return (
 		<CurrentUserContext.Provider value={user}>
@@ -294,6 +351,7 @@ function App() {
 					handleLogin={handleLogin}
 					message={dialogMessage}
 					isError={isDialogError}
+          setShowMessage={setShowMessage}
 				/>
 
 				<PopupNewEvent
@@ -317,6 +375,18 @@ function App() {
 				/>
 
 				<Toast ref={toast} />
+
+        <Dialog
+          visible={showMessage}
+          onHide={() => setShowMessage(false)}
+          position="top"
+          footer={isDialogError ? dialogFooter : ''}
+          showHeader={false}
+          breakpoints={{ '960px': '80vw' }}
+          style={{ width: '30vw' }}
+        >
+          <>{handleDialog()}</>
+        </Dialog>
 			</div>
 		</CurrentUserContext.Provider>
 	);
