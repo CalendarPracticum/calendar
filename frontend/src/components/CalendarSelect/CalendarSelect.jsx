@@ -1,56 +1,21 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import styles from './CalendarSelect.module.css';
 
-export function CalendarSelect() {
-	// список календарей придет с бэка
-	const list = [
-		{
-			color: '#91DED3',
-			description: null,
-			id: 16,
-			name: 'Личное',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#7F9498',
-			description: null,
-			id: 17,
-			name: 'Личное2',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#FF9086',
-			description: null,
-			id: 18,
-			name: 'Учеба',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#225662',
-			description: null,
-			id: 19,
-			name: 'Праздники',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#7254F3',
-			description: null,
-			id: 20,
-			name: 'Работа',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#91DED3',
-			description: null,
-			id: 21,
-			name: 'Фигня какая-то с очень длинным названием для проверки',
-			owner: 'yandex@yandex.com',
-		},
-	];
+export function CalendarSelect({ allUserCalendars }) {
 
 	const [isActive, setIsActive] = useState(true);
+  const [values, setValues] = useState({});
+  const handleCheckbox =(e) => {
+    // handleChange(e);
+    const input = e.target;
+    const value = input.checked;
+    setValues({...values, [input.name]:value});
+  }
 
+  console.log(values);
 	return (
+
 		<div className={styles.calendarContainer}>
 			<div className={styles.acordion}>
 				<button
@@ -63,13 +28,13 @@ export function CalendarSelect() {
 			</div>
 			<div className={styles.allCalendars}>
 				{isActive &&
-					list.map((calendar) => (
+					allUserCalendars.map((calendar) => (
 						<label
 							className={styles.list}
 							htmlFor={calendar.id}
 							key={calendar.id}
 						>
-							<input type="checkbox" id={calendar.id} name={calendar.id} />
+							<input type="checkbox" id={calendar.id} name={calendar.id} onChange={handleCheckbox} />
 							<span
 								className={styles.checkbox}
 								style={{ backgroundColor: calendar.color }}
@@ -88,3 +53,8 @@ export function CalendarSelect() {
 		</div>
 	);
 }
+
+CalendarSelect.propTypes = {
+	// eslint-disable-next-line react/forbid-prop-types
+	allUserCalendars: PropTypes.array.isRequired,
+};
