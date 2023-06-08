@@ -15,7 +15,6 @@ export function Sidebar({
 	localizer,
 	visibleProdCalendar,
 	showProdCalendar,
-	allUserCalendars,
 }) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn } = userContext;
@@ -71,7 +70,7 @@ export function Sidebar({
 			/>
 			{loggedIn && (
 				<>
-					<CalendarSelect allUserCalendars={allUserCalendars} />
+					<CalendarSelect />
 					<Button
 						label="Новый календарь"
 						icon="pi pi-plus"
@@ -102,6 +101,4 @@ Sidebar.propTypes = {
 	localizer: PropTypes.object.isRequired,
 	visibleProdCalendar: PropTypes.bool.isRequired,
 	showProdCalendar: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	allUserCalendars: PropTypes.array.isRequired,
 };

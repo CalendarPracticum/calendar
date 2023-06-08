@@ -1,21 +1,24 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useContext } from 'react';
 import styles from './CalendarSelect.module.css';
+import CurrentUserContext from '../../context/CurrentUserContext';
 
-export function CalendarSelect({ allUserCalendars }) {
+export function CalendarSelect() {
+	const userContext = useContext(CurrentUserContext);
+	const { allUserCalendars, chooseCalendar, setChooseCalendar } = userContext;
 
 	const [isActive, setIsActive] = useState(true);
-  const [values, setValues] = useState({});
-  const handleCheckbox =(e) => {
-    // handleChange(e);
-    const input = e.target;
-    const value = input.checked;
-    setValues({...values, [input.name]:value});
-  }
+	const handleCheckbox = (e) => {
+		// handleChange(e);
+		const input = e.target;
+		const value = input.checked;
+		// будет косяк, если имеется календарь с id = 0
+		setChooseCalendar({
+			...chooseCalendar,
+			[input.name]: value === true ? input.name : '',
+		});
+	};
 
-  console.log(values);
 	return (
-
 		<div className={styles.calendarContainer}>
 			<div className={styles.acordion}>
 				<button
@@ -34,7 +37,12 @@ export function CalendarSelect({ allUserCalendars }) {
 							htmlFor={calendar.id}
 							key={calendar.id}
 						>
-							<input type="checkbox" id={calendar.id} name={calendar.id} onChange={handleCheckbox} />
+							<input
+								type="checkbox"
+								id={calendar.id}
+								name={calendar.id}
+								onChange={handleCheckbox}
+							/>
 							<span
 								className={styles.checkbox}
 								style={{ backgroundColor: calendar.color }}
@@ -53,8 +61,3 @@ export function CalendarSelect({ allUserCalendars }) {
 		</div>
 	);
 }
-
-CalendarSelect.propTypes = {
-	// eslint-disable-next-line react/forbid-prop-types
-	allUserCalendars: PropTypes.array.isRequired,
-};

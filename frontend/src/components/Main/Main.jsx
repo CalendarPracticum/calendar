@@ -10,7 +10,6 @@ export function Main({
 	onNewEventClick,
 	onNewCalendarClick,
 	events,
-  allUserCalendars,
 }) {
 	const [visibleProdCalendar, setVisibleProdCalendar] = useState(false);
 
@@ -22,7 +21,6 @@ export function Main({
 				localizer={localizer}
 				showProdCalendar={setVisibleProdCalendar}
 				visibleProdCalendar={visibleProdCalendar}
-        allUserCalendars={allUserCalendars}
 			/>
 			<div className={styles.content}>
 				<BaseCalendar localizer={localizer} events={events} />
@@ -39,6 +37,4 @@ Main.propTypes = {
 	onNewCalendarClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types
 	events: PropTypes.array.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  allUserCalendars: PropTypes.array.isRequired,
 };
