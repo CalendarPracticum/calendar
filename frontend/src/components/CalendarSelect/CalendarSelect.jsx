@@ -1,54 +1,22 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import styles from './CalendarSelect.module.css';
+import CurrentUserContext from '../../context/CurrentUserContext';
 
 export function CalendarSelect() {
-	// список календарей придет с бэка
-	const list = [
-		{
-			color: '#91DED3',
-			description: null,
-			id: 16,
-			name: 'Личное',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#7F9498',
-			description: null,
-			id: 17,
-			name: 'Личное2',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#FF9086',
-			description: null,
-			id: 18,
-			name: 'Учеба',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#225662',
-			description: null,
-			id: 19,
-			name: 'Праздники',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#7254F3',
-			description: null,
-			id: 20,
-			name: 'Работа',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#91DED3',
-			description: null,
-			id: 21,
-			name: 'Фигня какая-то с очень длинным названием для проверки',
-			owner: 'yandex@yandex.com',
-		},
-	];
+	const userContext = useContext(CurrentUserContext);
+	const { allUserCalendars, chooseCalendar, setChooseCalendar } = userContext;
 
 	const [isActive, setIsActive] = useState(true);
+	const handleCheckbox = (e) => {
+		// handleChange(e);
+		const input = e.target;
+		const value = input.checked;
+		// будет косяк, если имеется календарь с id = 0
+		setChooseCalendar({
+			...chooseCalendar,
+			[input.name]: value === true ? input.name : '',
+		});
+	};
 
 	return (
 		<div className={styles.calendarContainer}>
@@ -63,13 +31,18 @@ export function CalendarSelect() {
 			</div>
 			<div className={styles.allCalendars}>
 				{isActive &&
-					list.map((calendar) => (
+					allUserCalendars.map((calendar) => (
 						<label
 							className={styles.list}
 							htmlFor={calendar.id}
 							key={calendar.id}
 						>
-							<input type="checkbox" id={calendar.id} name={calendar.id} />
+							<input
+								type="checkbox"
+								id={calendar.id}
+								name={calendar.id}
+								onChange={handleCheckbox}
+							/>
 							<span
 								className={styles.checkbox}
 								style={{ backgroundColor: calendar.color }}
