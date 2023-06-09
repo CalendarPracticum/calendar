@@ -37,7 +37,6 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		// console.log({ data });
 		onCreateEvent(data);
 		setVisible(false);
 
@@ -59,7 +58,7 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 			const endCurrentDay = endOfDay(timeStart);
 			setValue('timeFinish', endCurrentDay);
 		} else {
-			setValue('timeFinish', '');
+			setValue('timeFinish', null);
 		}
 	};
 
@@ -93,6 +92,7 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 									name="name"
 									control={control}
 									rules={{
+										required: 'Поле Название обязательное',
 										minLength: 1,
 										maxLength: {
 											value: 100,
@@ -115,7 +115,7 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 									htmlFor="name"
 									className={cn({ 'p-error': errors.name })}
 								>
-									Название
+									Название*
 								</label>
 							</span>
 							{getFormErrorMessage('name')}
@@ -126,7 +126,18 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 								<Controller
 									name="timeStart"
 									control={control}
-									rules={{ required: 'Поле Начало обязательное' }}
+									rules={{
+										required: 'Поле Начало обязательное',
+										validate: {
+											checkTimeFinish: (value) => {
+												const { timeFinish } = getValues();
+												return timeFinish
+													? timeFinish > value ||
+															'Дата начала события не может быть позже даты конца'
+													: true;
+											},
+										},
+									}}
 									render={({ field }) => (
 										<Calendar
 											id={field.name}
@@ -134,6 +145,7 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 											onChange={field.onChange}
 											showTime
 											showIcon
+											showButtonBar
 											locale="ru"
 											{...field}
 										/>
@@ -156,24 +168,26 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 									control={control}
 									rules={{
 										required: 'Поле Конец обязательное',
-										// disabled: {
-										//   value: () => {
-										//     const values = getValues();
-										//     const isAllDay = values?.allDay;
-										//     return isAllDay === true;
-										//   },
-										//   message: 'Дата конца события не может быть раньше даты начала',
-										// },
+										validate: {
+											checkTimeStart: (value) => {
+												const { timeStart } = getValues();
+												return timeStart
+													? timeStart < value ||
+															'Дата конца события не может быть раньше даты начала'
+													: true;
+											},
+										},
 									}}
 									render={({ field }) => (
 										<Calendar
 											id={field.name}
 											value={field.value}
-											onChange={field.onChange}
-											// disabledDates={}
-											// disabled={}
+											onChange={() => {
+												field.onChange();
+											}}
 											showTime
 											showIcon
+											showButtonBar
 											locale="ru"
 											{...field}
 										/>
