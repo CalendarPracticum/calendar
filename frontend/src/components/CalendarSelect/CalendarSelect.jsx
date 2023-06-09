@@ -8,10 +8,8 @@ export function CalendarSelect() {
 
 	const [isActive, setIsActive] = useState(true);
 	const handleCheckbox = (e) => {
-		// handleChange(e);
 		const input = e.target;
 		const value = input.checked;
-		// будет косяк, если имеется календарь с id = 0
 		setChooseCalendar({
 			...chooseCalendar,
 			[input.name]: value === true ? input.name : '',

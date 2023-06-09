@@ -46,7 +46,6 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 	const onDropdownChange = () => {
 		const values = getValues();
 		const color = values?.calendar?.color;
-
 		circle.current.style.color = color;
 	};
 
