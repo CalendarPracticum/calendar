@@ -315,7 +315,6 @@ function App() {
 					visible={visiblePopupNewEvent}
 					setVisible={setVisiblePopupNewEvent}
 					onCreateEvent={handleCreateEvent}
-					allUserCalendars={allUserCalendars}
 				/>
 
 				<PopupNewCalendar

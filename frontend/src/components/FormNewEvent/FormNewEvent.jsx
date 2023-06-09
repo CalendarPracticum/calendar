@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
+import endOfDay from 'date-fns/endOfDay';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -9,10 +10,13 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormNewEvent.module.css';
+import CurrentUserContext from '../../context/CurrentUserContext';
 
-export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
+export function FormNewEvent({ setVisible, onCreateEvent }) {
+	const userContext = useContext(CurrentUserContext);
+	const { allUserCalendars } = userContext;
+
 	const circle = useRef(null);
-	// const calendars = [{ name: 'Личное', color: '#91DED3' }];
 
 	const defaultValues = {
 		name: '',
@@ -29,6 +33,7 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 		handleSubmit,
 		reset,
 		getValues,
+		setValue,
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
@@ -45,8 +50,30 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 		circle.current.style.color = color;
 	};
 
+	const onAllDayMouseDown = () => {
+		// const values = getValues();
+		const { timeStart, allDay } = getValues();
+
+		if (!allDay) {
+			const endCurrentDay = endOfDay(timeStart);
+			setValue('timeFinish', endCurrentDay);
+		} else {
+			setValue('timeFinish', null);
+		}
+	};
+
 	const getFormErrorMessage = (name) =>
 		errors[name] && <small className="p-error">{errors[name].message}</small>;
+
+	const optionItemTemplate = (option) => (
+		<div className={styles.item}>
+			<div
+				style={{ backgroundColor: `${option.color}` }}
+				className={styles.marker}
+			/>
+			<div>{option.name}</div>
+		</div>
+	);
 
 	return (
 		<div className={styles.paddings}>
@@ -60,11 +87,12 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 					>
 						<div className={styles.field}>
 							<span className="p-float-label p-input-icon-right">
-								<i className="pi pi-calendar-plus" />
+								<i className="pi pi-pencil" />
 								<Controller
 									name="name"
 									control={control}
 									rules={{
+										required: 'Поле Название обязательное',
 										minLength: 1,
 										maxLength: {
 											value: 100,
@@ -87,7 +115,7 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 									htmlFor="name"
 									className={cn({ 'p-error': errors.name })}
 								>
-									Название
+									Название*
 								</label>
 							</span>
 							{getFormErrorMessage('name')}
@@ -98,13 +126,26 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 								<Controller
 									name="timeStart"
 									control={control}
-									rules={{ required: 'Поле Начало обязательное' }}
+									rules={{
+										required: 'Поле Начало обязательное',
+										validate: {
+											checkTimeFinish: (value) => {
+												const { timeFinish } = getValues();
+												return timeFinish
+													? timeFinish > value ||
+															'Дата начала события не может быть позже даты конца'
+													: true;
+											},
+										},
+									}}
 									render={({ field }) => (
 										<Calendar
 											id={field.name}
 											value={field.value}
 											onChange={field.onChange}
 											showTime
+											showIcon
+											showButtonBar
 											locale="ru"
 											{...field}
 										/>
@@ -125,13 +166,28 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 								<Controller
 									name="timeFinish"
 									control={control}
-									rules={{ required: 'Поле Конец обязательное' }}
+									rules={{
+										required: 'Поле Конец обязательное',
+										validate: {
+											checkTimeStart: (value) => {
+												const { timeStart } = getValues();
+												return timeStart
+													? timeStart < value ||
+															'Дата конца события не может быть раньше даты начала'
+													: true;
+											},
+										},
+									}}
 									render={({ field }) => (
 										<Calendar
 											id={field.name}
 											value={field.value}
-											onChange={field.onChange}
+											onChange={() => {
+												field.onChange();
+											}}
 											showTime
+											showIcon
+											showButtonBar
 											locale="ru"
 											{...field}
 										/>
@@ -156,6 +212,7 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 										<Checkbox
 											id={field.name}
 											onChange={(e) => field.onChange(e.checked)}
+											onMouseDown={onAllDayMouseDown}
 											checked={field.value}
 											inputRef={field.ref}
 											{...field}
@@ -189,9 +246,12 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 										<Dropdown
 											id={field.name}
 											value={field.value}
-											optionLabel="name"
 											placeholder="Выберите календарь*"
 											options={allUserCalendars}
+											optionLabel="name"
+											filter
+											filterBy="name"
+											itemTemplate={optionItemTemplate}
 											focusInputRef={field.ref}
 											{...field}
 											onChange={(e) => {
@@ -249,6 +309,4 @@ export function FormNewEvent({ setVisible, onCreateEvent, allUserCalendars }) {
 FormNewEvent.propTypes = {
 	setVisible: PropTypes.func.isRequired,
 	onCreateEvent: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	allUserCalendars: PropTypes.array.isRequired,
 };
