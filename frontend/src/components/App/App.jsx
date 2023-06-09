@@ -50,6 +50,7 @@ function App() {
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
+	const [chooseCalendar, setChooseCalendar] = useState([]);
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
 
@@ -99,7 +100,12 @@ function App() {
 			.getAllUserEvents({
 				start,
 				finish,
-				calendar: allUserCalendars.length !== 0 ? allUserCalendars[0].id : '',
+				calendar:
+					allUserCalendars.length !== 0
+						? Object.values(chooseCalendar)
+								.filter((c) => c !== '')
+								.join()
+						: '',
 			})
 			.then((result) => {
 				setAllUserEvents(
@@ -118,7 +124,7 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-	}, [loggedIn, allUserCalendars]);
+	}, [loggedIn, allUserCalendars, chooseCalendar]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
@@ -147,8 +153,17 @@ function App() {
 			setAllUserCalendars,
 			allUserEvents,
 			setAllUserEvents,
+			chooseCalendar,
+			setChooseCalendar,
 		}),
-		[currentUser, loggedIn, allUserCalendars, allUserEvents]
+		[
+			currentUser,
+			loggedIn,
+			allUserCalendars,
+			allUserEvents,
+			chooseCalendar,
+			setChooseCalendar,
+		]
 	);
 
 	// TODO: custom hook useOverlayClick?
