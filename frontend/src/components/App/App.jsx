@@ -70,6 +70,20 @@ function App() {
 		});
 	};
 
+	const Status = {
+		error: 'Error',
+		success: 'Success',
+	};
+
+	const showMessage = (message, status) => {
+		toast.current.show({
+			severity: status.toLowerCase(),
+			summary: status,
+			detail: message,
+			life: 3000,
+		});
+	};
+
 	const handleGetAllCalendars = () => {
 		calendarApi
 			.getAllUserCalendars()
@@ -160,9 +174,17 @@ function App() {
 			setAllUserEvents,
 			chooseCalendar,
 			setChooseCalendar,
+			editableCalendar,
 			setEditableCalendar,
 		}),
-		[currentUser, loggedIn, allUserCalendars, allUserEvents, chooseCalendar]
+		[
+			currentUser,
+			loggedIn,
+			allUserCalendars,
+			allUserEvents,
+			chooseCalendar,
+			editableCalendar,
+		]
 	);
 
 	// TODO: custom hook useOverlayClick?
@@ -279,7 +301,6 @@ function App() {
 		calendarApi
 			.partChangeCalendar(calendar)
 			.then((updatedCalendar) => {
-				console.log({ updatedCalendar });
 				setAllUserCalendars((prevState) =>
 					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
 				);
@@ -291,7 +312,21 @@ function App() {
 	};
 
 	const handleDeleteCalendar = (idCalendar) => {
-		console.log({ idCalendar });
+		calendarApi
+			.deleteCalendar(idCalendar)
+			.then((res) => {
+				if (res.status === 204) {
+					showMessage('Календарь удалён', Status.success);
+					setAllUserCalendars((prevState) =>
+						prevState.filter((c) => c.id !== idCalendar)
+					);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showError(err.message);
+			});
 	};
 
 	return (
@@ -354,7 +389,6 @@ function App() {
 					setVisible={setVisiblePopupEditCalendar}
 					onEditCalendar={handleEditCalendar}
 					onDeleteCalendar={handleDeleteCalendar}
-					editableCalendar={editableCalendar}
 				/>
 
 				<Toast ref={toast} />

@@ -108,7 +108,7 @@ export const fullChangeCalendar = ({ name, description, color, id }) =>
   }
 */
 export const partChangeCalendar = ({ name, description, color, id }) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}`, {
+	fetch(`${BASE_URL}/v1/calendars/${id}/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,
