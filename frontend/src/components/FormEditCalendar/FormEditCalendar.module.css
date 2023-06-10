@@ -28,6 +28,9 @@
 	height: 1.5rem;
 }
 
-.dangerBtn {
-	width: 100%;
+.deleteWrapper {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
 }

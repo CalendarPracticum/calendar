@@ -129,6 +129,17 @@ export function FormEditCalendar({
 							{getFormErrorMessage('color')}
 						</div>
 
+						<div className={styles.deleteWrapper}>
+							<Button
+								type="button"
+								icon="pi pi-times"
+								className="p-button-rounded p-button-danger p-button-text"
+								aria-label="Удалить календарь"
+								onClick={handleDeleteCalendar}
+							/>
+							<p>Удалить календарь</p>
+						</div>
+
 						<Button
 							type="submit"
 							label="Редактировать календарь"
@@ -137,12 +148,15 @@ export function FormEditCalendar({
 						/>
 					</form>
 
-					<Button
-						type="button"
-						label="Удалить календарь"
-						className={cn('p-button-danger', styles.dangerBtn)}
-						onClick={handleDeleteCalendar}
-					/>
+					{/* <div className={styles.deleteWrapper}>
+            <Button
+              icon="pi pi-times"
+              className="p-button-rounded p-button-danger p-button-text"
+              aria-label="Удалить календарь"
+              onClick={handleDeleteCalendar}
+            />
+            <p>Удалить календарь</p>
+          </div> */}
 				</div>
 			</div>
 		</div>
