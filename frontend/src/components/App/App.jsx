@@ -24,6 +24,7 @@ import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
 import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
+import { PopupEditCalendar } from '../PopupEditCalendar/PopupEditCalendar';
 import { Color } from '../../utils/calendarColors';
 
 const locales = {
@@ -47,11 +48,14 @@ function App() {
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
+	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
+		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chooseCalendar, setChooseCalendar] = useState([]);
+	const [editableCalendar, setEditableCalendar] = useState({});
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
 
@@ -156,6 +160,7 @@ function App() {
 			setAllUserEvents,
 			chooseCalendar,
 			setChooseCalendar,
+			setEditableCalendar,
 		}),
 		[currentUser, loggedIn, allUserCalendars, allUserEvents, chooseCalendar]
 	);
@@ -270,6 +275,25 @@ function App() {
 			});
 	};
 
+	const handleEditCalendar = (calendar) => {
+		calendarApi
+			.partChangeCalendar(calendar)
+			.then((updatedCalendar) => {
+				console.log({ updatedCalendar });
+				setAllUserCalendars((prevState) =>
+					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
+				);
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const handleDeleteCalendar = (idCalendar) => {
+		console.log({ idCalendar });
+	};
+
 	return (
 		<CurrentUserContext.Provider value={user}>
 			<div className={styles.app}>
@@ -288,6 +312,7 @@ function App() {
 									localizer={localizer}
 									onNewEventClick={setVisiblePopupNewEvent}
 									onNewCalendarClick={setVisiblePopupNewCalendar}
+									onEditCalendarClick={setVisiblePopupEditCalendar}
 									events={allUserEvents}
 								/>
 							</>
@@ -322,6 +347,14 @@ function App() {
 					setVisible={setVisiblePopupEditUser}
 					onUpdateUser={handleUpdateUser}
 					onDeleteUser={handleDeleteUser}
+				/>
+
+				<PopupEditCalendar
+					visible={visiblePopupEditCalendar}
+					setVisible={setVisiblePopupEditCalendar}
+					onEditCalendar={handleEditCalendar}
+					onDeleteCalendar={handleDeleteCalendar}
+					editableCalendar={editableCalendar}
 				/>
 
 				<Toast ref={toast} />

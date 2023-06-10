@@ -9,6 +9,7 @@ export function Main({
 	localizer,
 	onNewEventClick,
 	onNewCalendarClick,
+	onEditCalendarClick,
 	events,
 }) {
 	const [visibleProdCalendar, setVisibleProdCalendar] = useState(false);
@@ -16,6 +17,7 @@ export function Main({
 	return (
 		<main className={`${styles.main} container`}>
 			<Sidebar
+				onEditCalendarClick={onEditCalendarClick}
 				onNewEventClick={onNewEventClick}
 				onNewCalendarClick={onNewCalendarClick}
 				localizer={localizer}
@@ -33,6 +35,7 @@ export function Main({
 Main.propTypes = {
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
+	onEditCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types

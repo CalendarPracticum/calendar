@@ -1,10 +1,16 @@
 import { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import styles from './CalendarSelect.module.css';
 import CurrentUserContext from '../../context/CurrentUserContext';
 
-export function CalendarSelect() {
+export function CalendarSelect({ onEditCalendarClick }) {
 	const userContext = useContext(CurrentUserContext);
-	const { allUserCalendars, chooseCalendar, setChooseCalendar } = userContext;
+	const {
+		allUserCalendars,
+		chooseCalendar,
+		setChooseCalendar,
+		setEditableCalendar,
+	} = userContext;
 
 	const [isActive, setIsActive] = useState(true);
 	const handleCheckbox = (e) => {
@@ -49,7 +55,10 @@ export function CalendarSelect() {
 							<button
 								className={styles.edit}
 								type="button"
-								onClick={() => console.log(calendar.name)}
+								onClick={() => {
+									setEditableCalendar(calendar);
+									onEditCalendarClick(true);
+								}}
 							>
 								{'\u270E'}
 							</button>
@@ -59,3 +68,7 @@ export function CalendarSelect() {
 		</div>
 	);
 }
+
+CalendarSelect.propTypes = {
+	onEditCalendarClick: PropTypes.func.isRequired,
+};
