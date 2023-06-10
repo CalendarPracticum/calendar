@@ -4,18 +4,19 @@ import { Dialog } from 'primereact/dialog';
 import { FormNewEvent } from '../FormNewEvent/FormNewEvent';
 
 export function PopupNewEvent({ visible, setVisible, onCreateEvent }) {
-	const handleOverlayClick = (evt) => {
-		if (evt.target === evt.currentTarget) {
-			setVisible(false);
-		}
-	};
+	// const handleOverlayClick = (evt) => {
+	// 	if (evt.target === evt.currentTarget) {
+	// 		setVisible(false);
+	// 	}
+	// };
 
 	return (
 		<Dialog
 			visible={visible}
 			onHide={() => setVisible(false)}
-			onMaskClick={handleOverlayClick}
+			// onMaskClick={handleOverlayClick}
 			blockScroll
+			draggable={false}
 		>
 			<FormNewEvent setVisible={setVisible} onCreateEvent={onCreateEvent} />
 		</Dialog>
