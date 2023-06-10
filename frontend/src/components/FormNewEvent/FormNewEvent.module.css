@@ -10,13 +10,28 @@
 	margin-bottom: 2rem;
 }
 
+.calendar {
+	max-width: 260px;
+}
+
 .paddings {
 	padding: 0 1.25rem 2.25rem;
 }
 
 .item {
 	display: flex;
+	flex-wrap: nowrap;
 	align-items: center;
+	max-width: 268px;
+}
+
+.optionText {
+	margin: 0;
+	white-space: break-spaces;
+
+	/* overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; */
 }
 
 .marker {
@@ -24,4 +39,5 @@
 	height: 16px;
 	border-radius: 50%;
 	margin-right: 8px;
+	flex-shrink: 0;
 }
