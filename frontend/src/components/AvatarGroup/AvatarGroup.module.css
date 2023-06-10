@@ -1,8 +1,29 @@
 .top {
 	top: 54px !important;
+	width: 230px;
 }
 
 .avatar {
 	background-color: var(--primary-color);
 	color: var(--surface-f);
+}
+
+.menuContainer {
+	flex-wrap: nowrap;
+	max-width: calc(192px - 2.5rem);
+}
+
+.menuAvatar {
+	flex-shrink: 0;
+}
+
+.menuName {
+	overflow: hidden;
+	white-space: break-spaces;
+}
+
+.menuEmail {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
