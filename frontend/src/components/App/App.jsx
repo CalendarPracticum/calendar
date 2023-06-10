@@ -24,6 +24,7 @@ import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
 import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
+import { Color } from '../../utils/calendarColors';
 
 const locales = {
 	ru: ruLocale,
@@ -156,14 +157,7 @@ function App() {
 			chooseCalendar,
 			setChooseCalendar,
 		}),
-		[
-			currentUser,
-			loggedIn,
-			allUserCalendars,
-			allUserEvents,
-			chooseCalendar,
-			setChooseCalendar,
-		]
+		[currentUser, loggedIn, allUserCalendars, allUserEvents, chooseCalendar]
 	);
 
 	// TODO: custom hook useOverlayClick?
@@ -221,7 +215,7 @@ function App() {
 				auth.authorize(email, password).then((data) => {
 					localStorage.setItem('jwtAccess', data.access);
 					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					handleCreateCalendar({ name: 'Личное', color: Color.LIGHT_GREEN });
 					setLoggedIn(true);
 					handleGetAllCalendars();
 					setTimeout(() => {
