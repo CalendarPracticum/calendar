@@ -118,6 +118,28 @@ export const updateUserData = ({ email, username, picture, darkMode }) =>
 	}).then(getJson);
 
 /*
+  Изменение пароля
+  Вернёт:
+  {
+    "new_password": "string",
+    "current_password": "string"
+  }
+*/
+
+export const changePassword = ({ newPassword, currentPassword }) =>
+	fetch(`${BASE_URL}/v1/users/set_password/`, {
+		method: 'POST',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+			new_password: newPassword,
+			current_password: currentPassword,
+		}),
+	});
+
+/*
 Удаление пользовательского аккаунта
 */
 export const deleteUser = (password) =>
