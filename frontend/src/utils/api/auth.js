@@ -99,7 +99,6 @@ export const getUserData = () =>
     }
   }
 */
-
 export const updateUserData = ({ email, username, picture, darkMode }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
@@ -125,7 +124,6 @@ export const updateUserData = ({ email, username, picture, darkMode }) =>
     "current_password": "string"
   }
 */
-
 export const changePassword = ({ newPassword, currentPassword }) =>
 	fetch(`${BASE_URL}/v1/users/set_password/`, {
 		method: 'POST',
