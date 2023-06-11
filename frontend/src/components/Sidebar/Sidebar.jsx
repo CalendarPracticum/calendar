@@ -10,6 +10,7 @@ import { culture, noop } from '../../utils/constants';
 import CurrentUserContext from '../../context/CurrentUserContext';
 
 export function Sidebar({
+	onEditCalendarClick,
 	onNewEventClick,
 	onNewCalendarClick,
 	localizer,
@@ -70,7 +71,7 @@ export function Sidebar({
 			/>
 			{loggedIn && (
 				<>
-					<CalendarSelect />
+					<CalendarSelect onEditCalendarClick={onEditCalendarClick} />
 					<Button
 						label="Новый календарь"
 						icon="pi pi-plus"
@@ -95,6 +96,7 @@ export function Sidebar({
 }
 
 Sidebar.propTypes = {
+	onEditCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types

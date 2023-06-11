@@ -24,6 +24,8 @@ import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
 import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
+import { PopupEditCalendar } from '../PopupEditCalendar/PopupEditCalendar';
+import { Color, Status } from '../../utils/common';
 
 const locales = {
 	ru: ruLocale,
@@ -46,22 +48,26 @@ function App() {
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
+	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
+		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chooseCalendar, setChooseCalendar] = useState([]);
-  // по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
-  const today = new Date();
-	const start = [today.getFullYear(), '-01-01'].join('');
-  const finish = [today.getFullYear()+1, '-01-01'].join('');
+	const [editableCalendar, setEditableCalendar] = useState({});
 
-	// TODO: локальное решение, найти общее решение для вывода ошибок
+	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
+	const today = new Date();
+	const start = [today.getFullYear(), '-01-01'].join('');
+	const finish = [today.getFullYear() + 1, '-01-01'].join('');
+
 	const toast = useRef(null);
-	const showError = (message) => {
+
+	const showMessage = (message, status) => {
 		toast.current.show({
-			severity: 'error',
-			summary: 'Error',
+			severity: status,
+			summary: status,
 			detail: message,
 			life: 3000,
 		});
@@ -157,6 +163,8 @@ function App() {
 			setAllUserEvents,
 			chooseCalendar,
 			setChooseCalendar,
+			editableCalendar,
+			setEditableCalendar,
 		}),
 		[
 			currentUser,
@@ -164,7 +172,7 @@ function App() {
 			allUserCalendars,
 			allUserEvents,
 			chooseCalendar,
-			setChooseCalendar,
+			editableCalendar,
 		]
 	);
 
@@ -223,7 +231,7 @@ function App() {
 				auth.authorize(email, password).then((data) => {
 					localStorage.setItem('jwtAccess', data.access);
 					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					handleCreateCalendar({ name: 'Личное', color: Color.LIGHT_GREEN });
 					setLoggedIn(true);
 					handleGetAllCalendars();
 					setTimeout(() => {
@@ -269,12 +277,43 @@ function App() {
 				if (res.status === 204) {
 					logout();
 				} else {
-					// console.log({ res });
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showError(err.message);
+				showMessage(err.message, Status.ERROR);
+			});
+	};
+
+	const handleEditCalendar = (calendar) => {
+		calendarApi
+			.partChangeCalendar(calendar)
+			.then((updatedCalendar) => {
+				setAllUserCalendars((prevState) =>
+					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
+				);
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const handleDeleteCalendar = (idCalendar) => {
+		calendarApi
+			.deleteCalendar(idCalendar)
+			.then((res) => {
+				if (res.status === 204) {
+					showMessage('Календарь удалён', Status.SUCCESS);
+					setAllUserCalendars((prevState) =>
+						prevState.filter((c) => c.id !== idCalendar)
+					);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showMessage(err.message, Status.ERROR);
 			});
 	};
 
@@ -296,7 +335,7 @@ function App() {
 									localizer={localizer}
 									onNewEventClick={setVisiblePopupNewEvent}
 									onNewCalendarClick={setVisiblePopupNewCalendar}
-									events={allUserEvents}
+									onEditCalendarClick={setVisiblePopupEditCalendar}
 								/>
 							</>
 						}
@@ -330,6 +369,13 @@ function App() {
 					setVisible={setVisiblePopupEditUser}
 					onUpdateUser={handleUpdateUser}
 					onDeleteUser={handleDeleteUser}
+				/>
+
+				<PopupEditCalendar
+					visible={visiblePopupEditCalendar}
+					setVisible={setVisiblePopupEditCalendar}
+					onEditCalendar={handleEditCalendar}
+					onDeleteCalendar={handleDeleteCalendar}
 				/>
 
 				<Toast ref={toast} />

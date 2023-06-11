@@ -1,0 +1,36 @@
+.card {
+	width: 20rem;
+}
+
+.form {
+	margin: 2.75rem 0;
+}
+
+.field {
+	margin-bottom: 2rem;
+}
+
+.paddings {
+	padding: 0 1.25rem 2.25rem;
+}
+
+.colorTable {
+	padding: 1rem;
+	border-radius: 0.3rem;
+	border-color: var(--surface-border);
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	column-gap: 1.5rem;
+}
+
+.color {
+	width: 100%;
+	height: 1.5rem;
+}
+
+.deleteWrapper {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
+}

@@ -1,6 +1,8 @@
 import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
+import startOfDay from 'date-fns/startOfDay';
+import startOfToday from 'date-fns/startOfToday';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -34,7 +36,9 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 		reset,
 		getValues,
 		setValue,
-	} = useForm({ defaultValues, mode: 'onChange' });
+		clearErrors,
+		trigger,
+	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (data) => {
 		onCreateEvent(data);
@@ -49,16 +53,41 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 		circle.current.style.color = color;
 	};
 
-	const onAllDayMouseDown = () => {
-		// const values = getValues();
-		const { timeStart, allDay } = getValues();
+	const onAllDayClick = (e) => {
+		if (e.checked) {
+			const { timeStart, timeFinish } = getValues();
+			const today = startOfToday();
+			let start = today;
+			let end = endOfDay(today);
 
-		if (!allDay) {
-			const endCurrentDay = endOfDay(timeStart);
-			setValue('timeFinish', endCurrentDay);
+			if (timeStart && timeFinish) {
+				start = startOfDay(timeStart);
+				end = endOfDay(timeFinish);
+			} else if (timeStart) {
+				start = startOfDay(timeStart);
+				end = endOfDay(timeStart);
+			} else if (timeFinish) {
+				start = startOfDay(timeFinish);
+				end = endOfDay(timeFinish);
+			}
+
+			setValue('timeStart', start);
+			setValue('timeFinish', end);
 		} else {
+			setValue('timeStart', null);
 			setValue('timeFinish', null);
 		}
+
+		clearErrors('timeStart');
+		clearErrors('timeFinish');
+		trigger('timeStart', 'timeFinish');
+	};
+
+	const setAllDayFalse = () => setValue('allDay', false);
+
+	const onHideCalendar = () => {
+		// TODO: написать логику, завязанную на allDay
+		trigger('timeStart', 'timeFinish');
 	};
 
 	const getFormErrorMessage = (name) =>
@@ -70,7 +99,7 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 				style={{ backgroundColor: `${option.color}` }}
 				className={styles.marker}
 			/>
-			<div>{option.name}</div>
+			<p className={styles.optionText}>{option.name}</p>
 		</div>
 	);
 
@@ -141,10 +170,13 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 										<Calendar
 											id={field.name}
 											value={field.value}
-											onChange={field.onChange}
+											onChange={() => field.onChange}
+											onHide={onHideCalendar}
 											showTime
 											showIcon
 											showButtonBar
+											onClearButtonClick={setAllDayFalse}
+											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>
@@ -181,12 +213,13 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 										<Calendar
 											id={field.name}
 											value={field.value}
-											onChange={() => {
-												field.onChange();
-											}}
+											onChange={field.onChange}
+											onHide={onHideCalendar}
 											showTime
 											showIcon
 											showButtonBar
+											onClearButtonClick={setAllDayFalse}
+											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>
@@ -211,7 +244,7 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 										<Checkbox
 											id={field.name}
 											onChange={(e) => field.onChange(e.checked)}
-											onMouseDown={onAllDayMouseDown}
+											onClick={onAllDayClick}
 											checked={field.value}
 											inputRef={field.ref}
 											{...field}
@@ -259,7 +292,8 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 											}}
 											className={cn(
 												{ 'p-invalid': fieldState.error },
-												'w-full md:w-24rem'
+												'w-full md:w-24rem',
+												styles.calendar
 											)}
 										/>
 									)}

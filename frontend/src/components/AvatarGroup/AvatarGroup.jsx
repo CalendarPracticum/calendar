@@ -33,12 +33,13 @@ export function AvatarGroup({ onUserClick, logout }) {
 					<Avatar
 						icon={picture ? '' : 'pi pi-user'}
 						image={picture || ''}
-						className="mr-2"
+						// className="mr-2"
+						className={cn(styles.menuAvatar, 'mr-2')}
 						shape="circle"
 					/>
-					<div className="flex flex-column align">
-						<span className="font-bold">{username}</span>
-						<span className="text-sm">{email}</span>
+					<div className={cn(styles.menuContainer, 'flex flex-column align')}>
+						<span className={cn(styles.menuName, 'font-bold')}>{username}</span>
+						<span className={cn(styles.menuEmail, 'text-sm')}>{email}</span>
 					</div>
 				</button>
 			),

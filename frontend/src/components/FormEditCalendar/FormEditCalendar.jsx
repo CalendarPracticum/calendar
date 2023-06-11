@@ -1,18 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormNewCalendar.module.css';
+import CurrentUserContext from '../../context/CurrentUserContext';
+import styles from './FormEditCalendar.module.css';
 import { Color } from '../../utils/common';
 
-export function FormNewCalendar({ setVisible, onCreateCalendar }) {
+export function FormEditCalendar({
+	setVisible,
+	onEditCalendar,
+	onDeleteCalendar,
+}) {
+	const userContext = useContext(CurrentUserContext);
+	const { editableCalendar } = userContext;
+	const { id, name, color, description } = editableCalendar;
+
 	const defaultValues = {
-		name: '',
-		color: '',
-		description: '',
+		id,
+		name,
+		color,
+		description,
 	};
 
 	const {
@@ -23,20 +33,29 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		onCreateCalendar(data);
+		onEditCalendar(data);
 		setVisible(false);
 
 		reset();
 	};
 
-	const getFormErrorMessage = (name) =>
-		errors[name] && <small className="p-error">{errors[name].message}</small>;
+	const handleDeleteCalendar = () => {
+		onDeleteCalendar(id);
+		setVisible(false);
+
+		reset();
+	};
+
+	const getFormErrorMessage = (errorName) =>
+		errors[errorName] && (
+			<small className="p-error">{errors[errorName].message}</small>
+		);
 
 	return (
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Создайте новый календарь</h2>
+					<h2 className="text-center">Редактировать календарь</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -110,20 +129,42 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 							{getFormErrorMessage('color')}
 						</div>
 
+						<div className={styles.deleteWrapper}>
+							<Button
+								type="button"
+								icon="pi pi-times"
+								className="p-button-rounded p-button-danger p-button-text"
+								aria-label="Удалить календарь"
+								onClick={handleDeleteCalendar}
+							/>
+							<p>Удалить календарь</p>
+						</div>
+
 						<Button
 							type="submit"
-							label="Добавить новый календарь"
+							label="Редактировать календарь"
 							className="mt-2"
 							disabled={!isValid}
 						/>
 					</form>
+
+					{/* <div className={styles.deleteWrapper}>
+            <Button
+              icon="pi pi-times"
+              className="p-button-rounded p-button-danger p-button-text"
+              aria-label="Удалить календарь"
+              onClick={handleDeleteCalendar}
+            />
+            <p>Удалить календарь</p>
+          </div> */}
 				</div>
 			</div>
 		</div>
 	);
 }
 
-FormNewCalendar.propTypes = {
+FormEditCalendar.propTypes = {
 	setVisible: PropTypes.func.isRequired,
-	onCreateCalendar: PropTypes.func.isRequired,
+	onEditCalendar: PropTypes.func.isRequired,
+	onDeleteCalendar: PropTypes.func.isRequired,
 };
