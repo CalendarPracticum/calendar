@@ -1,10 +1,14 @@
-import { React, useCallback, useMemo } from 'react';
+import { React, useCallback, useMemo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
 import { culture, messages } from '../../utils/constants';
+import CurrentUserContext from '../../context/CurrentUserContext';
 
-export function BaseCalendar({ localizer, events }) {
+export function BaseCalendar({ localizer }) {
+	const userContext = useContext(CurrentUserContext);
+	const { allUserEvents } = userContext;
+
 	const { defaultDate, formats } = useMemo(
 		() => ({
 			defaultDate: new Date(),
@@ -47,7 +51,7 @@ export function BaseCalendar({ localizer, events }) {
 			endAccessor="end"
 			culture={culture}
 			formats={formats}
-			events={events}
+			events={allUserEvents}
 			className={styles.calendar}
 			messages={messages}
 			eventPropGetter={eventPropGetter}
@@ -58,6 +62,4 @@ export function BaseCalendar({ localizer, events }) {
 BaseCalendar.propTypes = {
 	// eslint-disable-next-line react/forbid-prop-types
 	localizer: PropTypes.object.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	events: PropTypes.array.isRequired,
 };

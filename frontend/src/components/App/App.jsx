@@ -336,7 +336,6 @@ function App() {
 									onNewEventClick={setVisiblePopupNewEvent}
 									onNewCalendarClick={setVisiblePopupNewCalendar}
 									onEditCalendarClick={setVisiblePopupEditCalendar}
-									events={allUserEvents}
 								/>
 							</>
 						}
