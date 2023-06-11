@@ -95,6 +95,9 @@ class UsersViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         methods=['POST'],
         summary='Смена пароля пользователя',
         description=' ',
+        responses={
+            204: {}
+        }
     )
     @action(
         ['post'],
