@@ -158,7 +158,7 @@ class WriteEventSerializer(serializers.ModelSerializer):
         datatime_start = data.get('datetime_start')
         datetime_finish = data.get('datetime_finish')
 
-        if datatime_start >= datetime_finish:
+        if datatime_start > datetime_finish:
             message = 'Мероприятие не может начинаться после даты окончания.'
             raise serializers.ValidationError(message)
 
