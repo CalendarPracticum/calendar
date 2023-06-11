@@ -7,7 +7,7 @@ import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
 import CurrentUserContext from '../../context/CurrentUserContext';
 import styles from './FormEditCalendar.module.css';
-import { Color } from '../../utils/calendarColors';
+import { Color } from '../../utils/common';
 
 export function FormEditCalendar({
 	setVisible,

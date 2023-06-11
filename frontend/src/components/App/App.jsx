@@ -25,7 +25,7 @@ import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
 import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
 import { PopupEditCalendar } from '../PopupEditCalendar/PopupEditCalendar';
-import { Color } from '../../utils/calendarColors';
+import { Color, Status } from '../../utils/common';
 
 const locales = {
 	ru: ruLocale,
@@ -59,25 +59,11 @@ function App() {
 	const start = '2023-01-01';
 	const finish = '2024-01-01';
 
-	// TODO: локальное решение, найти общее решение для вывода ошибок
 	const toast = useRef(null);
-	const showError = (message) => {
-		toast.current.show({
-			severity: 'error',
-			summary: 'Error',
-			detail: message,
-			life: 3000,
-		});
-	};
-
-	const Status = {
-		error: 'Error',
-		success: 'Success',
-	};
 
 	const showMessage = (message, status) => {
 		toast.current.show({
-			severity: status.toLowerCase(),
+			severity: status,
 			summary: status,
 			detail: message,
 			life: 3000,
@@ -288,12 +274,11 @@ function App() {
 				if (res.status === 204) {
 					logout();
 				} else {
-					// console.log({ res });
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showError(err.message);
+				showMessage(err.message, Status.ERROR);
 			});
 	};
 
@@ -316,7 +301,7 @@ function App() {
 			.deleteCalendar(idCalendar)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Календарь удалён', Status.success);
+					showMessage('Календарь удалён', Status.SUCCESS);
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
 					);
@@ -325,7 +310,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showError(err.message);
+				showMessage(err.message, Status.ERROR);
 			});
 	};
 
