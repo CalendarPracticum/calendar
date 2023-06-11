@@ -134,14 +134,7 @@ class WriteEventSerializer(serializers.ModelSerializer):
         return ReadEventSerializer(
             instance=instance, context=self.context).data
 
-    def create(self, validated_data):
-        calendar = validated_data.get('calendar')
-        user = self.context.get('request').user
-        if user != calendar.owner:
-            raise ValidationError(
-                {'calendar': 'Можно использовать только свой календарь'}
-            )
-
+    def set_event_date(self, validated_data):
         keys = ('all_day', 'datetime_start', 'datetime_finish')
         all_day, start, finish = [validated_data.get(key) for key in keys]
         if all_day:
@@ -152,13 +145,26 @@ class WriteEventSerializer(serializers.ModelSerializer):
                 hour=23, minute=59, second=59,
             )
 
+    def create(self, validated_data):
+        self.set_event_date(validated_data)
         return super().create(validated_data)
 
+    def update(self, instance, validated_data):
+        self.set_event_date(validated_data)
+        return super().update(instance, validated_data)
+
     def validate(self, data):
-        datatime_start = data.get('datetime_start')
+        calendar = data.get('calendar')
+        user = self.context.get('request').user
+        if user != calendar.owner:
+            raise ValidationError(
+                {'calendar': 'Можно использовать только свой календарь'}
+            )
+
+        datetime_start = data.get('datetime_start')
         datetime_finish = data.get('datetime_finish')
 
-        if datatime_start > datetime_finish:
+        if datetime_start > datetime_finish:
             message = 'Мероприятие не может начинаться после даты окончания.'
             raise serializers.ValidationError(message)
 
