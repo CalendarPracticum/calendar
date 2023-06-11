@@ -123,6 +123,10 @@ class WriteEventSerializer(serializers.ModelSerializer):
                      'null': 'Календарь не может быть null',
                      }
                  },
+            'all_day':
+                {'required': False, 'error_messages':
+                    {'invalid': 'Флаг all_day должен быть True или False'}
+                 }
         }
 
     def to_representation(self, instance):
