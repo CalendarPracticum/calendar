@@ -1,23 +1,22 @@
-import { React, useCallback, useMemo, useContext } from 'react';
-import PropTypes from 'prop-types';
+import { React, useCallback, useContext } from 'react';
 import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
 import { culture, messages } from '../../utils/constants';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext, LocalizationContext } from '../../context';
 
-export function BaseCalendar({ localizer }) {
+export function BaseCalendar() {
+	const localizer = useContext(LocalizationContext);
+	const { format } = localizer;
+
 	const userContext = useContext(CurrentUserContext);
 	const { allUserEvents } = userContext;
 
-	const { defaultDate, formats } = useMemo(
-		() => ({
-			defaultDate: new Date(),
-			formats: {
-				weekdayFormat: (date) => localizer.format(date, 'eeeeee', culture),
-			},
-		}),
-		[localizer]
-	);
+	const { defaultDate, formats } = {
+		defaultDate: new Date(),
+		formats: {
+			weekdayFormat: (date) => format(date, 'eeeeee', culture),
+		},
+	};
 
 	// окрашивание событий
 	const eventPropGetter = useCallback(
@@ -58,8 +57,3 @@ export function BaseCalendar({ localizer }) {
 		/>
 	);
 }
-
-BaseCalendar.propTypes = {
-	// eslint-disable-next-line react/forbid-prop-types
-	localizer: PropTypes.object.isRequired,
-};

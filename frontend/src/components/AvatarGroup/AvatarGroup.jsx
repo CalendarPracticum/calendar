@@ -4,7 +4,7 @@ import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
 import { classNames as cn } from 'primereact/utils';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 import styles from './AvatarGroup.module.css';
 
 export function AvatarGroup({ onUserClick, logout }) {

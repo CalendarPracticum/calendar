@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 import styles from './FormEditCalendar.module.css';
 import { Color } from '../../utils/common';
 

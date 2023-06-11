@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import styles from './CalendarSelect.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 
 export function CalendarSelect({ onEditCalendarClick }) {
 	const userContext = useContext(CurrentUserContext);
