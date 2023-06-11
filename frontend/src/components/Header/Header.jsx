@@ -5,7 +5,7 @@ import 'primeicons/primeicons.css';
 import { Button } from 'primereact/button';
 import { SelectButton } from 'primereact/selectbutton';
 import styles from './Header.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 import logo from '../../images/logo.svg';
 

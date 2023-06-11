@@ -6,7 +6,6 @@ import styles from './Main.module.css';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
 
 export function Main({
-	localizer,
 	onNewEventClick,
 	onNewCalendarClick,
 	onEditCalendarClick,
@@ -19,21 +18,18 @@ export function Main({
 				onEditCalendarClick={onEditCalendarClick}
 				onNewEventClick={onNewEventClick}
 				onNewCalendarClick={onNewCalendarClick}
-				localizer={localizer}
 				showProdCalendar={setVisibleProdCalendar}
 				visibleProdCalendar={visibleProdCalendar}
 			/>
 			<div className={styles.content}>
-				<BaseCalendar localizer={localizer} />
-				{visibleProdCalendar && <YearCalendar localizer={localizer} />}
+				<BaseCalendar />
+				{visibleProdCalendar && <YearCalendar />}
 			</div>
 		</main>
 	);
 }
 
 Main.propTypes = {
-	// eslint-disable-next-line react/forbid-prop-types
-	localizer: PropTypes.object.isRequired,
 	onEditCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,

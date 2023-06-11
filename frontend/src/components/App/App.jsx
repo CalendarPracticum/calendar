@@ -14,7 +14,7 @@ import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext, LocalizationContext } from '../../context';
 import { PopupLogin } from '../PopupLogin/PopupLogin';
 import { PopupNewEvent } from '../PopupNewEvent/PopupNewEvent';
 import ruPrime from '../../utils/ruPrime.json';
@@ -318,69 +318,70 @@ function App() {
 	};
 
 	return (
-		<CurrentUserContext.Provider value={user}>
-			<div className={styles.app}>
-				<Routes>
-					<Route
-						exact
-						path="/"
-						element={
-							<>
-								<Header
-									onLogin={setVisiblePopupLogin}
-									onUserClick={setVisiblePopupEditUser}
-									logout={logout}
-								/>
-								<Main
-									localizer={localizer}
-									onNewEventClick={setVisiblePopupNewEvent}
-									onNewCalendarClick={setVisiblePopupNewCalendar}
-									onEditCalendarClick={setVisiblePopupEditCalendar}
-								/>
-							</>
-						}
+		<LocalizationContext.Provider value={localizer}>
+			<CurrentUserContext.Provider value={user}>
+				<div className={styles.app}>
+					<Routes>
+						<Route
+							exact
+							path="/"
+							element={
+								<>
+									<Header
+										onLogin={setVisiblePopupLogin}
+										onUserClick={setVisiblePopupEditUser}
+										logout={logout}
+									/>
+									<Main
+										onNewEventClick={setVisiblePopupNewEvent}
+										onNewCalendarClick={setVisiblePopupNewCalendar}
+										onEditCalendarClick={setVisiblePopupEditCalendar}
+									/>
+								</>
+							}
+						/>
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+
+					<PopupLogin
+						visible={visiblePopupLogin}
+						setVisible={setVisiblePopupLogin}
+						handleRegister={handleRegister}
+						handleLogin={handleLogin}
+						message={dialogMessage}
+						isError={isDialogError}
 					/>
-					<Route path="*" element={<NotFound />} />
-				</Routes>
 
-				<PopupLogin
-					visible={visiblePopupLogin}
-					setVisible={setVisiblePopupLogin}
-					handleRegister={handleRegister}
-					handleLogin={handleLogin}
-					message={dialogMessage}
-					isError={isDialogError}
-				/>
+					<PopupNewEvent
+						visible={visiblePopupNewEvent}
+						setVisible={setVisiblePopupNewEvent}
+						onCreateEvent={handleCreateEvent}
+					/>
 
-				<PopupNewEvent
-					visible={visiblePopupNewEvent}
-					setVisible={setVisiblePopupNewEvent}
-					onCreateEvent={handleCreateEvent}
-				/>
+					<PopupNewCalendar
+						visible={visiblePopupNewCalendar}
+						setVisible={setVisiblePopupNewCalendar}
+						onCreateCalendar={handleCreateCalendar}
+					/>
 
-				<PopupNewCalendar
-					visible={visiblePopupNewCalendar}
-					setVisible={setVisiblePopupNewCalendar}
-					onCreateCalendar={handleCreateCalendar}
-				/>
+					<PopupEditUser
+						visible={visiblePopupEditUser}
+						setVisible={setVisiblePopupEditUser}
+						onUpdateUser={handleUpdateUser}
+						onDeleteUser={handleDeleteUser}
+					/>
 
-				<PopupEditUser
-					visible={visiblePopupEditUser}
-					setVisible={setVisiblePopupEditUser}
-					onUpdateUser={handleUpdateUser}
-					onDeleteUser={handleDeleteUser}
-				/>
+					<PopupEditCalendar
+						visible={visiblePopupEditCalendar}
+						setVisible={setVisiblePopupEditCalendar}
+						onEditCalendar={handleEditCalendar}
+						onDeleteCalendar={handleDeleteCalendar}
+					/>
 
-				<PopupEditCalendar
-					visible={visiblePopupEditCalendar}
-					setVisible={setVisiblePopupEditCalendar}
-					onEditCalendar={handleEditCalendar}
-					onDeleteCalendar={handleDeleteCalendar}
-				/>
-
-				<Toast ref={toast} />
-			</div>
-		</CurrentUserContext.Provider>
+					<Toast ref={toast} />
+				</div>
+			</CurrentUserContext.Provider>
+		</LocalizationContext.Provider>
 	);
 }
 

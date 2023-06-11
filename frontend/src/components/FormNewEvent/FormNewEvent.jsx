@@ -12,7 +12,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
 import styles from './FormNewEvent.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 
 export function FormNewEvent({ setVisible, onCreateEvent }) {
 	const userContext = useContext(CurrentUserContext);
