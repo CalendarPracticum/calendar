@@ -175,7 +175,7 @@ class WriteEventSerializer(serializers.ModelSerializer):
     def validate(self, data):
         calendar = data.get('calendar')
         user = self.context.get('request').user
-        if user != calendar.owner:
+        if calendar and user != calendar.owner:
             raise ValidationError(
                 {'calendar': 'Можно использовать только свой календарь'}
             )
