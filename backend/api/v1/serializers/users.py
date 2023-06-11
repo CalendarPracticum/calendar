@@ -77,6 +77,7 @@ class UsersSerializer(UserSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        settings = validated_data.pop('settings')
-        SettingsUser.objects.update(**settings)
+        settings = validated_data.pop('settings', None)
+        if settings:
+            SettingsUser.objects.update(**settings)
         return super().update(instance, validated_data)
