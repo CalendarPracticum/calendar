@@ -51,8 +51,10 @@ function App() {
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chooseCalendar, setChooseCalendar] = useState([]);
-	const start = '2023-01-01';
-	const finish = '2024-01-01';
+  // по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
+  const today = new Date();
+	const start = [today.getFullYear(), '-01-01'].join('');
+  const finish = [today.getFullYear()+1, '-01-01'].join('');
 
 	// TODO: локальное решение, найти общее решение для вывода ошибок
 	const toast = useRef(null);
@@ -124,7 +126,7 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-	}, [loggedIn, allUserCalendars, chooseCalendar]);
+	}, [loggedIn, allUserCalendars, chooseCalendar, start, finish]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
