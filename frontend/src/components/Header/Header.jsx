@@ -9,7 +9,7 @@ import { CurrentUserContext } from '../../context';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 import logo from '../../images/logo.svg';
 
-export function Header({ onLogin, onUserClick, logout }) {
+export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn, currentUser } = userContext;
 	const { darkMode: userDarkMode } = currentUser;
@@ -65,7 +65,11 @@ export function Header({ onLogin, onUserClick, logout }) {
 					/>
 				</div>
 				{loggedIn ? (
-					<AvatarGroup onUserClick={onUserClick} logout={logout} />
+					<AvatarGroup
+						onUserClick={onUserClick}
+						onPasswordClick={onPasswordClick}
+						logout={logout}
+					/>
 				) : (
 					<Button
 						label="Войти"
@@ -82,5 +86,6 @@ export function Header({ onLogin, onUserClick, logout }) {
 Header.propTypes = {
 	onLogin: PropTypes.func.isRequired,
 	onUserClick: PropTypes.func.isRequired,
+	onPasswordClick: PropTypes.func.isRequired,
 	logout: PropTypes.func.isRequired,
 };

@@ -25,6 +25,7 @@ import { NotFound } from '../NotFound/NotFound';
 import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
 import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
 import { PopupEditCalendar } from '../PopupEditCalendar/PopupEditCalendar';
+import { PopupChangePassword } from '../PopupChangePassword/PopupChangePassword';
 import { Color, Status } from '../../utils/common';
 
 const locales = {
@@ -49,6 +50,8 @@ function App() {
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
 	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
+		useState(false);
+	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
@@ -262,6 +265,21 @@ function App() {
 			});
 	};
 
+	const handleChangePassword = (data) => {
+		auth
+			.changePassword(data)
+			.then((res) => {
+				if (res.status === 204) {
+					showMessage('Пароль изменён', Status.SUCCESS);
+				} else {
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showMessage(err.message, Status.ERROR);
+			});
+	};
+
 	const logout = () => {
 		localStorage.clear();
 		setLoggedIn(false);
@@ -330,6 +348,7 @@ function App() {
 									<Header
 										onLogin={setVisiblePopupLogin}
 										onUserClick={setVisiblePopupEditUser}
+										onPasswordClick={setVisiblePopupChangePassword}
 										logout={logout}
 									/>
 									<Main
@@ -376,6 +395,12 @@ function App() {
 						setVisible={setVisiblePopupEditCalendar}
 						onEditCalendar={handleEditCalendar}
 						onDeleteCalendar={handleDeleteCalendar}
+					/>
+
+					<PopupChangePassword
+						visible={visiblePopupChangePassword}
+						setVisible={setVisiblePopupChangePassword}
+						onChangePassword={handleChangePassword}
 					/>
 
 					<Toast ref={toast} />
