@@ -7,7 +7,7 @@ import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
 import styles from './AvatarGroup.module.css';
 
-export function AvatarGroup({ onUserClick, logout }) {
+export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
 	const { currentUser } = userContext;
 	const { username, email, picture } = currentUser;
@@ -61,7 +61,9 @@ export function AvatarGroup({ onUserClick, logout }) {
 				{
 					label: 'Пароли и безопасность',
 					icon: 'pi pi-lock',
-					command: () => {},
+					command: () => {
+						onPasswordClick(true);
+					},
 				},
 				{
 					label: 'Выход',
@@ -107,5 +109,6 @@ export function AvatarGroup({ onUserClick, logout }) {
 
 AvatarGroup.propTypes = {
 	onUserClick: PropTypes.func.isRequired,
+	onPasswordClick: PropTypes.func.isRequired,
 	logout: PropTypes.func.isRequired,
 };
