@@ -191,7 +191,7 @@ class WriteEventSerializer(serializers.ModelSerializer):
         return data
 
 
-class ShareTheCalendarSerializer(serializers.ModelSerializer):
+class ShareCalendarSerializer(serializers.ModelSerializer):
     """
     Сериализация данных шеринга календаря.
     Owner - владелец календаря.
