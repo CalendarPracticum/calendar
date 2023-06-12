@@ -135,7 +135,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
                              f'календарь {calendar}'},
                     status=status.HTTP_204_NO_CONTENT)
 
-            if calendar_user.exists():
+            elif calendar_user.exists():
                 calendar_user.delete()
                 return Response(
                     {'info': f'Вам больше не доступен календарь {calendar} '
