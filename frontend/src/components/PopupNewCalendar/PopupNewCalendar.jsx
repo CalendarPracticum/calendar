@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormNewCalendar } from '../FormNewCalendar/FormNewCalendar';
+import { FormNewCalendar } from '../Forms';
 
 export function PopupNewCalendar({ visible, setVisible, onCreateCalendar }) {
 	const handleOverlayClick = (evt) => {

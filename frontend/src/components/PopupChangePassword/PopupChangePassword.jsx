@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormChangePassword } from '../FormChangePassword/FormChangePassword';
+import { FormChangePassword } from '../Forms';
 
 export function PopupChangePassword({ visible, setVisible, onChangePassword }) {
 	const handleOverlayClick = (evt) => {

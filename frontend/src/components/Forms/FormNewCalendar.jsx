@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormNewCalendar.module.css';
+import styles from './Forms.module.css';
 import { Color } from '../../utils/common';
 
 export function FormNewCalendar({ setVisible, onCreateCalendar }) {

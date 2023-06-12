@@ -6,7 +6,7 @@ import { Password } from 'primereact/password';
 // import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormChangePassword.module.css';
+import styles from './Forms.module.css';
 
 // , message, isError
 export function FormChangePassword({ setVisible, onChangePassword }) {

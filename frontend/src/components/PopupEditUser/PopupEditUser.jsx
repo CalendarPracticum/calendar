@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormEditUser } from '../FormEditUser/FormEditUser';
+import { FormEditUser } from '../Forms';
 
 export function PopupEditUser({
 	visible,
