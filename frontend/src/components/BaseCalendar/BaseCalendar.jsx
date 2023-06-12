@@ -6,70 +6,72 @@ import { culture, messages, noop } from '../../utils/constants';
 import { CurrentUserContext, LocalizationContext } from '../../context';
 
 export function BaseCalendar({ onEventDoubleClick }) {
-	const localizer = useContext(LocalizationContext);
-	const { format } = localizer;
+  const localizer = useContext(LocalizationContext);
+  const { format } = localizer;
 
-	const userContext = useContext(CurrentUserContext);
-	const { allUserEvents, setEditableEvent } = userContext;
+  const userContext = useContext(CurrentUserContext);
+  const { allUserEvents, chosenCalendars, setEditableEvent } = userContext;
 
-	const { defaultDate, formats } = {
-		defaultDate: new Date(),
-		formats: {
-			weekdayFormat: (date) => format(date, 'eeeeee', culture),
-		},
-	};
+  const displayedEvents = allUserEvents.filter(e => chosenCalendars.includes(`${e.calendar.id}`));
 
-	// окрашивание событий
-	const eventPropGetter = useCallback(
-		(event) => ({ style: { backgroundColor: event.calendar.color } }),
-		[]
-	);
+  const { defaultDate, formats } = {
+    defaultDate: new Date(),
+    formats: {
+      weekdayFormat: (date) => format(date, 'eeeeee', culture),
+    },
+  };
 
-	const handleDoubleClick = (event) => {
-		onEventDoubleClick(true);
-		setEditableEvent(event);
-		console.log('handleDoubleClick', event);
-	};
+  // окрашивание событий
+  const eventPropGetter = useCallback(
+    (event) => ({ style: { backgroundColor: event.calendar.color } }),
+    []
+  );
 
-	return (
-		<Calendar
-			dayPropGetter={(date) => {
-				const dayOfWeek = date.getDay();
-				const dateOfMonth = date.getMonth();
-				const nowMonth = new Date().getMonth();
-				const nowDay = new Date().getDate();
-				const dayOfMonth = date.getDate();
+  const handleDoubleClick = (event) => {
+    onEventDoubleClick(true);
+    setEditableEvent(event);
+    console.log('handleDoubleClick', event);
+  };
 
-				if (dateOfMonth !== nowMonth) {
-					return { className: styles.otherMonth };
-				}
-				if (nowDay === dayOfMonth) {
-					return { className: styles.today };
-				}
+  return (
+    <Calendar
+      dayPropGetter={(date) => {
+        const dayOfWeek = date.getDay();
+        const dateOfMonth = date.getMonth();
+        const nowMonth = new Date().getMonth();
+        const nowDay = new Date().getDate();
+        const dayOfMonth = date.getDate();
 
-				return dayOfWeek === 0 || dayOfWeek === 6
-					? { className: styles.holiday }
-					: {};
-			}}
-			defaultDate={defaultDate}
-			localizer={localizer}
-			startAccessor="start"
-			endAccessor="end"
-			culture={culture}
-			formats={formats}
-			events={allUserEvents}
-			className={styles.calendar}
-			messages={messages}
-			eventPropGetter={eventPropGetter}
-			onDoubleClickEvent={handleDoubleClick}
-		/>
-	);
+        if (dateOfMonth !== nowMonth) {
+          return { className: styles.otherMonth };
+        }
+        if (nowDay === dayOfMonth) {
+          return { className: styles.today };
+        }
+
+        return dayOfWeek === 0 || dayOfWeek === 6
+          ? { className: styles.holiday }
+          : {};
+      }}
+      defaultDate={defaultDate}
+      localizer={localizer}
+      startAccessor="start"
+      endAccessor="end"
+      culture={culture}
+      formats={formats}
+      events={displayedEvents}
+      className={styles.calendar}
+      messages={messages}
+      eventPropGetter={eventPropGetter}
+      onDoubleClickEvent={handleDoubleClick}
+    />
+  );
 }
 
 BaseCalendar.propTypes = {
-	onEventDoubleClick: PropTypes.func,
+  onEventDoubleClick: PropTypes.func,
 };
 
 BaseCalendar.defaultProps = {
-	onEventDoubleClick: noop,
+  onEventDoubleClick: noop,
 };
