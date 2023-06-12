@@ -84,7 +84,10 @@ class CalendarViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_superuser:
             return Calendar.objects.all()
-        return Calendar.objects.filter(owner=self.request.user)
+        return Calendar.objects.filter(
+            Q(owner=self.request.user) |
+            Q(share_calendars__user=self.request.user)
+        )
 
     def get_serializer_class(self):
         if self.action == 'share':
