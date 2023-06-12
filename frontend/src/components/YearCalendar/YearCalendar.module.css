@@ -3,6 +3,7 @@
 	flex-direction: column;
 	background-color: var(--surface-e);
 	margin: 0;
+	padding-top: 1.3rem;
 	text-align: left;
 	max-width: 1295px;
 	font-family: 'Roboto';
