@@ -10,6 +10,7 @@ export function Main({
 	onNewEventClick,
 	onNewCalendarClick,
 	onEditCalendarClick,
+	onEventDoubleClick,
 }) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn } = userContext;
@@ -20,14 +21,14 @@ export function Main({
 		if (visibleProdCalendar && loggedIn) {
 			return (
 				<>
-					<BaseCalendar />
+					<BaseCalendar onEventDoubleClick={onEventDoubleClick} />
 					<YearCalendar />
 				</>
 			);
 		}
 
 		if (!visibleProdCalendar && loggedIn) {
-			return <BaseCalendar />;
+			return <BaseCalendar onEventDoubleClick={onEventDoubleClick} />;
 		}
 
 		if (visibleProdCalendar && !loggedIn) {
@@ -55,4 +56,5 @@ Main.propTypes = {
 	onEditCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,
+	onEventDoubleClick: PropTypes.func.isRequired,
 };

@@ -28,6 +28,7 @@ import {
 	PopupEditUser,
 	PopupEditCalendar,
 	PopupChangePassword,
+	PopupEditEvent,
 } from '../Popups';
 
 const locales = {
@@ -51,6 +52,7 @@ function App() {
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
+	const [visiblePopupEditEvent, setVisiblePopupEditEvent] = useState(false);
 	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
@@ -61,6 +63,7 @@ function App() {
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chooseCalendar, setChooseCalendar] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
+	const [editableEvent, setEditableEvent] = useState({});
 
 	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
 	const today = new Date();
@@ -170,6 +173,8 @@ function App() {
 			setChooseCalendar,
 			editableCalendar,
 			setEditableCalendar,
+			editableEvent,
+			setEditableEvent,
 		}),
 		[
 			currentUser,
@@ -178,6 +183,7 @@ function App() {
 			allUserEvents,
 			chooseCalendar,
 			editableCalendar,
+			editableEvent,
 		]
 	);
 
@@ -208,6 +214,42 @@ function App() {
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	// TODO: зачем мы расширяем объект?
+	const handleEditEvent = (formData) => {
+		eventApi
+			.partChangeEvent(formData)
+			.then((updatedEvent) => {
+				updatedEvent.title = updatedEvent.name;
+				updatedEvent.start = updatedEvent.datetime_start;
+				updatedEvent.end = updatedEvent.datetime_finish;
+				updatedEvent.allDay = updatedEvent.all_day;
+				setAllUserEvents((prevState) =>
+					prevState.map((event) =>
+						event.id === updatedEvent.id ? updatedEvent : event
+					)
+				);
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const handleDeleteEvent = (idEvent) => {
+		eventApi
+			.deleteEvent(idEvent)
+			.then((res) => {
+				if (res.status === 204) {
+					showMessage('Событие удалено', Status.SUCCESS);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showMessage(err.message, Status.ERROR);
 			});
 	};
 
@@ -355,6 +397,7 @@ function App() {
 									/>
 									<Main
 										onNewEventClick={setVisiblePopupNewEvent}
+										onEventDoubleClick={setVisiblePopupEditEvent}
 										onNewCalendarClick={setVisiblePopupNewCalendar}
 										onEditCalendarClick={setVisiblePopupEditCalendar}
 									/>
@@ -403,6 +446,13 @@ function App() {
 						visible={visiblePopupChangePassword}
 						setVisible={setVisiblePopupChangePassword}
 						onChangePassword={handleChangePassword}
+					/>
+
+					<PopupEditEvent
+						visible={visiblePopupEditEvent}
+						setVisible={setVisiblePopupEditEvent}
+						onEditEvent={handleEditEvent}
+						onDeleteEvent={handleDeleteEvent}
 					/>
 
 					<Toast ref={toast} />

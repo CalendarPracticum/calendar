@@ -1,15 +1,16 @@
 import { React, useCallback, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
-import { culture, messages } from '../../utils/constants';
+import { culture, messages, noop } from '../../utils/constants';
 import { CurrentUserContext, LocalizationContext } from '../../context';
 
-export function BaseCalendar() {
+export function BaseCalendar({ onEventDoubleClick }) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
 	const userContext = useContext(CurrentUserContext);
-	const { allUserEvents } = userContext;
+	const { allUserEvents, setEditableEvent } = userContext;
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
@@ -23,6 +24,12 @@ export function BaseCalendar() {
 		(event) => ({ style: { backgroundColor: event.calendar.color } }),
 		[]
 	);
+
+	const handleDoubleClick = (event) => {
+		onEventDoubleClick(true);
+		setEditableEvent(event);
+		console.log('handleDoubleClick', event);
+	};
 
 	return (
 		<Calendar
@@ -54,6 +61,15 @@ export function BaseCalendar() {
 			className={styles.calendar}
 			messages={messages}
 			eventPropGetter={eventPropGetter}
+			onDoubleClickEvent={handleDoubleClick}
 		/>
 	);
 }
+
+BaseCalendar.propTypes = {
+	onEventDoubleClick: PropTypes.func,
+};
+
+BaseCalendar.defaultProps = {
+	onEventDoubleClick: noop,
+};
