@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormLogin } from '../FormLogin/FormLogin';
-import { FormRegistration } from '../FormRegistration/FormRegistration';
+import { FormLogin } from '../Forms/FormLogin';
+import { FormRegistration } from '../Forms';
 
 export function PopupLogin({
 	visible,

@@ -15,18 +15,20 @@ import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
 import { CurrentUserContext, LocalizationContext } from '../../context';
-import { PopupLogin } from '../PopupLogin/PopupLogin';
-import { PopupNewEvent } from '../PopupNewEvent/PopupNewEvent';
 import ruPrime from '../../utils/ruPrime.json';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
-import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
-import { PopupEditCalendar } from '../PopupEditCalendar/PopupEditCalendar';
-import { PopupChangePassword } from '../PopupChangePassword/PopupChangePassword';
 import { Color, Status } from '../../utils/common';
+import {
+	PopupLogin,
+	PopupNewEvent,
+	PopupNewCalendar,
+	PopupEditUser,
+	PopupEditCalendar,
+	PopupChangePassword,
+} from '../Popups';
 
 const locales = {
 	ru: ruLocale,

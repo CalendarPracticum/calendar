@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormNewCalendar } from '../FormNewCalendar/FormNewCalendar';
+import { FormEditCalendar } from '../Forms';
 
-export function PopupNewCalendar({ visible, setVisible, onCreateCalendar }) {
+export function PopupEditCalendar({
+	visible,
+	setVisible,
+	onEditCalendar,
+	onDeleteCalendar,
+}) {
 	const handleOverlayClick = (evt) => {
 		if (evt.target === evt.currentTarget) {
 			setVisible(false);
@@ -17,16 +22,18 @@ export function PopupNewCalendar({ visible, setVisible, onCreateCalendar }) {
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormNewCalendar
+			<FormEditCalendar
 				setVisible={setVisible}
-				onCreateCalendar={onCreateCalendar}
+				onEditCalendar={onEditCalendar}
+				onDeleteCalendar={onDeleteCalendar}
 			/>
 		</Dialog>
 	);
 }
 
-PopupNewCalendar.propTypes = {
+PopupEditCalendar.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
-	onCreateCalendar: PropTypes.func.isRequired,
+	onEditCalendar: PropTypes.func.isRequired,
+	onDeleteCalendar: PropTypes.func.isRequired,
 };

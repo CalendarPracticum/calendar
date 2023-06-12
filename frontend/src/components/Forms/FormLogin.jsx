@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { Dialog } from 'primereact/dialog';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormLogin.module.css';
+import styles from './Forms.module.css';
 
 export function FormLogin({ showFormLogin, handleLogin, message, isError }) {
 	const [showMessage, setShowMessage] = useState(false);

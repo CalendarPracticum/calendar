@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormNewEvent } from '../FormNewEvent/FormNewEvent';
+import { FormNewEvent } from '../Forms';
 
 export function PopupNewEvent({ visible, setVisible, onCreateEvent }) {
 	// const handleOverlayClick = (evt) => {

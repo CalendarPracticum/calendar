@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormChangePassword } from '../FormChangePassword/FormChangePassword';
+import { FormNewCalendar } from '../Forms';
 
-export function PopupChangePassword({ visible, setVisible, onChangePassword }) {
+export function PopupNewCalendar({ visible, setVisible, onCreateCalendar }) {
 	const handleOverlayClick = (evt) => {
 		if (evt.target === evt.currentTarget) {
 			setVisible(false);
@@ -17,16 +17,16 @@ export function PopupChangePassword({ visible, setVisible, onChangePassword }) {
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormChangePassword
+			<FormNewCalendar
 				setVisible={setVisible}
-				onChangePassword={onChangePassword}
+				onCreateCalendar={onCreateCalendar}
 			/>
 		</Dialog>
 	);
 }
 
-PopupChangePassword.propTypes = {
+PopupNewCalendar.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
-	onChangePassword: PropTypes.func.isRequired,
+	onCreateCalendar: PropTypes.func.isRequired,
 };

@@ -11,7 +11,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormNewEvent.module.css';
+import styles from './Forms.module.css';
 import { CurrentUserContext } from '../../context';
 
 export function FormNewEvent({ setVisible, onCreateEvent }) {
