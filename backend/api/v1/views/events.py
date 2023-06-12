@@ -21,7 +21,7 @@ from api.permissions import (
 from api.v1.serializers.events import (
     CalendarSerializer,
     ReadEventSerializer,
-    ShareTheCalendarSerializer,
+    ShareCalendarSerializer,
     WriteEventSerializer,
 )
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
@@ -91,7 +91,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'share':
-            return ShareTheCalendarSerializer
+            return ShareCalendarSerializer
         return CalendarSerializer
 
     @extend_schema(
