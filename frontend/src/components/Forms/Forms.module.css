@@ -65,6 +65,10 @@
 }
 
 /* FormNewEvent */
+.calendar {
+	max-width: 260px;
+}
+
 .item {
 	display: flex;
 	flex-wrap: nowrap;
