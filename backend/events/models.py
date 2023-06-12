@@ -137,7 +137,7 @@ class ShareCalendar(models.Model):
         Calendar,
         on_delete=models.CASCADE,
         verbose_name='Календарь',
-        related_name='share_the_calendars',
+        related_name='share_calendars',
     )
 
     class Meta:

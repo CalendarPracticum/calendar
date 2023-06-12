@@ -36,29 +36,46 @@ from events.models import Calendar, Event, ShareCalendar
     ),
     create=extend_schema(
         summary='Создание нового календаря',
-        description=' '
+        description=' ',
     ),
     retrieve=extend_schema(
         summary='Детальная информация о календаре',
-        description=' '
+        description=' ',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор календаря',
+            )
+        ],
     ),
     update=extend_schema(
         summary='Полное обновление календаря',
-        description=' '
+        description=' ',
     ),
     partial_update=extend_schema(
         summary='Частичное обновление информации о календаре',
-        description=' '
+        description=' ',
     ),
     destroy=extend_schema(
         summary='Удаление календаря',
-        description=' '
+        description=' ',
     ),
     share=extend_schema(
         tags=['Шеринг календаря'],
-        summary='Шеринг календаря',
-        description=' '
     ),
+)
+@extend_schema(
+    methods=['PUT', 'PATCH', 'DELETE'],
+    parameters=[
+             OpenApiParameter(
+                 name='id',
+                 type=int,
+                 location=OpenApiParameter.PATH,
+                 description='Идентификатор календаря',
+             )
+         ],
 )
 class CalendarViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrCalendarOwnerOrReadOnly,)
@@ -74,6 +91,24 @@ class CalendarViewSet(viewsets.ModelViewSet):
             return ShareTheCalendarSerializer
         return CalendarSerializer
 
+    @extend_schema(
+        methods=['POST'],
+        summary='Поделиться календарем с пользователем.',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор календаря',
+            )
+        ],
+    )
+    @extend_schema(
+        methods=['DELETE'],
+        summary='Удалить доступ к календарю, которым поделились.',
+        description='⚠️ ️**В теле запроса обязательно нужно передать параметр '
+                    '{"user": "user@example.com"}️** ⚠️',
+    )
     @action(methods=['post', 'delete'], detail=True)
     def share(self, request, pk):
         calendar = get_object_or_404(Calendar, pk=pk)
@@ -87,12 +122,28 @@ class CalendarViewSet(viewsets.ModelViewSet):
 
         if request.method == 'DELETE':
             user = request.data.get('user')
-            share = ShareCalendar.objects.filter(user=user, calendar=calendar)
-            if share.exists():
-                share.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            calendar_owner = ShareCalendar.objects.filter(
+                owner=request.user, user__email=user, calendar=calendar)
+            calendar_user = ShareCalendar.objects.filter(
+                owner__email=user, user=request.user, calendar=calendar)
+
+            if calendar_owner.exists():
+                calendar_owner.delete()
+                return Response(
+                    {'info': f'Пользователь {user}, больше не видит ваш '
+                             f'календарь {calendar}'},
+                    status=status.HTTP_204_NO_CONTENT)
+
+            if calendar_user.exists():
+                calendar_user.delete()
+                return Response(
+                    {'info': f'Вам больше не доступен календарь {calendar} '
+                             f'пользователя {user} '},
+                    status=status.HTTP_204_NO_CONTENT)
+
             return Response(
-                {'error': 'Такой подписки не существует'},
+                {'error': 'У вас нет доступа к этому календарю.'},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -203,6 +254,8 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
             global_events = Q(calendar__owner__is_superuser=True,
                               calendar__public=True)
             if self.request.user.is_authenticated:
+                shared_calendar = ShareCalendar.objects.filter(
+                    user=self.request.user)
                 return qs.filter(
                     Q(calendar__owner=self.request.user) | global_events)
             return qs.filter(global_events)

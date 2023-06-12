@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from events.models import Calendar, Event, ShareCalendar
+from users.models import User
 
 
 class CalendarSerializer(serializers.ModelSerializer):
@@ -182,6 +183,7 @@ class ShareTheCalendarSerializer(serializers.ModelSerializer):
     3. calendar является календарем созданным owner'ом
     """
     owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='email')
     calendar = serializers.SlugRelatedField(read_only=True, slug_field='name')
 
     class Meta:
