@@ -254,8 +254,6 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
             global_events = Q(calendar__owner__is_superuser=True,
                               calendar__public=True)
             if self.request.user.is_authenticated:
-                shared_calendar = ShareCalendar.objects.filter(
-                    user=self.request.user)
                 return qs.filter(
                     Q(calendar__owner=self.request.user) | global_events)
             return qs.filter(global_events)
