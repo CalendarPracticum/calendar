@@ -9,7 +9,9 @@ export function BaseCalendar() {
 	const { format } = localizer;
 
 	const userContext = useContext(CurrentUserContext);
-	const { allUserEvents } = userContext;
+	const { allUserEvents, chosenCalendars } = userContext;
+
+  const displayedEvents = allUserEvents.filter(e => chosenCalendars.includes(`${e.calendar.id}`));
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
@@ -50,7 +52,7 @@ export function BaseCalendar() {
 			endAccessor="end"
 			culture={culture}
 			formats={formats}
-			events={allUserEvents}
+			events={displayedEvents}
 			className={styles.calendar}
 			messages={messages}
 			eventPropGetter={eventPropGetter}

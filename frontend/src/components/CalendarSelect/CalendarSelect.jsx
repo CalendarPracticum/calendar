@@ -5,21 +5,21 @@ import { CurrentUserContext } from '../../context';
 
 export function CalendarSelect({ onEditCalendarClick }) {
 	const userContext = useContext(CurrentUserContext);
-	const {
-		allUserCalendars,
-		chooseCalendar,
-		setChooseCalendar,
-		setEditableCalendar,
-	} = userContext;
+	const { allUserCalendars, setChosenCalendars, setEditableCalendar } =
+		userContext;
 
 	const [isActive, setIsActive] = useState(true);
+
 	const handleCheckbox = (e) => {
-		const input = e.target;
-		const value = input.checked;
-		setChooseCalendar({
-			...chooseCalendar,
-			[input.name]: value === true ? input.name : '',
-		});
+		const calendarId = e.target.id;
+		const isChecked = e.target.checked;
+		if (isChecked) {
+			setChosenCalendars((prevState) => [...prevState, calendarId]);
+		} else {
+			setChosenCalendars((prevState) =>
+				prevState.filter((id) => id !== calendarId)
+			);
+		}
 	};
 
 	return (
