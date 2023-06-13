@@ -16,16 +16,21 @@ import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
 import styles from './App.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
-import { PopupLogin } from '../PopupLogin/PopupLogin';
-import { PopupNewEvent } from '../PopupNewEvent/PopupNewEvent';
+import { CurrentUserContext, LocalizationContext } from '../../context';
 import ruPrime from '../../utils/ruPrime.json';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
-import { PopupEditUser } from '../PopupEditUser/PopupEditUser';
+import { Color, Status } from '../../utils/common';
+import {
+	PopupLogin,
+	PopupNewEvent,
+	PopupNewCalendar,
+	PopupEditUser,
+	PopupEditCalendar,
+	PopupChangePassword,
+} from '../Popups';
 
 const locales = {
 	ru: ruLocale,
@@ -48,20 +53,29 @@ function App() {
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
+	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
+		useState(false);
+	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
+		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
-	const start = '2023-01-01';
-	const finish = '2024-01-01';
+	const [chosenCalendars, setChosenCalendars] = useState([]);
+	const [editableCalendar, setEditableCalendar] = useState({});
 
-	// TODO: локальное решение, найти общее решение для вывода ошибок
+	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
+	const today = new Date();
+	const start = [today.getFullYear(), '-01-01'].join('');
+	const finish = [today.getFullYear() + 1, '-01-01'].join('');
+
 	const toast = useRef(null);
-	const showError = (message) => {
+
+	const showToast = (message, status) => {
 		toast.current.show({
-			severity: 'error',
-			summary: 'Error',
+			severity: status,
+			summary: status,
 			detail: message,
 			life: 3000,
 		});
@@ -96,13 +110,16 @@ function App() {
 					console.log('ОШИБКА: ', err.message);
 				});
 		}
+	}, [loggedIn]);
+
+	useEffect(() => {
+		const calendarsId = allUserCalendars.map((c) => c.id);
 
 		eventApi
-			// жутчаий хардкод на получение личного календря т.к. пока возможности переключения между ними нету
 			.getAllUserEvents({
 				start,
 				finish,
-				calendar: allUserCalendars.length !== 0 ? allUserCalendars[0].id : '',
+				calendar: allUserCalendars.length !== 0 ? calendarsId : '',
 			})
 			.then((result) => {
 				setAllUserEvents(
@@ -121,7 +138,7 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-	}, [loggedIn, allUserCalendars]);
+	}, [allUserCalendars, start, finish]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
@@ -150,8 +167,19 @@ function App() {
 			setAllUserCalendars,
 			allUserEvents,
 			setAllUserEvents,
+			chosenCalendars,
+			setChosenCalendars,
+			editableCalendar,
+			setEditableCalendar,
 		}),
-		[currentUser, loggedIn, allUserCalendars, allUserEvents]
+		[
+			currentUser,
+			loggedIn,
+			allUserCalendars,
+			allUserEvents,
+			chosenCalendars,
+			editableCalendar,
+		]
 	);
 
 	// TODO: custom hook useOverlayClick?
@@ -193,7 +221,7 @@ function App() {
 				localStorage.setItem('jwtAccess', data.access);
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
-				handleGetAllCalendars();
+				// handleGetAllCalendars();
 				setVisiblePopupLogin(false);
         setDialogMessage('Вы успешно вошли!');
 				setTimeout(() => {
@@ -213,9 +241,9 @@ function App() {
 				auth.authorize(email, password).then((data) => {
 					localStorage.setItem('jwtAccess', data.access);
 					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
+					handleCreateCalendar({ name: 'Личное', color: Color.LIGHT_GREEN });
 					setLoggedIn(true);
-					handleGetAllCalendars();
+					// handleGetAllCalendars();
           setVisiblePopupLogin(false);
           setDialogMessage('Регистрация прошла успешно!')
 					setTimeout(() => {
@@ -247,6 +275,21 @@ function App() {
 			});
 	};
 
+	const handleChangePassword = (data) => {
+		auth
+			.changePassword(data)
+			.then((res) => {
+				if (res.status === 204) {
+					showMessage('Пароль изменён', Status.SUCCESS);
+				} else {
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showMessage(err.message, Status.ERROR);
+			});
+	};
+
 	const logout = () => {
 		localStorage.clear();
 		setLoggedIn(false);
@@ -262,13 +305,43 @@ function App() {
 				if (res.status === 204) {
 					logout();
 				} else {
-					// console.log({ res });
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-        // TODO: переделать под попап
-				showError(err.message);
+				showToast(err.message, Status.ERROR);
+			});
+	};
+
+	const handleEditCalendar = (calendar) => {
+		calendarApi
+			.partChangeCalendar(calendar)
+			.then((updatedCalendar) => {
+				setAllUserCalendars((prevState) =>
+					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
+				);
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const handleDeleteCalendar = (idCalendar) => {
+		calendarApi
+			.deleteCalendar(idCalendar)
+			.then((res) => {
+				if (res.status === 204) {
+					showMessage('Календарь удалён', Status.SUCCESS);
+					setAllUserCalendars((prevState) =>
+						prevState.filter((c) => c.id !== idCalendar)
+					);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showMessage(err.message, Status.ERROR);
 			});
 	};
 
@@ -283,7 +356,6 @@ function App() {
 		</div>
 	);
 
-  // внести доработки в текст, чтобы всё зависело от типа ошибки и т.д.
   const handleDialog = () => (
     <div className="flex justify-content-center flex-column pt-6 px-3">
       <i
@@ -295,54 +367,32 @@ function App() {
     </div>
   );
 
-		/* if (isDialogError) {
-			return (
-				<div className="flex justify-content-center flex-column pt-6 px-3">
-					<i
-						className="pi pi-times-circle"
-						style={{ fontSize: '5rem', color: 'var(--red-500)' }}
-					/>
-					<h4>Произошла ошибка!</h4>
-					<p style={{ lineHeight: 1.5 }}>{dialogMessage}</p>
-				</div>
-			);
-		}
-
-		return (
-			<div className="flex justify-content-center flex-column pt-6 px-3">
-				<i
-					className="pi pi-check-circle"
-					style={{ fontSize: '5rem', color: 'var(--green-500)' }}
-				/>
-				<h4>И снова здравствуйте!</h4>
-			</div>
-		); */
-
 	return (
-		<CurrentUserContext.Provider value={user}>
-			<div className={styles.app}>
-				<Routes>
-					<Route
-						exact
-						path="/"
-						element={
-							<>
-								<Header
-									onLogin={setVisiblePopupLogin}
-									onUserClick={setVisiblePopupEditUser}
-									logout={logout}
-								/>
-								<Main
-									localizer={localizer}
-									onNewEventClick={setVisiblePopupNewEvent}
-									onNewCalendarClick={setVisiblePopupNewCalendar}
-									events={allUserEvents}
-								/>
-							</>
-						}
-					/>
-					<Route path="*" element={<NotFound />} />
-				</Routes>
+		<LocalizationContext.Provider value={localizer}>
+			<CurrentUserContext.Provider value={user}>
+				<div className={styles.app}>
+					<Routes>
+						<Route
+							exact
+							path="/"
+							element={
+								<>
+									<Header
+										onLogin={setVisiblePopupLogin}
+										onUserClick={setVisiblePopupEditUser}
+										onPasswordClick={setVisiblePopupChangePassword}
+										logout={logout}
+									/>
+									<Main
+										onNewEventClick={setVisiblePopupNewEvent}
+										onNewCalendarClick={setVisiblePopupNewCalendar}
+										onEditCalendarClick={setVisiblePopupEditCalendar}
+									/>
+								</>
+							}
+						/>
+						<Route path="*" element={<NotFound />} />
+					</Routes>
 
 				<PopupLogin
 					visible={visiblePopupLogin}
@@ -358,7 +408,6 @@ function App() {
 					visible={visiblePopupNewEvent}
 					setVisible={setVisiblePopupNewEvent}
 					onCreateEvent={handleCreateEvent}
-					allUserCalendars={allUserCalendars}
 				/>
 
 				<PopupNewCalendar
@@ -372,6 +421,19 @@ function App() {
 					setVisible={setVisiblePopupEditUser}
 					onUpdateUser={handleUpdateUser}
 					onDeleteUser={handleDeleteUser}
+				/>
+
+				<PopupEditCalendar
+					visible={visiblePopupEditCalendar}
+					setVisible={setVisiblePopupEditCalendar}
+					onEditCalendar={handleEditCalendar}
+					onDeleteCalendar={handleDeleteCalendar}
+				/>
+
+				<PopupChangePassword
+					visible={visiblePopupChangePassword}
+					setVisible={setVisiblePopupChangePassword}
+					onChangePassword={handleChangePassword}
 				/>
 
 				<Toast ref={toast} />
@@ -389,6 +451,7 @@ function App() {
         </Dialog>
 			</div>
 		</CurrentUserContext.Provider>
+		</LocalizationContext.Provider>
 	);
 }
 

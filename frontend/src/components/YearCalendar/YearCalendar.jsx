@@ -1,22 +1,21 @@
-import { useMemo } from 'react';
+import { useContext } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './YearCalendar.module.css';
 import { culture, months, info, noop } from '../../utils/constants';
+import { LocalizationContext } from '../../context';
 
-// eslint-disable-next-line react/prop-types
-export function YearCalendar({ localizer }) {
+export function YearCalendar() {
+	const localizer = useContext(LocalizationContext);
+	const { format } = localizer;
+
 	// задаем формат шапки месяца
-	const { defaultDate, formats } = useMemo(
-		() => ({
-			defaultDate: new Date(),
-			formats: {
-				// eslint-disable-next-line react/prop-types
-				weekdayFormat: (date) => localizer.format(date, 'eeeeee', culture),
-			},
-		}),
-		[localizer]
-	);
+	const { defaultDate, formats } = {
+		defaultDate: new Date(),
+		formats: {
+			weekdayFormat: (date) => format(date, 'eeeeee', culture),
+		},
+	};
 
 	return (
 		<div className={styles.year}>

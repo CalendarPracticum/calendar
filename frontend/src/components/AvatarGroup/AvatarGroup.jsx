@@ -4,10 +4,10 @@ import { Menu } from 'primereact/menu';
 import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
 import { classNames as cn } from 'primereact/utils';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 import styles from './AvatarGroup.module.css';
 
-export function AvatarGroup({ onUserClick, logout }) {
+export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
 	const { currentUser } = userContext;
 	const { username, email, picture } = currentUser;
@@ -33,12 +33,13 @@ export function AvatarGroup({ onUserClick, logout }) {
 					<Avatar
 						icon={picture ? '' : 'pi pi-user'}
 						image={picture || ''}
-						className="mr-2"
+						// className="mr-2"
+						className={cn(styles.menuAvatar, 'mr-2')}
 						shape="circle"
 					/>
-					<div className="flex flex-column align">
-						<span className="font-bold">{username}</span>
-						<span className="text-sm">{email}</span>
+					<div className={cn(styles.menuContainer, 'flex flex-column align')}>
+						<span className={cn(styles.menuName, 'font-bold')}>{username}</span>
+						<span className={cn(styles.menuEmail, 'text-sm')}>{email}</span>
 					</div>
 				</button>
 			),
@@ -60,7 +61,9 @@ export function AvatarGroup({ onUserClick, logout }) {
 				{
 					label: 'Пароли и безопасность',
 					icon: 'pi pi-lock',
-					command: () => {},
+					command: () => {
+						onPasswordClick(true);
+					},
 				},
 				{
 					label: 'Выход',
@@ -106,5 +109,6 @@ export function AvatarGroup({ onUserClick, logout }) {
 
 AvatarGroup.propTypes = {
 	onUserClick: PropTypes.func.isRequired,
+	onPasswordClick: PropTypes.func.isRequired,
 	logout: PropTypes.func.isRequired,
 };

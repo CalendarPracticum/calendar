@@ -10,3 +10,10 @@ export const Color = {
 	DARK_GREEN: '#225662',
 	GREY: '#7F9498',
 };
+
+export const Status = {
+	IDLE: 'idle',
+	LOADING: 'loading',
+	SUCCESS: 'success',
+	ERROR: 'error',
+};

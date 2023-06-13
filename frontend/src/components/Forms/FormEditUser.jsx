@@ -7,8 +7,8 @@ import { Checkbox } from 'primereact/checkbox';
 import { Divider } from 'primereact/divider';
 import { Password } from 'primereact/password';
 import { classNames as cn } from 'primereact/utils';
-import CurrentUserContext from '../../context/CurrentUserContext';
-import styles from './FormEditUser.module.css';
+import { CurrentUserContext } from '../../context';
+import styles from './Forms.module.css';
 
 export function FormEditUser({ setVisible, onUpdateUser, onDeleteUser }) {
 	const userContext = useContext(CurrentUserContext);

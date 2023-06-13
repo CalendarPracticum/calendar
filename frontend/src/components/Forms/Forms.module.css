@@ -1,0 +1,94 @@
+/* ОБЩИЕ СТИЛИ */
+.card {
+	width: 20rem;
+}
+
+.form {
+	margin: 2.75rem 0;
+}
+
+.field {
+	margin-bottom: 2rem;
+}
+
+.paddings {
+	padding: 0 1.25rem 2.25rem;
+}
+
+/* FormChangePassword */
+
+/* FormNewCalendar && FormEditCalendar */
+.colorTable {
+	padding: 1rem;
+	border-radius: 0.3rem;
+	border-color: var(--surface-border);
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	column-gap: 1.5rem;
+}
+
+.color {
+	width: 100%;
+	height: 1.5rem;
+}
+
+/* FormEditCalendar */
+.deleteWrapper {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
+}
+
+/* FormEditUser */
+.dangerZone {
+	margin-top: 2.75rem;
+}
+
+.dangerBtn,
+.dangerInput,
+.dangerInput input {
+	width: 100%;
+}
+
+/* FormLogin && FormRegistration*/
+.linkRegistry {
+	color: var(--primary-500);
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	transition: all 0.3s linear;
+}
+
+.linkRegistry:hover {
+	box-shadow: 0 0.1rem 0 var(--primary-500);
+}
+
+/* FormNewEvent */
+.calendar {
+	max-width: 260px;
+}
+
+.item {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	max-width: 268px;
+}
+
+.optionText {
+	margin: 0;
+	white-space: break-spaces;
+
+	/* overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; */
+}
+
+.marker {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	margin-right: 8px;
+	flex-shrink: 0;
+}
