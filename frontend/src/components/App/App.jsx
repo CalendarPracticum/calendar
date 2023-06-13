@@ -59,7 +59,7 @@ function App() {
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
-	const [chooseCalendar, setChooseCalendar] = useState([]);
+	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
 
 	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
@@ -107,18 +107,14 @@ function App() {
 					console.log('ОШИБКА: ', err.message);
 				});
 		}
+	}, [loggedIn]);
 
-		eventApi
-			// жутчаий хардкод на получение личного календря т.к. пока возможности переключения между ними нету
+  useEffect(()=> {
+      eventApi
 			.getAllUserEvents({
 				start,
 				finish,
-				calendar:
-					allUserCalendars.length !== 0
-						? Object.values(chooseCalendar)
-								.filter((c) => c !== '')
-								.join()
-						: '',
+				calendar: allUserCalendars.length !== 0 ? allUserCalendars : '',
 			})
 			.then((result) => {
 				setAllUserEvents(
@@ -137,7 +133,7 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-	}, [loggedIn, allUserCalendars, chooseCalendar, start, finish]);
+  }, [allUserCalendars, start, finish]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
@@ -166,8 +162,8 @@ function App() {
 			setAllUserCalendars,
 			allUserEvents,
 			setAllUserEvents,
-			chooseCalendar,
-			setChooseCalendar,
+			chosenCalendars,
+			setChosenCalendars,
 			editableCalendar,
 			setEditableCalendar,
 		}),
@@ -176,7 +172,7 @@ function App() {
 			loggedIn,
 			allUserCalendars,
 			allUserEvents,
-			chooseCalendar,
+			chosenCalendars,
 			editableCalendar,
 		]
 	);
