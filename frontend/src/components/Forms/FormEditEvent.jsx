@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
+import parseISO from 'date-fns/parseISO';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -17,13 +18,14 @@ import { CurrentUserContext } from '../../context';
 export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 	const userContext = useContext(CurrentUserContext);
 	const { allUserCalendars, editableEvent } = userContext;
+	console.log({ editableEvent });
 
 	const circle = useRef(null);
 
 	const defaultValues = {
 		name: editableEvent.title,
-		timeStart: editableEvent.start,
-		timeFinish: editableEvent.end,
+		timeStart: parseISO(editableEvent.start),
+		timeFinish: parseISO(editableEvent.end),
 		allDay: editableEvent.allDay,
 		calendar: editableEvent.calendar,
 		description: editableEvent.description,
@@ -41,12 +43,12 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (formData) => {
-		const preparedData = {
+		const data = {
 			...formData,
 			id: editableEvent.id,
 		};
-		console.log({ preparedData });
-		onEditEvent(preparedData);
+		console.log({ data });
+		onEditEvent(data);
 		setVisible(false);
 
 		reset();
@@ -187,6 +189,7 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 											showTime
 											showIcon
 											showButtonBar
+											selectOtherMonths
 											onClearButtonClick={setAllDayFalse}
 											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
