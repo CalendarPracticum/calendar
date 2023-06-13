@@ -1,4 +1,5 @@
-import React, { useRef, useContext } from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { useRef, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
@@ -15,19 +16,26 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CurrentUserContext } from '../../context';
 
+const getCalendarByName = (name, calendars) =>
+	calendars.find((c) => c.name === name);
+
 export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 	const userContext = useContext(CurrentUserContext);
 	const { allUserCalendars, editableEvent } = userContext;
-	console.log({ editableEvent });
 
 	const circle = useRef(null);
+	let currentColor = editableEvent?.calendar?.color;
+
+	useEffect(() => {
+		circle.current.style.color = currentColor;
+	}, [currentColor]);
 
 	const defaultValues = {
 		name: editableEvent.title,
 		timeStart: parseISO(editableEvent.start),
 		timeFinish: parseISO(editableEvent.end),
 		allDay: editableEvent.allDay,
-		calendar: editableEvent.calendar,
+		calendar: editableEvent.calendar.name,
 		description: editableEvent.description,
 	};
 
@@ -45,9 +53,10 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 	const onSubmit = (formData) => {
 		const data = {
 			...formData,
+			calendar: getCalendarByName(formData.calendar, allUserCalendars),
 			id: editableEvent.id,
 		};
-		console.log({ data });
+
 		onEditEvent(data);
 		setVisible(false);
 
@@ -63,8 +72,13 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 
 	const onDropdownChange = () => {
 		const values = getValues();
-		const color = values?.calendar?.color;
-		circle.current.style.color = color;
+		const currentCalendar = getCalendarByName(
+			values.calendar,
+			allUserCalendars
+		);
+
+		currentColor = currentCalendar?.color;
+		circle.current.style.color = currentColor;
 	};
 
 	const onAllDayClick = (e) => {
@@ -296,6 +310,7 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 											placeholder="Выберите календарь*"
 											options={allUserCalendars}
 											optionLabel="name"
+											optionValue="name"
 											filter
 											filterBy="name"
 											itemTemplate={optionItemTemplate}
