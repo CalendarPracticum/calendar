@@ -11,7 +11,7 @@ export function CalendarSelect({ onEditCalendarClick }) {
 	const [isActive, setIsActive] = useState(true);
 
 	const handleCheckbox = (e) => {
-		const calendarId = e.target.name;
+		const calendarId = e.target.id;
 		const isChecked = e.target.checked;
 		if (isChecked) {
 			setChosenCalendars((prevState) => [...prevState, calendarId]);

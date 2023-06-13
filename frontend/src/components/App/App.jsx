@@ -109,12 +109,14 @@ function App() {
 		}
 	}, [loggedIn]);
 
-  useEffect(()=> {
-      eventApi
+	useEffect(() => {
+		const calendarsId = allUserCalendars.map((c) => c.id);
+
+		eventApi
 			.getAllUserEvents({
 				start,
 				finish,
-				calendar: allUserCalendars.length !== 0 ? chosenCalendars : '',
+				calendar: allUserCalendars.length !== 0 ? calendarsId : '',
 			})
 			.then((result) => {
 				setAllUserEvents(
@@ -133,7 +135,7 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-  }, [allUserCalendars, start, finish, chosenCalendars]);
+	}, [allUserCalendars, start, finish]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
@@ -214,7 +216,7 @@ function App() {
 				localStorage.setItem('jwtAccess', data.access);
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
-				handleGetAllCalendars();
+				// handleGetAllCalendars();
 				setTimeout(() => {
 					setVisiblePopupLogin(false);
 				}, 1000);
@@ -234,7 +236,7 @@ function App() {
 					localStorage.setItem('jwtRefresh', data.refresh);
 					handleCreateCalendar({ name: 'Личное', color: Color.LIGHT_GREEN });
 					setLoggedIn(true);
-					handleGetAllCalendars();
+					// handleGetAllCalendars();
 					setTimeout(() => {
 						setVisiblePopupLogin(false);
 					}, 1000);
