@@ -114,7 +114,7 @@ function App() {
 			.getAllUserEvents({
 				start,
 				finish,
-				calendar: allUserCalendars.length !== 0 ? allUserCalendars : '',
+				calendar: allUserCalendars.length !== 0 ? chosenCalendars : '',
 			})
 			.then((result) => {
 				setAllUserEvents(
@@ -133,7 +133,7 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-  }, [allUserCalendars, start, finish]);
+  }, [allUserCalendars, start, finish, chosenCalendars]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
