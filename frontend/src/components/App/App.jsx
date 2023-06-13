@@ -242,6 +242,9 @@ function App() {
 			.then((res) => {
 				if (res.status === 204) {
 					showMessage('Событие удалено', Status.SUCCESS);
+					setAllUserEvents((prevState) =>
+						prevState.filter((event) => event.id !== idEvent)
+					);
 				} else {
 					throw new Error(`Что-то пошло не так`);
 				}

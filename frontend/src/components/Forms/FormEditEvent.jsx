@@ -29,6 +29,8 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 		description: editableEvent.description,
 	};
 
+	console.log({ defaultValues });
+
 	const {
 		control,
 		formState: { errors, isValid },
@@ -41,7 +43,7 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (data) => {
-		console.log(data);
+		console.log({ data });
 		onEditEvent(data);
 		setVisible(false);
 
@@ -49,7 +51,6 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 	};
 
 	const handleDeleteEvent = (id) => {
-		console.log(id);
 		onDeleteEvent(id);
 		setVisible(false);
 
