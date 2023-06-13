@@ -29,8 +29,6 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 		description: editableEvent.description,
 	};
 
-	console.log({ defaultValues });
-
 	const {
 		control,
 		formState: { errors, isValid },
@@ -42,9 +40,13 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 		trigger,
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
-	const onSubmit = (data) => {
-		console.log({ data });
-		onEditEvent(data);
+	const onSubmit = (formData) => {
+		const preparedData = {
+			...formData,
+			id: editableEvent.id,
+		};
+		console.log({ preparedData });
+		onEditEvent(preparedData);
 		setVisible(false);
 
 		reset();
@@ -117,7 +119,7 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Создайте новое событие</h2>
+					<h2 className="text-center">Редактировать/удалить событие</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -349,7 +351,7 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 
 						<Button
 							type="submit"
-							label="Добавить новое событие"
+							label="Редактировать событие"
 							className="mt-2"
 							disabled={!isValid}
 						/>

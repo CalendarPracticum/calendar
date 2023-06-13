@@ -72,7 +72,7 @@ function App() {
 
 	const toast = useRef(null);
 
-	const showMessage = (message, status) => {
+	const showToast = (message, status) => {
 		toast.current.show({
 			severity: status,
 			summary: status,
@@ -241,7 +241,7 @@ function App() {
 			.deleteEvent(idEvent)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Событие удалено', Status.SUCCESS);
+					showToast('Событие удалено', Status.SUCCESS);
 					setAllUserEvents((prevState) =>
 						prevState.filter((event) => event.id !== idEvent)
 					);
@@ -250,7 +250,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -315,13 +315,13 @@ function App() {
 			.changePassword(data)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Пароль изменён', Status.SUCCESS);
+					showToast('Пароль изменён', Status.SUCCESS);
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -344,7 +344,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -367,7 +367,7 @@ function App() {
 			.deleteCalendar(idCalendar)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Календарь удалён', Status.SUCCESS);
+					showToast('Календарь удалён', Status.SUCCESS);
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
 					);
@@ -376,7 +376,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
