@@ -12,4 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Not a valid string."
-msgstr "Некорректное значение"
+msgstr "Некорректное значение строки"
+
+msgid "Must be a valid boolean."
+msgstr "Некорректное логическое значение"
