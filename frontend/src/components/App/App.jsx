@@ -28,6 +28,7 @@ import {
 	PopupEditUser,
 	PopupEditCalendar,
 	PopupChangePassword,
+	PopupEditEvent,
 } from '../Popups';
 
 const locales = {
@@ -51,6 +52,7 @@ function App() {
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
+	const [visiblePopupEditEvent, setVisiblePopupEditEvent] = useState(false);
 	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
@@ -61,6 +63,7 @@ function App() {
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
+	const [editableEvent, setEditableEvent] = useState({});
 
 	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
 	const today = new Date();
@@ -69,7 +72,7 @@ function App() {
 
 	const toast = useRef(null);
 
-	const showMessage = (message, status) => {
+	const showToast = (message, status) => {
 		toast.current.show({
 			severity: status,
 			summary: status,
@@ -168,6 +171,8 @@ function App() {
 			setChosenCalendars,
 			editableCalendar,
 			setEditableCalendar,
+			editableEvent,
+			setEditableEvent,
 		}),
 		[
 			currentUser,
@@ -176,6 +181,7 @@ function App() {
 			allUserEvents,
 			chosenCalendars,
 			editableCalendar,
+			editableEvent,
 		]
 	);
 
@@ -206,6 +212,45 @@ function App() {
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	// TODO: зачем мы расширяем объект?
+	const handleEditEvent = (formData) => {
+		eventApi
+			.partChangeEvent(formData)
+			.then((updatedEvent) => {
+				updatedEvent.title = updatedEvent.name;
+				updatedEvent.start = updatedEvent.datetime_start;
+				updatedEvent.end = updatedEvent.datetime_finish;
+				updatedEvent.allDay = updatedEvent.all_day;
+				setAllUserEvents((prevState) =>
+					prevState.map((event) =>
+						event.id === updatedEvent.id ? updatedEvent : event
+					)
+				);
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			});
+	};
+
+	const handleDeleteEvent = (idEvent) => {
+		eventApi
+			.deleteEvent(idEvent)
+			.then((res) => {
+				if (res.status === 204) {
+					showToast('Событие удалено', Status.SUCCESS);
+					setAllUserEvents((prevState) =>
+						prevState.filter((event) => event.id !== idEvent)
+					);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -270,13 +315,13 @@ function App() {
 			.changePassword(data)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Пароль изменён', Status.SUCCESS);
+					showToast('Пароль изменён', Status.SUCCESS);
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -299,7 +344,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -322,7 +367,7 @@ function App() {
 			.deleteCalendar(idCalendar)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Календарь удалён', Status.SUCCESS);
+					showToast('Календарь удалён', Status.SUCCESS);
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
 					);
@@ -331,7 +376,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				showToast(err.message, Status.ERROR);
 			});
 	};
 
@@ -353,6 +398,7 @@ function App() {
 									/>
 									<Main
 										onNewEventClick={setVisiblePopupNewEvent}
+										onEventDoubleClick={setVisiblePopupEditEvent}
 										onNewCalendarClick={setVisiblePopupNewCalendar}
 										onEditCalendarClick={setVisiblePopupEditCalendar}
 									/>
@@ -401,6 +447,13 @@ function App() {
 						visible={visiblePopupChangePassword}
 						setVisible={setVisiblePopupChangePassword}
 						onChangePassword={handleChangePassword}
+					/>
+
+					<PopupEditEvent
+						visible={visiblePopupEditEvent}
+						setVisible={setVisiblePopupEditEvent}
+						onEditEvent={handleEditEvent}
+						onDeleteEvent={handleDeleteEvent}
 					/>
 
 					<Toast ref={toast} />
