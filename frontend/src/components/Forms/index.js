@@ -5,6 +5,7 @@ import { FormLogin } from './FormLogin';
 import { FormNewCalendar } from './FormNewCalendar';
 import { FormNewEvent } from './FormNewEvent';
 import { FormRegistration } from './FormRegistration';
+import { FormEditEvent } from './FormEditEvent';
 
 export {
 	FormChangePassword,
@@ -14,4 +15,5 @@ export {
 	FormNewCalendar,
 	FormNewEvent,
 	FormRegistration,
+	FormEditEvent,
 };

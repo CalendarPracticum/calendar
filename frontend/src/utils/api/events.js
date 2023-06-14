@@ -172,7 +172,7 @@ export const fullChangeEvent = (formData) =>
   }
 */
 export const partChangeEvent = (formData) =>
-	fetch(`${BASE_URL}/v1/events/${formData.id}`, {
+	fetch(`${BASE_URL}/v1/events/${formData.id}/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,

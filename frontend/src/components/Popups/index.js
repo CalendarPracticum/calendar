@@ -4,6 +4,7 @@ import { PopupEditUser } from './PopupEditUser';
 import { PopupLogin } from './PopupLogin';
 import { PopupNewCalendar } from './PopupNewCalendar';
 import { PopupNewEvent } from './PopupNewEvent';
+import { PopupEditEvent } from './PopupEditEvent';
 
 export {
 	PopupChangePassword,
@@ -12,4 +13,5 @@ export {
 	PopupLogin,
 	PopupNewCalendar,
 	PopupNewEvent,
+	PopupEditEvent,
 };
