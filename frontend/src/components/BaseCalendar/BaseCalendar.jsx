@@ -11,7 +11,9 @@ export function BaseCalendar() {
 	const userContext = useContext(CurrentUserContext);
 	const { allUserEvents, chosenCalendars } = userContext;
 
-  const displayedEvents = allUserEvents.filter(e => chosenCalendars.includes(`${e.calendar.id}`));
+	const displayedEvents = allUserEvents.filter((e) =>
+		chosenCalendars.includes(`${e.calendar.id}`)
+	);
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),

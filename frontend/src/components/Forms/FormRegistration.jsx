@@ -8,11 +8,7 @@ import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 
-export function FormRegistration({
-	showFormLogin,
-	handleRegister,
-  setShowMessage,
-}) {
+export function FormRegistration({ showFormLogin, handleRegister }) {
 	const defaultValues = {
 		email: '',
 		password: '',
@@ -28,7 +24,7 @@ export function FormRegistration({
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		handleRegister(data).then(() => setShowMessage(true));
+		handleRegister(data);
 		reset();
 	};
 
@@ -187,5 +183,4 @@ export function FormRegistration({
 FormRegistration.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
 	handleRegister: PropTypes.func.isRequired,
-	setShowMessage: PropTypes.func.isRequired,
 };

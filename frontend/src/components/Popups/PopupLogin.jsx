@@ -9,9 +9,6 @@ export function PopupLogin({
 	setVisible,
 	handleRegister,
 	handleLogin,
-  setShowMessage,
-	message,
-	isError,
 }) {
 	const [showFormLogin, setShowFormLogin] = useState(true);
 
@@ -29,20 +26,11 @@ export function PopupLogin({
 			blockScroll
 		>
 			{showFormLogin ? (
-				<FormLogin
-					showFormLogin={setShowFormLogin}
-					handleLogin={handleLogin}
-					message={message}
-					isError={isError}
-          setShowMessage={setShowMessage}
-				/>
+				<FormLogin showFormLogin={setShowFormLogin} handleLogin={handleLogin} />
 			) : (
 				<FormRegistration
 					showFormLogin={setShowFormLogin}
 					handleRegister={handleRegister}
-					message={message}
-					isError={isError}
-          setShowMessage={setShowMessage}
 				/>
 			)}
 		</Dialog>
@@ -54,7 +42,4 @@ PopupLogin.propTypes = {
 	setVisible: PropTypes.func.isRequired,
 	handleRegister: PropTypes.func.isRequired,
 	handleLogin: PropTypes.func.isRequired,
-  setShowMessage: PropTypes.func.isRequired,
-	message: PropTypes.string.isRequired,
-	isError: PropTypes.bool.isRequired,
 };

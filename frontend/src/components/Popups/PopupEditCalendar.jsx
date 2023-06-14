@@ -23,7 +23,6 @@ export function PopupEditCalendar({
 			blockScroll
 		>
 			<FormEditCalendar
-				setVisible={setVisible}
 				onEditCalendar={onEditCalendar}
 				onDeleteCalendar={onDeleteCalendar}
 			/>

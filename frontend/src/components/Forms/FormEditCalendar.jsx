@@ -9,11 +9,7 @@ import { CurrentUserContext } from '../../context';
 import styles from './Forms.module.css';
 import { Color } from '../../utils/common';
 
-export function FormEditCalendar({
-	setVisible,
-	onEditCalendar,
-	onDeleteCalendar,
-}) {
+export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 	const userContext = useContext(CurrentUserContext);
 	const { editableCalendar } = userContext;
 	const { id, name, color, description } = editableCalendar;
@@ -34,15 +30,11 @@ export function FormEditCalendar({
 
 	const onSubmit = (data) => {
 		onEditCalendar(data);
-		setVisible(false);
-
 		reset();
 	};
 
 	const handleDeleteCalendar = () => {
 		onDeleteCalendar(id);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -164,7 +156,6 @@ export function FormEditCalendar({
 }
 
 FormEditCalendar.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onEditCalendar: PropTypes.func.isRequired,
 	onDeleteCalendar: PropTypes.func.isRequired,
 };

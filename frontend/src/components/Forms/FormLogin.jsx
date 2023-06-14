@@ -7,7 +7,7 @@ import { Password } from 'primereact/password';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 
-export function FormLogin({ showFormLogin, handleLogin, setShowMessage }) {
+export function FormLogin({ showFormLogin, handleLogin }) {
 	const defaultValues = {
 		name: '',
 		email: '',
@@ -22,7 +22,7 @@ export function FormLogin({ showFormLogin, handleLogin, setShowMessage }) {
 	} = useForm({ defaultValues, mode: 'onBlur' });
 
 	const onSubmit = (data) => {
-		handleLogin(data).then(() => setShowMessage(true));
+		handleLogin(data);
 		reset();
 	};
 
@@ -126,5 +126,4 @@ export function FormLogin({ showFormLogin, handleLogin, setShowMessage }) {
 FormLogin.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
 	handleLogin: PropTypes.func.isRequired,
-  setShowMessage: PropTypes.func.isRequired,
 };

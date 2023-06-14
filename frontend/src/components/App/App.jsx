@@ -59,7 +59,7 @@ function App() {
 		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
-  const [showMessage, setShowMessage] = useState(false);
+	const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chosenCalendars, setChosenCalendars] = useState([]);
@@ -75,7 +75,7 @@ function App() {
 	const showToast = (message, status) => {
 		toast.current.show({
 			severity: status,
-			summary: status,
+			summary: 'Успех',
 			detail: message,
 			life: 3000,
 		});
@@ -184,20 +184,21 @@ function App() {
 
 	// TODO: custom hook useOverlayClick?
 
-	const handleCreateCalendar = ({ name, description, color }) => {
+	const handleCreateCalendar = ({ name, description, color }) =>
 		calendarApi
 			.createNewCalendar({ name, description, color })
-			.then((newCalendar) =>
-				setAllUserCalendars((prevState) => [newCalendar, ...prevState])
-			)
+			.then((newCalendar) => {
+				setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+				setVisiblePopupNewCalendar(false);
+				showToast('Новый календарь создан!', Status.SUCCESS);
+			})
 			.catch((err) => {
-        // TODO: добавить оповещение
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
-	const handleCreateEvent = (data) => {
+	const handleCreateEvent = (data) =>
 		eventApi
 			.createNewEvent(data)
 			.then((event) => {
@@ -206,13 +207,14 @@ function App() {
 				event.end = event.datetime_finish;
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
+				setVisiblePopupNewEvent(false);
+				showToast('Событие создано!', Status.SUCCESS);
 			})
 			.catch((err) => {
-        // TODO: добавить оповещение
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
 	const handleLogin = ({ email, password }) =>
 		auth
@@ -221,17 +223,19 @@ function App() {
 				localStorage.setItem('jwtAccess', data.access);
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
-				// handleGetAllCalendars();
+				handleGetAllCalendars();
 				setVisiblePopupLogin(false);
-        setDialogMessage('Вы успешно вошли!');
+				setDialogMessage('Вы успешно вошли!');
 				setTimeout(() => {
-          setShowMessage(false);
+					setShowMessage(false);
 				}, 1500);
 				setIsDialogError(false);
+				setShowMessage(true);
 			})
 			.catch((err) => {
 				setDialogMessage(err.message);
 				setIsDialogError(true);
+				setShowMessage(true);
 			});
 
 	const handleRegister = ({ email, password }) =>
@@ -241,23 +245,33 @@ function App() {
 				auth.authorize(email, password).then((data) => {
 					localStorage.setItem('jwtAccess', data.access);
 					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: Color.LIGHT_GREEN });
-					setLoggedIn(true);
-					// handleGetAllCalendars();
-          setVisiblePopupLogin(false);
-          setDialogMessage('Регистрация прошла успешно!')
-					setTimeout(() => {
-            setShowMessage(false);
-					}, 1500);
-					setIsDialogError(false);
+					calendarApi
+						.createNewCalendar({
+							name: 'Личное',
+							description: '',
+							color: Color.LIGHT_GREEN,
+						})
+						.then((newCalendar) => {
+							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+							setLoggedIn(true);
+							handleGetAllCalendars();
+							setVisiblePopupLogin(false);
+							setDialogMessage('Регистрация прошла успешно!');
+							setTimeout(() => {
+								setShowMessage(false);
+							}, 1500);
+							setIsDialogError(false);
+							setShowMessage(true);
+						});
 				})
 			)
 			.catch((err) => {
 				setDialogMessage(err.message);
 				setIsDialogError(true);
+				setShowMessage(true);
 			});
 
-	const handleUpdateUser = (userData) => {
+	const handleUpdateUser = (userData) =>
 		auth
 			.updateUserData(userData)
 			.then((result) => {
@@ -267,28 +281,31 @@ function App() {
 					picture: result.profile_picture,
 					darkMode: result.settings.dark_mode,
 				});
+				setVisiblePopupEditUser(false);
+				showToast('Данные успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-        // TODO: добавить оповещение пользователя
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
-	const handleChangePassword = (data) => {
+	const handleChangePassword = (data) =>
 		auth
 			.changePassword(data)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Пароль изменён', Status.SUCCESS);
+					setVisiblePopupChangePassword(false);
+					showToast('Пароль изменён', Status.SUCCESS);
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
 	const logout = () => {
 		localStorage.clear();
@@ -298,41 +315,46 @@ function App() {
 		setAllUserEvents([]);
 	};
 
-	const handleDeleteUser = (password) => {
+	const handleDeleteUser = (password) =>
 		auth
 			.deleteUser(password)
 			.then((res) => {
 				if (res.status === 204) {
+					setVisiblePopupEditUser(false);
 					logout();
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showToast(err.message, Status.ERROR);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
-	const handleEditCalendar = (calendar) => {
+	const handleEditCalendar = (calendar) =>
 		calendarApi
 			.partChangeCalendar(calendar)
 			.then((updatedCalendar) => {
 				setAllUserCalendars((prevState) =>
 					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
 				);
+				setVisiblePopupEditCalendar(false);
+				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
-	const handleDeleteCalendar = (idCalendar) => {
+	const handleDeleteCalendar = (idCalendar) =>
 		calendarApi
 			.deleteCalendar(idCalendar)
 			.then((res) => {
 				if (res.status === 204) {
-					showMessage('Календарь удалён', Status.SUCCESS);
+					setVisiblePopupEditCalendar(false);
+					showToast('Календарь удалён', Status.SUCCESS);
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
 					);
@@ -341,11 +363,12 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showMessage(err.message, Status.ERROR);
+				setDialogMessage(err.message);
+				setIsDialogError(true);
+				setShowMessage(true);
 			});
-	};
 
-  const dialogFooter = (
+	const dialogFooter = (
 		<div className="flex justify-content-center">
 			<Button
 				label="OK"
@@ -355,17 +378,6 @@ function App() {
 			/>
 		</div>
 	);
-
-  const handleDialog = () => (
-    <div className="flex justify-content-center flex-column pt-6 px-3">
-      <i
-        className={`pi pi-${isDialogError ? 'times': 'check'}-circle`}
-        style={{ fontSize: '5rem', color: `var(--${isDialogError ? 'red' : 'green'}-500)` }}
-      />
-      <h4>{isDialogError ? 'Произошла ошибка!' : 'Успех!'}</h4>
-      <p style={{ lineHeight: 1.5 }}>{dialogMessage}</p>
-    </div>
-  );
 
 	return (
 		<LocalizationContext.Provider value={localizer}>
@@ -394,63 +406,70 @@ function App() {
 						<Route path="*" element={<NotFound />} />
 					</Routes>
 
-				<PopupLogin
-					visible={visiblePopupLogin}
-					setVisible={setVisiblePopupLogin}
-					handleRegister={handleRegister}
-					handleLogin={handleLogin}
-					message={dialogMessage}
-					isError={isDialogError}
-          setShowMessage={setShowMessage}
-				/>
+					<PopupLogin
+						visible={visiblePopupLogin}
+						setVisible={setVisiblePopupLogin}
+						handleRegister={handleRegister}
+						handleLogin={handleLogin}
+					/>
 
-				<PopupNewEvent
-					visible={visiblePopupNewEvent}
-					setVisible={setVisiblePopupNewEvent}
-					onCreateEvent={handleCreateEvent}
-				/>
+					<PopupNewEvent
+						visible={visiblePopupNewEvent}
+						setVisible={setVisiblePopupNewEvent}
+						onCreateEvent={handleCreateEvent}
+					/>
 
-				<PopupNewCalendar
-					visible={visiblePopupNewCalendar}
-					setVisible={setVisiblePopupNewCalendar}
-					onCreateCalendar={handleCreateCalendar}
-				/>
+					<PopupNewCalendar
+						visible={visiblePopupNewCalendar}
+						setVisible={setVisiblePopupNewCalendar}
+						onCreateCalendar={handleCreateCalendar}
+					/>
 
-				<PopupEditUser
-					visible={visiblePopupEditUser}
-					setVisible={setVisiblePopupEditUser}
-					onUpdateUser={handleUpdateUser}
-					onDeleteUser={handleDeleteUser}
-				/>
+					<PopupEditUser
+						visible={visiblePopupEditUser}
+						setVisible={setVisiblePopupEditUser}
+						onUpdateUser={handleUpdateUser}
+						onDeleteUser={handleDeleteUser}
+					/>
 
-				<PopupEditCalendar
-					visible={visiblePopupEditCalendar}
-					setVisible={setVisiblePopupEditCalendar}
-					onEditCalendar={handleEditCalendar}
-					onDeleteCalendar={handleDeleteCalendar}
-				/>
+					<PopupEditCalendar
+						visible={visiblePopupEditCalendar}
+						setVisible={setVisiblePopupEditCalendar}
+						onEditCalendar={handleEditCalendar}
+						onDeleteCalendar={handleDeleteCalendar}
+					/>
 
-				<PopupChangePassword
-					visible={visiblePopupChangePassword}
-					setVisible={setVisiblePopupChangePassword}
-					onChangePassword={handleChangePassword}
-				/>
+					<PopupChangePassword
+						visible={visiblePopupChangePassword}
+						setVisible={setVisiblePopupChangePassword}
+						onChangePassword={handleChangePassword}
+					/>
 
-				<Toast ref={toast} />
+					<Toast ref={toast} />
 
-        <Dialog
-          visible={showMessage}
-          onHide={() => setShowMessage(false)}
-          position="top"
-          footer={isDialogError ? dialogFooter : ''}
-          showHeader={false}
-          breakpoints={{ '960px': '80vw' }}
-          style={{ width: '30vw' }}
-        >
-          <>{handleDialog()}</>
-        </Dialog>
-			</div>
-		</CurrentUserContext.Provider>
+					<Dialog
+						visible={showMessage}
+						onHide={() => setShowMessage(false)}
+						position="top"
+						footer={isDialogError ? dialogFooter : ''}
+						showHeader={false}
+						breakpoints={{ '960px': '80vw' }}
+						style={{ width: '30vw' }}
+					>
+						<div className="flex justify-content-center flex-column pt-6 px-3">
+							<i
+								className={`pi pi-${isDialogError ? 'times' : 'check'}-circle`}
+								style={{
+									fontSize: '5rem',
+									color: `var(--${isDialogError ? 'red' : 'green'}-500)`,
+								}}
+							/>
+							<h4>{isDialogError ? 'Произошла ошибка!' : 'Успех!'}</h4>
+							<p style={{ lineHeight: 1.5 }}>{dialogMessage}</p>
+						</div>
+					</Dialog>
+				</div>
+			</CurrentUserContext.Provider>
 		</LocalizationContext.Provider>
 	);
 }

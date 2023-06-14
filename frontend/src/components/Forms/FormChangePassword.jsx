@@ -9,7 +9,7 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 
 // , message, isError
-export function FormChangePassword({ setVisible, onChangePassword }) {
+export function FormChangePassword({ onChangePassword }) {
 	// const [showMessage, setShowMessage] = useState(false);
 	// const [formData, setFormData] = useState({});
 	const defaultValues = {
@@ -29,8 +29,6 @@ export function FormChangePassword({ setVisible, onChangePassword }) {
 	const onSubmit = (data) => {
 		// setFormData(data);
 		onChangePassword(data);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -225,7 +223,6 @@ export function FormChangePassword({ setVisible, onChangePassword }) {
 }
 
 FormChangePassword.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onChangePassword: PropTypes.func.isRequired,
 	// message: PropTypes.string.isRequired,
 	// isError: PropTypes.bool.isRequired,
