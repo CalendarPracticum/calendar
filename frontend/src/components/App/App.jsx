@@ -84,6 +84,12 @@ function App() {
 		});
 	};
 
+	const showDialog = (message) => {
+		setDialogMessage(message);
+		setIsDialogError(true);
+		setShowMessage(true);
+	};
+
 	const handleGetAllCalendars = () => {
 		calendarApi
 			.getAllUserCalendars()
@@ -199,9 +205,7 @@ function App() {
 				showToast('Новый календарь создан!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const handleCreateEvent = (data) =>
@@ -217,12 +221,9 @@ function App() {
 				showToast('Событие создано!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
-	// TODO: зачем мы расширяем объект?
 	const handleEditEvent = (formData) => {
 		eventApi
 			.partChangeEvent(formData)
@@ -236,10 +237,11 @@ function App() {
 						event.id === updatedEvent.id ? updatedEvent : event
 					)
 				);
+				setVisiblePopupEditEvent(false);
+				showToast('Событие изменено!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				showDialog(err.message);
 			});
 	};
 
@@ -248,16 +250,17 @@ function App() {
 			.deleteEvent(idEvent)
 			.then((res) => {
 				if (res.status === 204) {
-					showToast('Событие удалено', Status.SUCCESS);
 					setAllUserEvents((prevState) =>
 						prevState.filter((event) => event.id !== idEvent)
 					);
+					setVisiblePopupEditEvent(false);
+					showToast('Событие удалено!', Status.SUCCESS);
 				} else {
 					throw new Error(`Что-то пошло не так`);
 				}
 			})
 			.catch((err) => {
-				showToast(err.message, Status.ERROR);
+				showDialog(err.message);
 			});
 	};
 
@@ -278,9 +281,7 @@ function App() {
 				setShowMessage(true);
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const handleRegister = ({ email, password }) =>
@@ -311,9 +312,7 @@ function App() {
 				})
 			)
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const handleUpdateUser = (userData) =>
@@ -330,9 +329,7 @@ function App() {
 				showToast('Данные успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const handleChangePassword = (data) =>
@@ -347,9 +344,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const logout = () => {
@@ -372,9 +367,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const handleEditCalendar = (calendar) =>
@@ -388,9 +381,7 @@ function App() {
 				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const handleDeleteCalendar = (idCalendar) =>
@@ -408,9 +399,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
-				setShowMessage(true);
+				showDialog(err.message);
 			});
 
 	const dialogFooter = (
