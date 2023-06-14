@@ -139,6 +139,22 @@ class ShareCalendar(models.Model):
         verbose_name='Календарь',
         related_name='share_calendars',
     )
+    custom_name = models.CharField(
+        'Название',
+        max_length=100,
+        null=True,
+        blank=True,
+    )
+    custom_color = models.CharField(
+        'Код цвета в формате HEX',
+        max_length=7,
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex='^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$',
+            message='Недопустимые символы в коде цвета!'
+        )]
+    )
 
     class Meta:
         verbose_name = 'Доступ к календарю'
