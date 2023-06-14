@@ -217,6 +217,8 @@ class ShareCalendarSerializer(serializers.ModelSerializer):
             'owner',
             'user',
             'calendar',
+            'custom_name',
+            'custom_color',
         )
 
     def validate(self, data):
