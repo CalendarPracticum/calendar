@@ -18,7 +18,7 @@ export function PopupNewEvent({ visible, setVisible, onCreateEvent }) {
 			blockScroll
 			draggable={false}
 		>
-			<FormNewEvent setVisible={setVisible} onCreateEvent={onCreateEvent} />
+			<FormNewEvent onCreateEvent={onCreateEvent} />
 		</Dialog>
 	);
 }

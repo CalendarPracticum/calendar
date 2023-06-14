@@ -13,6 +13,7 @@ import { addLocale } from 'primereact/api';
 import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
+import { PopupDialog } from '../Popups/PopupDialog';
 import styles from './App.module.css';
 import { CurrentUserContext, LocalizationContext } from '../../context';
 import ruPrime from '../../utils/ruPrime.json';
@@ -59,6 +60,7 @@ function App() {
 		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
+	const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [chosenCalendars, setChosenCalendars] = useState([]);
@@ -75,10 +77,21 @@ function App() {
 	const showToast = (message, status) => {
 		toast.current.show({
 			severity: status,
-			summary: status,
+			summary: 'Успех',
 			detail: message,
 			life: 3000,
 		});
+	};
+
+	const showDialog = (message, status) => {
+		setDialogMessage(message);
+    if (status === false) {
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 1500);
+    }
+		setIsDialogError(status);
+		setShowMessage(true);
 	};
 
 	const handleGetAllCalendars = () => {
@@ -187,19 +200,19 @@ function App() {
 
 	// TODO: custom hook useOverlayClick?
 
-	const handleCreateCalendar = ({ name, description, color }) => {
+	const handleCreateCalendar = ({ name, description, color }) =>
 		calendarApi
 			.createNewCalendar({ name, description, color })
-			.then((newCalendar) =>
-				setAllUserCalendars((prevState) => [newCalendar, ...prevState])
-			)
+			.then((newCalendar) => {
+				setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+				setVisiblePopupNewCalendar(false);
+				showToast('Новый календарь создан!', Status.SUCCESS);
+			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				showDialog(err.message, true);
 			});
-	};
 
-	const handleCreateEvent = (data) => {
+	const handleCreateEvent = (data) =>
 		eventApi
 			.createNewEvent(data)
 			.then((event) => {
@@ -208,14 +221,13 @@ function App() {
 				event.end = event.datetime_finish;
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
+				setVisiblePopupNewEvent(false);
+				showToast('Событие создано!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				showDialog(err.message, true);
 			});
-	};
 
-	// TODO: зачем мы расширяем объект?
 	const handleEditEvent = (formData) => {
 		eventApi
 			.partChangeEvent(formData)
@@ -229,10 +241,11 @@ function App() {
 						event.id === updatedEvent.id ? updatedEvent : event
 					)
 				);
+				setVisiblePopupEditEvent(false);
+				showToast('Событие изменено!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				showDialog(err.message, true);
 			});
 	};
 
@@ -241,16 +254,17 @@ function App() {
 			.deleteEvent(idEvent)
 			.then((res) => {
 				if (res.status === 204) {
-					showToast('Событие удалено', Status.SUCCESS);
 					setAllUserEvents((prevState) =>
 						prevState.filter((event) => event.id !== idEvent)
 					);
+					setVisiblePopupEditEvent(false);
+					showToast('Событие удалено!', Status.SUCCESS);
 				} else {
 					throw new Error(`Что-то пошло не так`);
 				}
 			})
 			.catch((err) => {
-				showToast(err.message, Status.ERROR);
+				showDialog(err.message, true);
 			});
 	};
 
@@ -261,15 +275,12 @@ function App() {
 				localStorage.setItem('jwtAccess', data.access);
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
-				// handleGetAllCalendars();
-				setTimeout(() => {
-					setVisiblePopupLogin(false);
-				}, 1000);
-				setIsDialogError(false);
+				handleGetAllCalendars();
+				setVisiblePopupLogin(false);
+				showDialog('Вы успешно вошли!', false)
 			})
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
+				showDialog(err.message, true);
 			});
 
 	const handleRegister = ({ email, password }) =>
@@ -279,21 +290,26 @@ function App() {
 				auth.authorize(email, password).then((data) => {
 					localStorage.setItem('jwtAccess', data.access);
 					localStorage.setItem('jwtRefresh', data.refresh);
-					handleCreateCalendar({ name: 'Личное', color: Color.LIGHT_GREEN });
-					setLoggedIn(true);
-					// handleGetAllCalendars();
-					setTimeout(() => {
-						setVisiblePopupLogin(false);
-					}, 1000);
-					setIsDialogError(false);
+					calendarApi
+						.createNewCalendar({
+							name: 'Личное',
+							description: '',
+							color: Color.LIGHT_GREEN,
+						})
+						.then((newCalendar) => {
+							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+							setLoggedIn(true);
+							handleGetAllCalendars();
+							setVisiblePopupLogin(false);
+							showDialog('Регистрация прошла успешно!', false)
+						});
 				})
 			)
 			.catch((err) => {
-				setDialogMessage(err.message);
-				setIsDialogError(true);
+				showDialog(err.message, true);
 			});
 
-	const handleUpdateUser = (userData) => {
+	const handleUpdateUser = (userData) =>
 		auth
 			.updateUserData(userData)
 			.then((result) => {
@@ -303,27 +319,27 @@ function App() {
 					picture: result.profile_picture,
 					darkMode: result.settings.dark_mode,
 				});
+				setVisiblePopupEditUser(false);
+				showToast('Данные успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				showDialog(err.message, true);
 			});
-	};
 
-	const handleChangePassword = (data) => {
+	const handleChangePassword = (data) =>
 		auth
 			.changePassword(data)
 			.then((res) => {
 				if (res.status === 204) {
+					setVisiblePopupChangePassword(false);
 					showToast('Пароль изменён', Status.SUCCESS);
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showToast(err.message, Status.ERROR);
+				showDialog(err.message, true);
 			});
-	};
 
 	const logout = () => {
 		localStorage.clear();
@@ -333,40 +349,41 @@ function App() {
 		setAllUserEvents([]);
 	};
 
-	const handleDeleteUser = (password) => {
+	const handleDeleteUser = (password) =>
 		auth
 			.deleteUser(password)
 			.then((res) => {
 				if (res.status === 204) {
+					setVisiblePopupEditUser(false);
 					logout();
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
 			})
 			.catch((err) => {
-				showToast(err.message, Status.ERROR);
+				showDialog(err.message, true);
 			});
-	};
 
-	const handleEditCalendar = (calendar) => {
+	const handleEditCalendar = (calendar) =>
 		calendarApi
 			.partChangeCalendar(calendar)
 			.then((updatedCalendar) => {
 				setAllUserCalendars((prevState) =>
 					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
 				);
+				setVisiblePopupEditCalendar(false);
+				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
+				showDialog(err.message, true);
 			});
-	};
 
-	const handleDeleteCalendar = (idCalendar) => {
+	const handleDeleteCalendar = (idCalendar) =>
 		calendarApi
 			.deleteCalendar(idCalendar)
 			.then((res) => {
 				if (res.status === 204) {
+					setVisiblePopupEditCalendar(false);
 					showToast('Календарь удалён', Status.SUCCESS);
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
@@ -376,9 +393,8 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showToast(err.message, Status.ERROR);
+				showDialog(err.message, true);
 			});
-	};
 
 	return (
 		<LocalizationContext.Provider value={localizer}>
@@ -413,8 +429,6 @@ function App() {
 						setVisible={setVisiblePopupLogin}
 						handleRegister={handleRegister}
 						handleLogin={handleLogin}
-						message={dialogMessage}
-						isError={isDialogError}
 					/>
 
 					<PopupNewEvent
@@ -457,6 +471,13 @@ function App() {
 					/>
 
 					<Toast ref={toast} />
+
+          <PopupDialog
+            showMessage={showMessage}
+            setShowMessage={setShowMessage}
+            isDialogError={isDialogError}
+            dialogMessage={dialogMessage}
+          />
 				</div>
 			</CurrentUserContext.Provider>
 		</LocalizationContext.Provider>

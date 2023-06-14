@@ -10,7 +10,7 @@ import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
 import styles from './Forms.module.css';
 
-export function FormEditUser({ setVisible, onUpdateUser, onDeleteUser }) {
+export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 	const userContext = useContext(CurrentUserContext);
 	const { currentUser } = userContext;
 	const { username, email, darkMode, picture } = currentUser;
@@ -40,15 +40,11 @@ export function FormEditUser({ setVisible, onUpdateUser, onDeleteUser }) {
 			darkMode: data.darkMode,
 		};
 		onUpdateUser(preparedData);
-		setVisible(false);
-
 		reset();
 	};
 
 	const handleDeleteUserClick = (password) => {
 		onDeleteUser(password);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -209,7 +205,6 @@ export function FormEditUser({ setVisible, onUpdateUser, onDeleteUser }) {
 }
 
 FormEditUser.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onUpdateUser: PropTypes.func.isRequired,
 	onDeleteUser: PropTypes.func.isRequired,
 };

@@ -17,10 +17,7 @@ export function PopupNewCalendar({ visible, setVisible, onCreateCalendar }) {
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormNewCalendar
-				setVisible={setVisible}
-				onCreateCalendar={onCreateCalendar}
-			/>
+			<FormNewCalendar onCreateCalendar={onCreateCalendar} />
 		</Dialog>
 	);
 }
