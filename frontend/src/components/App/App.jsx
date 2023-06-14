@@ -10,11 +10,10 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
+import { PopupDialog } from '../Popups/PopupDialog';
 import styles from './App.module.css';
 import { CurrentUserContext, LocalizationContext } from '../../context';
 import ruPrime from '../../utils/ruPrime.json';
@@ -84,9 +83,14 @@ function App() {
 		});
 	};
 
-	const showDialog = (message) => {
+	const showDialog = (message, status) => {
 		setDialogMessage(message);
-		setIsDialogError(true);
+    if (status === false) {
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 1500);
+    }
+		setIsDialogError(status);
 		setShowMessage(true);
 	};
 
@@ -205,7 +209,7 @@ function App() {
 				showToast('Новый календарь создан!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleCreateEvent = (data) =>
@@ -221,7 +225,7 @@ function App() {
 				showToast('Событие создано!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleEditEvent = (formData) => {
@@ -241,7 +245,7 @@ function App() {
 				showToast('Событие изменено!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 	};
 
@@ -260,7 +264,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 	};
 
@@ -273,15 +277,10 @@ function App() {
 				setLoggedIn(true);
 				handleGetAllCalendars();
 				setVisiblePopupLogin(false);
-				setDialogMessage('Вы успешно вошли!');
-				setTimeout(() => {
-					setShowMessage(false);
-				}, 1500);
-				setIsDialogError(false);
-				setShowMessage(true);
+				showDialog('Вы успешно вошли!', false)
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleRegister = ({ email, password }) =>
@@ -302,17 +301,12 @@ function App() {
 							setLoggedIn(true);
 							handleGetAllCalendars();
 							setVisiblePopupLogin(false);
-							setDialogMessage('Регистрация прошла успешно!');
-							setTimeout(() => {
-								setShowMessage(false);
-							}, 1500);
-							setIsDialogError(false);
-							setShowMessage(true);
+							showDialog('Регистрация прошла успешно!', false)
 						});
 				})
 			)
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleUpdateUser = (userData) =>
@@ -329,7 +323,7 @@ function App() {
 				showToast('Данные успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleChangePassword = (data) =>
@@ -344,7 +338,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const logout = () => {
@@ -367,7 +361,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleEditCalendar = (calendar) =>
@@ -381,7 +375,7 @@ function App() {
 				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
 
 	const handleDeleteCalendar = (idCalendar) =>
@@ -399,19 +393,8 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message);
+				showDialog(err.message, true);
 			});
-
-	const dialogFooter = (
-		<div className="flex justify-content-center">
-			<Button
-				label="OK"
-				className="p-button-text"
-				autoFocus
-				onClick={() => setShowMessage(false)}
-			/>
-		</div>
-	);
 
 	return (
 		<LocalizationContext.Provider value={localizer}>
@@ -489,27 +472,12 @@ function App() {
 
 					<Toast ref={toast} />
 
-					<Dialog
-						visible={showMessage}
-						onHide={() => setShowMessage(false)}
-						position="top"
-						footer={isDialogError ? dialogFooter : ''}
-						showHeader={false}
-						breakpoints={{ '960px': '80vw' }}
-						style={{ width: '30vw' }}
-					>
-						<div className="flex justify-content-center flex-column pt-6 px-3">
-							<i
-								className={`pi pi-${isDialogError ? 'times' : 'check'}-circle`}
-								style={{
-									fontSize: '5rem',
-									color: `var(--${isDialogError ? 'red' : 'green'}-500)`,
-								}}
-							/>
-							<h4>{isDialogError ? 'Произошла ошибка!' : 'Успех!'}</h4>
-							<p style={{ lineHeight: 1.5 }}>{dialogMessage}</p>
-						</div>
-					</Dialog>
+          <PopupDialog
+            showMessage={showMessage}
+            setShowMessage={setShowMessage}
+            isDialogError={isDialogError}
+            dialogMessage={dialogMessage}
+          />
 				</div>
 			</CurrentUserContext.Provider>
 		</LocalizationContext.Provider>
