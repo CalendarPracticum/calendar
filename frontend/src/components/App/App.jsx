@@ -230,8 +230,8 @@ function App() {
 			.createNewEvent(data)
 			.then((event) => {
 				event.title = event.name;
-				event.start = event.datetime_start;
-				event.end = event.datetime_finish;
+				event.start = new Date(event.datetime_start);
+				event.end = new Date(event.datetime_finish);
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
 				setVisiblePopupNewEvent(false);
@@ -251,8 +251,8 @@ function App() {
 			.partChangeEvent(formData)
 			.then((updatedEvent) => {
 				updatedEvent.title = updatedEvent.name;
-				updatedEvent.start = updatedEvent.datetime_start;
-				updatedEvent.end = updatedEvent.datetime_finish;
+				updatedEvent.start = new Date(updatedEvent.datetime_start);
+				updatedEvent.end = new Date(updatedEvent.datetime_finish);
 				updatedEvent.allDay = updatedEvent.all_day;
 				setAllUserEvents((prevState) =>
 					prevState.map((event) =>
