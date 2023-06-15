@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -40,7 +41,16 @@ export function FormNewEvent({ onCreateEvent }) {
 		trigger,
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
-	const onSubmit = (data) => {
+	const onSubmit = (formData) => {
+		const utcDateStart = zonedTimeToUtc(formData.timeStart);
+		const utcDateFinish = zonedTimeToUtc(formData.timeFinish);
+
+		const data = {
+			...formData,
+			timeStart: utcDateStart,
+			timeFinish: utcDateFinish,
+		};
+
 		onCreateEvent(data);
 		reset();
 	};
