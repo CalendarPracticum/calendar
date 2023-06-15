@@ -16,6 +16,7 @@ export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 
 	const [value, setValue] = useState('light');
 	const [darkMode, setDarkMode] = useState(false);
+
 	const themeOptions = [
 		{ icon: 'pi pi-moon', value: 'dark', constant: darkMode },
 		{ icon: 'pi pi-sun', value: 'light', constant: !darkMode },
@@ -23,9 +24,7 @@ export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 
 	useEffect(() => {
 		const themeLink = document.getElementById('app-theme');
-
 		const darkTheme = 'lara-dark-blue';
-
 		const lightTheme = 'soho-light';
 
 		if (themeLink) {
@@ -42,8 +41,6 @@ export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 	}, [loggedIn, userDarkMode]);
 
 	const themeTemplate = (option) => <i className={option.icon} />;
-
-	// TODO: добавить логотип, удалить логику показа аватарки
 
 	return (
 		<header className={styles.header} id="header">

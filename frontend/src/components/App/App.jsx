@@ -70,7 +70,6 @@ function App() {
 	const [editableEvent, setEditableEvent] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
 
-	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
 	const today = new Date();
 	const start = [today.getFullYear(), '-01-01'].join('');
 	const finish = [today.getFullYear() + 1, '-01-01'].join('');
@@ -150,7 +149,7 @@ function App() {
 						event.start = parseISO(event.datetime_start);
 						event.end = parseISO(event.datetime_finish);
 						event.allDay = event.all_day;
-						// TODO: почистить объект от лишних полей
+
 						return event;
 					})
 				);
@@ -205,8 +204,6 @@ function App() {
 			editableEvent,
 		]
 	);
-
-	// TODO: custom hook useOverlayClick?
 
 	const handleCreateCalendar = ({ name, description, color }) => {
 		setIsLoading(true);
@@ -326,7 +323,7 @@ function App() {
 						.createNewCalendar({
 							name: 'Личное',
 							description: '',
-							color: Color.LIGHT_GREEN,
+							color: Color.DEFAULT,
 						})
 						.then((newCalendar) => {
 							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
