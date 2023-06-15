@@ -3,15 +3,11 @@ import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
-// import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 
-// , message, isError
 export function FormChangePassword({ onChangePassword }) {
-	// const [showMessage, setShowMessage] = useState(false);
-	// const [formData, setFormData] = useState({});
 	const defaultValues = {
 		currentPassword: '',
 		newPassword: '',
@@ -27,7 +23,6 @@ export function FormChangePassword({ onChangePassword }) {
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		// setFormData(data);
 		onChangePassword(data);
 		reset();
 	};
@@ -35,16 +30,6 @@ export function FormChangePassword({ onChangePassword }) {
 	const getFormErrorMessage = (name) =>
 		errors[name] && <small className="p-error">{errors[name].message}</small>;
 
-	// const dialogFooter = (
-	//   <div className="flex justify-content-center">
-	//     <Button
-	//       label="OK"
-	//       className="p-button-text"
-	//       autoFocus
-	//       onClick={() => setShowMessage(false)}
-	//     />
-	//   </div>
-	// );
 	const passwordHeader = <h4>Введите пароль</h4>;
 	const passwordFooter = (
 		<>
@@ -59,46 +44,8 @@ export function FormChangePassword({ onChangePassword }) {
 		</>
 	);
 
-	// function handleDialog() {
-	//   if (isError) {
-	//     return (
-	//       <div className="flex justify-content-center flex-column pt-6 px-3">
-	//         <i
-	//           className="pi pi-times-circle"
-	//           style={{ fontSize: '5rem', color: 'var(--red-500)' }}
-	//         />
-	//         <h4>Произошла ошибка!</h4>
-	//         <p style={{ lineHeight: 1.5 }}>{message}</p>
-	//       </div>
-	//     );
-	//   }
-
-	//   return (
-	//     <div className="flex justify-content-center flex-column pt-6 px-3">
-	//       <i
-	//         className="pi pi-check-circle"
-	//         style={{ fontSize: '5rem', color: 'var(--green-500)' }}
-	//       />
-	//       <h4>Поздравляем!</h4>
-	//       <p style={{ lineHeight: 1.5 }}>Вы успешнео изменили пароль!</p>
-	//     </div>
-	//   );
-	// }
-
 	return (
 		<div className={styles.paddings}>
-			{/* <Dialog
-        visible={showMessage}
-        onHide={() => setShowMessage(false)}
-        position="top"
-        footer={isError ? dialogFooter : ''}
-        showHeader={false}
-        breakpoints={{ '960px': '80vw' }}
-        style={{ width: '30vw' }}
-      >
-        <>{handleDialog()}</>
-      </Dialog> */}
-
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
 					<h2 className="text-center">Пароли и безопасность</h2>
@@ -198,7 +145,6 @@ export function FormChangePassword({ onChangePassword }) {
 										/>
 									)}
 								/>
-								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
 								<label
 									htmlFor="confirmNewPassword"
 									className={cn({ 'p-error': errors.confirmNewPassword })}
@@ -224,6 +170,4 @@ export function FormChangePassword({ onChangePassword }) {
 
 FormChangePassword.propTypes = {
 	onChangePassword: PropTypes.func.isRequired,
-	// message: PropTypes.string.isRequired,
-	// isError: PropTypes.bool.isRequired,
 };

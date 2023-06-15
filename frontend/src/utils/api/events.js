@@ -146,8 +146,8 @@ export const fullChangeEvent = (formData) =>
 			all_day: formData.allDay,
 			name: formData.name,
 			description: formData.description,
-			day_off: formData.dayOff, // в частности из за этого и ещё нескольких полей смысла в put нет
-			holiday: formData.holiday, // и из-за этого
+			day_off: formData.dayOff,
+			holiday: formData.holiday,
 			calendar: formData.calendar.id,
 		}),
 	}).then(getJson);

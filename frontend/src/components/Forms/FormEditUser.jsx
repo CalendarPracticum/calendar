@@ -29,7 +29,6 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 		formState: { errors, isValid },
 		handleSubmit,
 		reset,
-		// getValues,
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
