@@ -13,7 +13,7 @@ import { addLocale } from 'primereact/api';
 import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
-import { PopupDialog } from '../Popups/PopupDialog';
+import { Loader } from '../Loader/Loader';
 import styles from './App.module.css';
 import { CurrentUserContext, LocalizationContext } from '../../context';
 import ruPrime from '../../utils/ruPrime.json';
@@ -30,6 +30,7 @@ import {
 	PopupEditCalendar,
 	PopupChangePassword,
 	PopupEditEvent,
+	PopupDialog,
 } from '../Popups';
 
 const locales = {
@@ -66,6 +67,7 @@ function App() {
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
 	const [editableEvent, setEditableEvent] = useState({});
+	const [isLoading, setIsLoading] = useState(false);
 
 	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
 	const today = new Date();
@@ -95,6 +97,7 @@ function App() {
 	};
 
 	const handleGetAllCalendars = () => {
+		setIsLoading(true);
 		calendarApi
 			.getAllUserCalendars()
 			.then((data) => {
@@ -104,6 +107,9 @@ function App() {
 			.catch((err) => {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', err.message);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
@@ -201,7 +207,8 @@ function App() {
 
 	// TODO: custom hook useOverlayClick?
 
-	const handleCreateCalendar = ({ name, description, color }) =>
+	const handleCreateCalendar = ({ name, description, color }) => {
+		setIsLoading(true);
 		calendarApi
 			.createNewCalendar({ name, description, color })
 			.then((newCalendar) => {
@@ -211,9 +218,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
-	const handleCreateEvent = (data) =>
+	const handleCreateEvent = (data) => {
+		setIsLoading(true);
 		eventApi
 			.createNewEvent(data)
 			.then((event) => {
@@ -227,9 +239,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
 	const handleEditEvent = (formData) => {
+		setIsLoading(true);
 		eventApi
 			.partChangeEvent(formData)
 			.then((updatedEvent) => {
@@ -247,10 +264,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	const handleDeleteEvent = (idEvent) => {
+		setIsLoading(true);
 		eventApi
 			.deleteEvent(idEvent)
 			.then((res) => {
@@ -266,10 +287,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
-	const handleLogin = ({ email, password }) =>
+	const handleLogin = ({ email, password }) => {
+		setIsLoading(true);
 		auth
 			.authorize(email, password)
 			.then((data) => {
@@ -282,9 +307,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
-	const handleRegister = ({ email, password }) =>
+	const handleRegister = ({ email, password }) => {
+		setIsLoading(true);
 		auth
 			.register(email, password)
 			.then(() =>
@@ -308,9 +338,14 @@ function App() {
 			)
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
-	const handleUpdateUser = (userData) =>
+	const handleUpdateUser = (userData) => {
+		setIsLoading(true);
 		auth
 			.updateUserData(userData)
 			.then((result) => {
@@ -325,9 +360,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
-	const handleChangePassword = (data) =>
+	const handleChangePassword = (data) => {
+		setIsLoading(true);
 		auth
 			.changePassword(data)
 			.then((res) => {
@@ -340,7 +380,11 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
 	const logout = () => {
 		localStorage.clear();
@@ -348,9 +392,11 @@ function App() {
 		setCurrentUser({});
 		setAllUserCalendars([]);
 		setAllUserEvents([]);
+		showToast('Вы вышли из аккаунта!', Status.SUCCESS);
 	};
 
-	const handleDeleteUser = (password) =>
+	const handleDeleteUser = (password) => {
+		setIsLoading(true);
 		auth
 			.deleteUser(password)
 			.then((res) => {
@@ -363,9 +409,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
-	const handleEditCalendar = (calendar) =>
+	const handleEditCalendar = (calendar) => {
+		setIsLoading(true);
 		calendarApi
 			.partChangeCalendar(calendar)
 			.then((updatedCalendar) => {
@@ -377,9 +428,14 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
-	const handleDeleteCalendar = (idCalendar) =>
+	const handleDeleteCalendar = (idCalendar) => {
+		setIsLoading(true);
 		calendarApi
 			.deleteCalendar(idCalendar)
 			.then((res) => {
@@ -395,7 +451,11 @@ function App() {
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
+	};
 
 	return (
 		<LocalizationContext.Provider value={localizer}>
@@ -424,6 +484,8 @@ function App() {
 						/>
 						<Route path="*" element={<NotFound />} />
 					</Routes>
+
+					<Loader isLoading={isLoading} />
 
 					<PopupLogin
 						visible={visiblePopupLogin}
