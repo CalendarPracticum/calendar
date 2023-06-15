@@ -85,11 +85,11 @@ function App() {
 
 	const showDialog = (message, status) => {
 		setDialogMessage(message);
-    if (status === false) {
-      setTimeout(() => {
-        setShowMessage(false);
-      }, 1500);
-    }
+		if (status === false) {
+			setTimeout(() => {
+				setShowMessage(false);
+			}, 1500);
+		}
 		setIsDialogError(status);
 		setShowMessage(true);
 	};
@@ -99,7 +99,7 @@ function App() {
 			.getAllUserCalendars()
 			.then((data) => {
 				setAllUserCalendars(data);
-        setChosenCalendars(data.map(c=>c.id));
+				setChosenCalendars(data.map((c) => c.id));
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
@@ -278,7 +278,7 @@ function App() {
 				setLoggedIn(true);
 				handleGetAllCalendars();
 				setVisiblePopupLogin(false);
-				showDialog('Вы успешно вошли!', false)
+				showDialog('Вы успешно вошли!', false);
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -302,7 +302,7 @@ function App() {
 							setLoggedIn(true);
 							handleGetAllCalendars();
 							setVisiblePopupLogin(false);
-							showDialog('Регистрация прошла успешно!', false)
+							showDialog('Регистрация прошла успешно!', false);
 						});
 				})
 			)
@@ -473,12 +473,12 @@ function App() {
 
 					<Toast ref={toast} />
 
-          <PopupDialog
-            showMessage={showMessage}
-            setShowMessage={setShowMessage}
-            isDialogError={isDialogError}
-            dialogMessage={dialogMessage}
-          />
+					<PopupDialog
+						showMessage={showMessage}
+						setShowMessage={setShowMessage}
+						isDialogError={isDialogError}
+						dialogMessage={dialogMessage}
+					/>
 				</div>
 			</CurrentUserContext.Provider>
 		</LocalizationContext.Provider>

@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useRef, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
 import parseISO from 'date-fns/parseISO';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -51,8 +51,13 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (formData) => {
+		const utcDateStart = zonedTimeToUtc(formData.timeStart);
+		const utcDateFinish = zonedTimeToUtc(formData.timeFinish);
+
 		const data = {
 			...formData,
+			timeStart: utcDateStart,
+			timeFinish: utcDateFinish,
 			calendar: getCalendarByName(formData.calendar, allUserCalendars),
 			id: editableEvent.id,
 		};
