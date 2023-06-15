@@ -9,17 +9,10 @@ export function PopupEditEvent({
 	onEditEvent,
 	onDeleteEvent,
 }) {
-	// const handleOverlayClick = (evt) => {
-	// 	if (evt.target === evt.currentTarget) {
-	// 		setVisible(false);
-	// 	}
-	// };
-
 	return (
 		<Dialog
 			visible={visible}
 			onHide={() => setVisible(false)}
-			// onMaskClick={handleOverlayClick}
 			blockScroll
 			draggable={false}
 		>

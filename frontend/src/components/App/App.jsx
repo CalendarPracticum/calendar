@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import parseISO from 'date-fns/parseISO';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
@@ -69,7 +70,6 @@ function App() {
 	const [editableEvent, setEditableEvent] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
 
-	// по идее мы должны считать дату старта не от текущей даты, а от отображаемой и прибавлять не год, а месяцы
 	const today = new Date();
 	const start = [today.getFullYear(), '-01-01'].join('');
 	const finish = [today.getFullYear() + 1, '-01-01'].join('');
@@ -146,10 +146,10 @@ function App() {
 					result.map((event) => {
 						/* eslint-disable no-param-reassign */
 						event.title = event.name;
-						event.start = new Date(event.datetime_start);
-						event.end = new Date(event.datetime_finish);
+						event.start = parseISO(event.datetime_start);
+						event.end = parseISO(event.datetime_finish);
 						event.allDay = event.all_day;
-						// TODO: почистить объект от лишних полей
+
 						return event;
 					})
 				);
@@ -205,8 +205,6 @@ function App() {
 		]
 	);
 
-	// TODO: custom hook useOverlayClick?
-
 	const handleCreateCalendar = ({ name, description, color }) => {
 		setIsLoading(true);
 		calendarApi
@@ -230,8 +228,8 @@ function App() {
 			.createNewEvent(data)
 			.then((event) => {
 				event.title = event.name;
-				event.start = new Date(event.datetime_start);
-				event.end = new Date(event.datetime_finish);
+				event.start = parseISO(event.datetime_start);
+				event.end = parseISO(event.datetime_finish);
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
 				setVisiblePopupNewEvent(false);
@@ -251,8 +249,8 @@ function App() {
 			.partChangeEvent(formData)
 			.then((updatedEvent) => {
 				updatedEvent.title = updatedEvent.name;
-				updatedEvent.start = new Date(updatedEvent.datetime_start);
-				updatedEvent.end = new Date(updatedEvent.datetime_finish);
+				updatedEvent.start = parseISO(updatedEvent.datetime_start);
+				updatedEvent.end = parseISO(updatedEvent.datetime_finish);
 				updatedEvent.allDay = updatedEvent.all_day;
 				setAllUserEvents((prevState) =>
 					prevState.map((event) =>
@@ -325,7 +323,7 @@ function App() {
 						.createNewCalendar({
 							name: 'Личное',
 							description: '',
-							color: Color.LIGHT_GREEN,
+							color: Color.DEFAULT,
 						})
 						.then((newCalendar) => {
 							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
