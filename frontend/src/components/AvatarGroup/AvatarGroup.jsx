@@ -1,7 +1,6 @@
 import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Menu } from 'primereact/menu';
-import { Toast } from 'primereact/toast';
 import { Avatar } from 'primereact/avatar';
 import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
@@ -13,7 +12,6 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 	const { username, email, picture } = currentUser;
 
 	const menu = useRef(null);
-	const toastExit = useRef(null);
 
 	const items = [
 		{
@@ -68,15 +66,7 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 				{
 					label: 'Выход',
 					icon: 'pi pi-sign-out',
-					command: () => {
-						toastExit.current.show({
-							severity: 'success',
-							summary: 'Выход',
-							detail: 'Вы вышли из приложения',
-							life: 2000,
-						});
-						setTimeout(() => logout(), 2001);
-					},
+					command: () => logout(),
 				},
 			],
 		},
@@ -84,7 +74,6 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 
 	return (
 		<div className="card flex justify-content-center">
-			<Toast ref={toastExit} />
 			<Menu
 				model={items}
 				popup
