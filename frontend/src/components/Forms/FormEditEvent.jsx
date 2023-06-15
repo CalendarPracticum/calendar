@@ -19,7 +19,7 @@ import { CurrentUserContext } from '../../context';
 const getCalendarByName = (name, calendars) =>
 	calendars.find((c) => c.name === name);
 
-export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
+export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 	const userContext = useContext(CurrentUserContext);
 	const { allUserCalendars, editableEvent } = userContext;
 
@@ -58,15 +58,11 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 		};
 
 		onEditEvent(data);
-		setVisible(false);
-
 		reset();
 	};
 
 	const handleDeleteEvent = (id) => {
 		onDeleteEvent(id);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -381,7 +377,6 @@ export function FormEditEvent({ setVisible, onEditEvent, onDeleteEvent }) {
 }
 
 FormEditEvent.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onEditEvent: PropTypes.func.isRequired,
 	onDeleteEvent: PropTypes.func.isRequired,
 };

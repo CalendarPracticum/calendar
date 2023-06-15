@@ -17,10 +17,7 @@ export function PopupChangePassword({ visible, setVisible, onChangePassword }) {
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormChangePassword
-				setVisible={setVisible}
-				onChangePassword={onChangePassword}
-			/>
+			<FormChangePassword onChangePassword={onChangePassword} />
 		</Dialog>
 	);
 }

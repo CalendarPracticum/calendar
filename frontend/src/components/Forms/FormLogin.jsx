@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
-import { Dialog } from 'primereact/dialog';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 
-export function FormLogin({ showFormLogin, handleLogin, message, isError }) {
-	const [showMessage, setShowMessage] = useState(false);
+export function FormLogin({ showFormLogin, handleLogin }) {
 	const defaultValues = {
 		name: '',
 		email: '',
@@ -24,63 +22,15 @@ export function FormLogin({ showFormLogin, handleLogin, message, isError }) {
 	} = useForm({ defaultValues, mode: 'onBlur' });
 
 	const onSubmit = (data) => {
-		handleLogin(data).then(() => setShowMessage(true));
+		handleLogin(data);
 		reset();
 	};
 
 	const getFormErrorMessage = (name) =>
 		errors[name] && <small className="p-error">{errors[name].message}</small>;
 
-	const dialogFooter = (
-		<div className="flex justify-content-center">
-			<Button
-				label="OK"
-				className="p-button-text"
-				autoFocus
-				onClick={() => setShowMessage(false)}
-			/>
-		</div>
-	);
-
-	function handleDialog() {
-		if (isError) {
-			return (
-				<div className="flex justify-content-center flex-column pt-6 px-3">
-					<i
-						className="pi pi-times-circle"
-						style={{ fontSize: '5rem', color: 'var(--red-500)' }}
-					/>
-					<h4>Произошла ошибка!</h4>
-					<p style={{ lineHeight: 1.5 }}>{message}</p>
-				</div>
-			);
-		}
-
-		return (
-			<div className="flex justify-content-center flex-column pt-6 px-3">
-				<i
-					className="pi pi-check-circle"
-					style={{ fontSize: '5rem', color: 'var(--green-500)' }}
-				/>
-				<h4>И снова здравствуйте!</h4>
-			</div>
-		);
-	}
-
 	return (
 		<div className={styles.paddings}>
-			<Dialog
-				visible={showMessage}
-				onHide={() => setShowMessage(false)}
-				position="top"
-				footer={isError ? dialogFooter : ''}
-				showHeader={false}
-				breakpoints={{ '960px': '80vw' }}
-				style={{ width: '30vw' }}
-			>
-				<>{handleDialog()}</>
-			</Dialog>
-
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
 					<h2 className="text-center">Вход</h2>
@@ -176,6 +126,4 @@ export function FormLogin({ showFormLogin, handleLogin, message, isError }) {
 FormLogin.propTypes = {
 	showFormLogin: PropTypes.func.isRequired,
 	handleLogin: PropTypes.func.isRequired,
-	message: PropTypes.string.isRequired,
-	isError: PropTypes.bool.isRequired,
 };

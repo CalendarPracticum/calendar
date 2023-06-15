@@ -8,7 +8,7 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { Color } from '../../utils/common';
 
-export function FormNewCalendar({ setVisible, onCreateCalendar }) {
+export function FormNewCalendar({ onCreateCalendar }) {
 	const defaultValues = {
 		name: '',
 		color: '',
@@ -24,8 +24,6 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 
 	const onSubmit = (data) => {
 		onCreateCalendar(data);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -124,6 +122,5 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 }
 
 FormNewCalendar.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onCreateCalendar: PropTypes.func.isRequired,
 };

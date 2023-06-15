@@ -14,7 +14,7 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CurrentUserContext } from '../../context';
 
-export function FormNewEvent({ setVisible, onCreateEvent }) {
+export function FormNewEvent({ onCreateEvent }) {
 	const userContext = useContext(CurrentUserContext);
 	const { allUserCalendars } = userContext;
 
@@ -42,8 +42,6 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 
 	const onSubmit = (data) => {
 		onCreateEvent(data);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -340,6 +338,5 @@ export function FormNewEvent({ setVisible, onCreateEvent }) {
 }
 
 FormNewEvent.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onCreateEvent: PropTypes.func.isRequired,
 };

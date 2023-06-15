@@ -23,11 +23,7 @@ export function PopupEditEvent({
 			blockScroll
 			draggable={false}
 		>
-			<FormEditEvent
-				setVisible={setVisible}
-				onEditEvent={onEditEvent}
-				onDeleteEvent={onDeleteEvent}
-			/>
+			<FormEditEvent onEditEvent={onEditEvent} onDeleteEvent={onDeleteEvent} />
 		</Dialog>
 	);
 }

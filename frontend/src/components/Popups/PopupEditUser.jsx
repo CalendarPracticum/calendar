@@ -22,11 +22,7 @@ export function PopupEditUser({
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormEditUser
-				setVisible={setVisible}
-				onUpdateUser={onUpdateUser}
-				onDeleteUser={onDeleteUser}
-			/>
+			<FormEditUser onUpdateUser={onUpdateUser} onDeleteUser={onDeleteUser} />
 		</Dialog>
 	);
 }
