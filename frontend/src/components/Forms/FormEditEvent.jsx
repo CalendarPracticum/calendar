@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
-import parseISO from 'date-fns/parseISO';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
@@ -32,8 +31,8 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 
 	const defaultValues = {
 		name: editableEvent.title,
-		timeStart: parseISO(editableEvent.start),
-		timeFinish: parseISO(editableEvent.end),
+		timeStart: editableEvent.start,
+		timeFinish: editableEvent.end,
 		allDay: editableEvent.allDay,
 		calendar: editableEvent.calendar.name,
 		description: editableEvent.description,
