@@ -99,6 +99,7 @@ function App() {
 			.getAllUserCalendars()
 			.then((data) => {
 				setAllUserCalendars(data);
+        setChosenCalendars(data.map(c=>c.id));
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
