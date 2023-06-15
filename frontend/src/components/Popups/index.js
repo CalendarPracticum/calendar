@@ -15,5 +15,5 @@ export {
 	PopupNewCalendar,
 	PopupNewEvent,
 	PopupEditEvent,
-  PopupDialog,
+	PopupDialog,
 };
