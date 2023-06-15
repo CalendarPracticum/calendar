@@ -146,8 +146,8 @@ function App() {
 					result.map((event) => {
 						/* eslint-disable no-param-reassign */
 						event.title = event.name;
-						event.start = event.datetime_start;
-						event.end = event.datetime_finish;
+						event.start = new Date(event.datetime_start);
+						event.end = new Date(event.datetime_finish);
 						event.allDay = event.all_day;
 						// TODO: почистить объект от лишних полей
 						return event;
