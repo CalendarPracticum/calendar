@@ -5,8 +5,12 @@ import { CurrentUserContext } from '../../context';
 
 export function CalendarSelect({ onEditCalendarClick }) {
 	const userContext = useContext(CurrentUserContext);
-	const { allUserCalendars, setChosenCalendars, setEditableCalendar } =
-		userContext;
+	const {
+		allUserCalendars,
+		chosenCalendars,
+		setChosenCalendars,
+		setEditableCalendar,
+	} = userContext;
 
 	const [isActive, setIsActive] = useState(true);
 
@@ -14,10 +18,10 @@ export function CalendarSelect({ onEditCalendarClick }) {
 		const calendarId = e.target.id;
 		const isChecked = e.target.checked;
 		if (isChecked) {
-			setChosenCalendars((prevState) => [...prevState, calendarId]);
+			setChosenCalendars((prevState) => [...prevState, +calendarId]);
 		} else {
 			setChosenCalendars((prevState) =>
-				prevState.filter((id) => id !== calendarId)
+				prevState.filter((id) => id !== +calendarId)
 			);
 		}
 	};
@@ -46,6 +50,7 @@ export function CalendarSelect({ onEditCalendarClick }) {
 								id={calendar.id}
 								name={calendar.id}
 								onChange={handleCheckbox}
+								defaultChecked={chosenCalendars.some((c) => c === calendar.id)}
 							/>
 							<span
 								className={styles.checkbox}

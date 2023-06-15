@@ -13,7 +13,7 @@ export function BaseCalendar({ onEventDoubleClick }) {
 	const { allUserEvents, chosenCalendars, setEditableEvent } = userContext;
 
 	const displayedEvents = allUserEvents.filter((e) =>
-		chosenCalendars.includes(`${e.calendar.id}`)
+		chosenCalendars.includes(e.calendar.id)
 	);
 
 	const { defaultDate, formats } = {
