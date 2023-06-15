@@ -31,7 +31,6 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 					<Avatar
 						icon={picture ? '' : 'pi pi-user'}
 						image={picture || ''}
-						// className="mr-2"
 						className={cn(styles.menuAvatar, 'mr-2')}
 						shape="circle"
 					/>
@@ -44,18 +43,8 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 		},
 		{ separator: true },
 		{
-			// label: name,
+			label: 'Настройки',
 			items: [
-				// {
-				//   label: 'Личные данные',
-				//   icon: 'pi pi-user',
-				//   command: () => { },
-				// },
-				{
-					label: 'Настройки',
-					icon: 'pi pi-cog',
-					command: () => {},
-				},
 				{
 					label: 'Пароли и безопасность',
 					icon: 'pi pi-lock',
