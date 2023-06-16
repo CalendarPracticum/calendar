@@ -24,6 +24,8 @@
 	font: inherit;
 	background-color: transparent;
 	cursor: pointer;
+  color: var(--text-color);
+  font-weight: 400;
 }
 
 .allCalendars {

@@ -34,7 +34,7 @@ export function CalendarSelect({ onEditCalendarClick }) {
 					onClick={() => setIsActive(!isActive)}
 					type="button"
 				>
-					Календари {isActive ? '\u15D0' : '\u15D2'}
+					{isActive ? '\u02c5' : '\u02c3'} Календари
 				</button>
 			</div>
 			<div className={styles.allCalendars}>
