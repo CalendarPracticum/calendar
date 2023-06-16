@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
-import { FormNewEvent } from '../FormNewEvent/FormNewEvent';
+import { FormEditUser } from '../Forms';
 
-export function PopupNewEvent({
+export function PopupEditUser({
 	visible,
 	setVisible,
-	onCreateEvent,
-	allUserCalendars,
+	onUpdateUser,
+	onDeleteUser,
 }) {
 	const handleOverlayClick = (evt) => {
 		if (evt.target === evt.currentTarget) {
@@ -22,19 +22,14 @@ export function PopupNewEvent({
 			onMaskClick={handleOverlayClick}
 			blockScroll
 		>
-			<FormNewEvent
-				setVisible={setVisible}
-				onCreateEvent={onCreateEvent}
-				allUserCalendars={allUserCalendars}
-			/>
+			<FormEditUser onUpdateUser={onUpdateUser} onDeleteUser={onDeleteUser} />
 		</Dialog>
 	);
 }
 
-PopupNewEvent.propTypes = {
+PopupEditUser.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
-	onCreateEvent: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	allUserCalendars: PropTypes.array.isRequired,
+	onUpdateUser: PropTypes.func.isRequired,
+	onDeleteUser: PropTypes.func.isRequired,
 };

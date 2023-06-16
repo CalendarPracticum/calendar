@@ -5,10 +5,10 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
-import styles from './FormNewCalendar.module.css';
-import { Color } from '../../utils/calendarColors';
+import styles from './Forms.module.css';
+import { Color } from '../../utils/constants';
 
-export function FormNewCalendar({ setVisible, onCreateCalendar }) {
+export function FormNewCalendar({ onCreateCalendar }) {
 	const defaultValues = {
 		name: '',
 		color: '',
@@ -24,8 +24,6 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 
 	const onSubmit = (data) => {
 		onCreateCalendar(data);
-		setVisible(false);
-
 		reset();
 	};
 
@@ -124,6 +122,5 @@ export function FormNewCalendar({ setVisible, onCreateCalendar }) {
 }
 
 FormNewCalendar.propTypes = {
-	setVisible: PropTypes.func.isRequired,
 	onCreateCalendar: PropTypes.func.isRequired,
 };

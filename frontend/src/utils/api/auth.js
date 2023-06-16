@@ -1,14 +1,22 @@
-const BASE_URL = 'http://193.107.236.224/api'; // http://localhost/api
+const BASE_URL = 'http://193.107.236.224/api';
 
 const HEADERS = {
 	'Content-Type': 'application/json',
 };
 
+const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
+
 const getJson = (response) => {
 	if (response.ok) {
 		return response.json();
 	}
-	throw new Error({ status: response.status });
+	return response.json().then((errorText) => {
+		throw new Error(
+			Array.isArray(errorText[Object.keys(errorText)[0]])
+				? errorText[Object.keys(errorText)[0]][0]
+				: 'Произошла ошибка на сервере'
+		);
+	});
 };
 
 /*
@@ -48,11 +56,11 @@ export const refreshAccess = (refreshToken) =>
   Проверка access токена на действительность
   в случае успешной проверки возвращается {}
 */
-export const verify = (accessToken) =>
+export const verify = () =>
 	fetch(`${BASE_URL}/auth/verify/`, {
 		method: 'POST',
 		headers: HEADERS,
-		body: JSON.stringify({ access: accessToken }),
+		body: JSON.stringify({ access: getAccessToken() }),
 	}).then(getJson);
 
 /*
@@ -69,10 +77,77 @@ export const verify = (accessToken) =>
     }
   }
 */
-export const getUserData = (accessToken) =>
+export const getUserData = () =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		headers: {
 			...HEADERS,
-			Authorization: `Bearer ${accessToken}`,
+			authorization: getAccessToken(),
 		},
 	}).then(getJson);
+
+/*
+  Изменение пользовательских данных
+  Вернёт:
+  {
+    "id": 0,
+    "email": "user@example.com",
+    "username": "string",
+    "profile_picture": "string",
+    "settings": {
+      "dark_mode": true,
+      "background": "string"
+    }
+  }
+*/
+export const updateUserData = ({ email, username, picture, darkMode }) =>
+	fetch(`${BASE_URL}/v1/users/me/`, {
+		method: 'PATCH',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+			email,
+			username,
+			profile_picture: picture,
+			settings: {
+				dark_mode: darkMode,
+			},
+		}),
+	}).then(getJson);
+
+/*
+  Изменение пароля
+  Вернёт:
+  {
+    "new_password": "string",
+    "current_password": "string"
+  }
+*/
+export const changePassword = ({ newPassword, currentPassword }) =>
+	fetch(`${BASE_URL}/v1/users/set_password/`, {
+		method: 'POST',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+			new_password: newPassword,
+			current_password: currentPassword,
+		}),
+	});
+
+/*
+Удаление пользовательского аккаунта
+*/
+export const deleteUser = (password) =>
+	fetch(`${BASE_URL}/v1/users/me/`, {
+		method: 'DELETE',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+			current_password: password,
+		}),
+	});

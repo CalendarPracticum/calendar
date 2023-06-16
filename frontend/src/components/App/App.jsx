@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import parseISO from 'date-fns/parseISO';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
@@ -10,18 +11,28 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
+import { Toast } from 'primereact/toast';
 import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
+import { Loader } from '../Loader/Loader';
 import styles from './App.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
-import { PopupLogin } from '../PopupLogin/PopupLogin';
-import { PopupNewEvent } from '../PopupNewEvent/PopupNewEvent';
+import { CurrentUserContext, LocalizationContext } from '../../context';
 import ruPrime from '../../utils/ruPrime.json';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { PopupNewCalendar } from '../PopupNewCalendar/PopupNewCalendar';
+import { Color, Status } from '../../utils/constants';
+import {
+	PopupLogin,
+	PopupNewEvent,
+	PopupNewCalendar,
+	PopupEditUser,
+	PopupEditCalendar,
+	PopupChangePassword,
+	PopupEditEvent,
+	PopupDialog,
+} from '../Popups';
 
 const locales = {
 	ru: ruLocale,
@@ -43,65 +54,125 @@ function App() {
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
+	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
+	const [visiblePopupEditEvent, setVisiblePopupEditEvent] = useState(false);
+	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
+		useState(false);
+	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
+		useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
-	const start = '2023-01-01';
-	const finish = '2024-01-01';
+	const [showMessage, setShowMessage] = useState(false);
+	const [dialogMessage, setDialogMessage] = useState('');
+	const [isDialogError, setIsDialogError] = useState(false);
+	const [chosenCalendars, setChosenCalendars] = useState([]);
+	const [editableCalendar, setEditableCalendar] = useState({});
+	const [editableEvent, setEditableEvent] = useState({});
+	const [isLoading, setIsLoading] = useState(false);
+
+	const today = new Date();
+	const start = [today.getFullYear(), '-01-01'].join('');
+	const finish = [today.getFullYear() + 1, '-01-01'].join('');
+
+	const toast = useRef(null);
+
+	const showToast = (message, status) => {
+		toast.current.show({
+			severity: status,
+			summary: 'Успех',
+			detail: message,
+			life: 3000,
+		});
+	};
+
+	const showDialog = (message, status) => {
+		setDialogMessage(message);
+		if (status === false) {
+			setTimeout(() => {
+				setShowMessage(false);
+			}, 1500);
+		}
+		setIsDialogError(status);
+		setShowMessage(true);
+	};
+
+	const handleGetAllCalendars = () => {
+		setIsLoading(true);
+		calendarApi
+			.getAllUserCalendars()
+			.then((data) => {
+				setAllUserCalendars(data);
+				setChosenCalendars(data.map((c) => c.id));
+			})
+			.catch((err) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', err.message);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
 
 	useEffect(() => {
 		if (loggedIn) {
-			const jwtAccess = localStorage.getItem('jwtAccess');
 			auth
-				.getUserData(jwtAccess)
+				.getUserData()
 				.then((result) => {
-					setCurrentUser(result);
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture,
+						darkMode: result.settings.dark_mode,
+					});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', err);
+					console.log('ОШИБКА: ', err.message);
 				});
 		}
+	}, [loggedIn]);
+
+	useEffect(() => {
+		const calendarsId = allUserCalendars.map((c) => c.id);
 
 		eventApi
-			// жутчаий хардкод на получение личного календря т.к. пока возможности переключения между ними нету
-			.getAllUserEvents(
+			.getAllUserEvents({
 				start,
 				finish,
-				allUserCalendars.length !== 0 ? allUserCalendars[0].id : ''
-			)
+				calendar: allUserCalendars.length !== 0 ? calendarsId : '',
+			})
 			.then((result) => {
 				setAllUserEvents(
 					result.map((event) => {
 						/* eslint-disable no-param-reassign */
 						event.title = event.name;
-						event.start = event.datetime_start;
-						event.end = event.datetime_finish;
+						event.start = parseISO(event.datetime_start);
+						event.end = parseISO(event.datetime_finish);
 						event.allDay = event.all_day;
+
 						return event;
 					})
 				);
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', error);
+				console.log('ОШИБКА: ', error.message);
 			});
-	}, [loggedIn, allUserCalendars]);
+	}, [allUserCalendars, start, finish]);
 
 	useEffect(() => {
 		if (localStorage.getItem('jwtAccess')) {
-			const jwtAccess = localStorage.getItem('jwtAccess');
 			auth
-				.getUserData(jwtAccess)
+				.getUserData()
 				.then((res) => {
 					if (res) {
 						setLoggedIn(true);
-						// eslint-disable-next-line
 						handleGetAllCalendars();
 					}
 				})
 				.catch((error) => {
 					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', error);
+					console.log('ОШИБКА: ', error.message);
 				});
 		}
 	}, []);
@@ -116,54 +187,112 @@ function App() {
 			setAllUserCalendars,
 			allUserEvents,
 			setAllUserEvents,
+			chosenCalendars,
+			setChosenCalendars,
+			editableCalendar,
+			setEditableCalendar,
+			editableEvent,
+			setEditableEvent,
 		}),
-		[currentUser, loggedIn, allUserCalendars, allUserEvents]
+		[
+			currentUser,
+			loggedIn,
+			allUserCalendars,
+			allUserEvents,
+			chosenCalendars,
+			editableCalendar,
+			editableEvent,
+		]
 	);
 
-	// TODO: closeAllPopups?
-	// TODO: custom hook useOverlayClick?
-
-	const handleGetAllCalendars = () => {
+	const handleCreateCalendar = ({ name, description, color }) => {
+		setIsLoading(true);
 		calendarApi
-			.getAllUserCalendars()
-			.then((data) => {
-				setAllUserCalendars(data);
+			.createNewCalendar({ name, description, color })
+			.then((newCalendar) => {
+				setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+				setVisiblePopupNewCalendar(false);
+				showToast('Новый календарь создан!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err);
-			});
-	};
-
-	const handleCreateCalendar = ({ name, description, color }) => {
-		calendarApi
-			.createNewCalendar(name, description, color)
-			.then((newCalendar) =>
-				setAllUserCalendars((prevState) => [newCalendar, ...prevState])
-			)
-			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err);
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	const handleCreateEvent = (data) => {
+		setIsLoading(true);
 		eventApi
 			.createNewEvent(data)
 			.then((event) => {
 				event.title = event.name;
-				event.start = event.datetime_start;
-				event.end = event.datetime_finish;
+				event.start = parseISO(event.datetime_start);
+				event.end = parseISO(event.datetime_finish);
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
+				setVisiblePopupNewEvent(false);
+				showToast('Событие создано!', Status.SUCCESS);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err);
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleEditEvent = (formData) => {
+		setIsLoading(true);
+		eventApi
+			.partChangeEvent(formData)
+			.then((updatedEvent) => {
+				updatedEvent.title = updatedEvent.name;
+				updatedEvent.start = parseISO(updatedEvent.datetime_start);
+				updatedEvent.end = parseISO(updatedEvent.datetime_finish);
+				updatedEvent.allDay = updatedEvent.all_day;
+				setAllUserEvents((prevState) =>
+					prevState.map((event) =>
+						event.id === updatedEvent.id ? updatedEvent : event
+					)
+				);
+				setVisiblePopupEditEvent(false);
+				showToast('Событие изменено!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleDeleteEvent = (idEvent) => {
+		setIsLoading(true);
+		eventApi
+			.deleteEvent(idEvent)
+			.then((res) => {
+				if (res.status === 204) {
+					setAllUserEvents((prevState) =>
+						prevState.filter((event) => event.id !== idEvent)
+					);
+					setVisiblePopupEditEvent(false);
+					showToast('Событие удалено!', Status.SUCCESS);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	const handleLogin = ({ email, password }) => {
+		setIsLoading(true);
 		auth
 			.authorize(email, password)
 			.then((data) => {
@@ -171,82 +300,248 @@ function App() {
 				localStorage.setItem('jwtRefresh', data.refresh);
 				setLoggedIn(true);
 				handleGetAllCalendars();
-				setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
+				setVisiblePopupLogin(false);
+				showDialog('Вы успешно вошли!', false);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err);
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	const handleRegister = ({ email, password }) => {
+		setIsLoading(true);
 		auth
 			.register(email, password)
-			.then(
-				auth
-					.authorize(email, password)
-					.then((data) => {
-						localStorage.setItem('jwtAccess', data.access);
-						localStorage.setItem('jwtRefresh', data.refresh);
-						handleCreateCalendar({ name: 'Личное', color: '#91DED3' });
-						setLoggedIn(true);
-						handleGetAllCalendars();
-						setVisiblePopupLogin(false); // всплывашка подтверждения тоже закрывается, доработать
-					})
-					.catch((err) => {
-						// eslint-disable-next-line no-console
-						console.log('ОШИБКА: ', err);
-					})
+			.then(() =>
+				auth.authorize(email, password).then((data) => {
+					localStorage.setItem('jwtAccess', data.access);
+					localStorage.setItem('jwtRefresh', data.refresh);
+					calendarApi
+						.createNewCalendar({
+							name: 'Личное',
+							description: '',
+							color: Color.DEFAULT,
+						})
+						.then((newCalendar) => {
+							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+							setLoggedIn(true);
+							handleGetAllCalendars();
+							setVisiblePopupLogin(false);
+							showDialog('Регистрация прошла успешно!', false);
+						});
+				})
 			)
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err);
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleUpdateUser = (userData) => {
+		setIsLoading(true);
+		auth
+			.updateUserData(userData)
+			.then((result) => {
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture: result.profile_picture,
+					darkMode: result.settings.dark_mode,
+				});
+				setVisiblePopupEditUser(false);
+				showToast('Данные успешно обновлены!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleChangePassword = (data) => {
+		setIsLoading(true);
+		auth
+			.changePassword(data)
+			.then((res) => {
+				if (res.status === 204) {
+					setVisiblePopupChangePassword(false);
+					showToast('Пароль изменён', Status.SUCCESS);
+				} else {
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const logout = () => {
+		localStorage.clear();
+		setLoggedIn(false);
+		setCurrentUser({});
+		setAllUserCalendars([]);
+		setAllUserEvents([]);
+		showToast('Вы вышли из аккаунта!', Status.SUCCESS);
+	};
+
+	const handleDeleteUser = (password) => {
+		setIsLoading(true);
+		auth
+			.deleteUser(password)
+			.then((res) => {
+				if (res.status === 204) {
+					setVisiblePopupEditUser(false);
+					logout();
+				} else {
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleEditCalendar = (calendar) => {
+		setIsLoading(true);
+		calendarApi
+			.partChangeCalendar(calendar)
+			.then((updatedCalendar) => {
+				setAllUserCalendars((prevState) =>
+					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
+				);
+				setVisiblePopupEditCalendar(false);
+				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleDeleteCalendar = (idCalendar) => {
+		setIsLoading(true);
+		calendarApi
+			.deleteCalendar(idCalendar)
+			.then((res) => {
+				if (res.status === 204) {
+					setVisiblePopupEditCalendar(false);
+					showToast('Календарь удалён', Status.SUCCESS);
+					setAllUserCalendars((prevState) =>
+						prevState.filter((c) => c.id !== idCalendar)
+					);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
 	};
 
 	return (
-		<CurrentUserContext.Provider value={user}>
-			<div className={styles.app}>
-				<Routes>
-					<Route
-						exact
-						path="/"
-						element={
-							<>
-								<Header onLogin={setVisiblePopupLogin} />
-								<Main
-									localizer={localizer}
-									onNewEventClick={setVisiblePopupNewEvent}
-									onNewCalendarClick={setVisiblePopupNewCalendar}
-									events={allUserEvents}
-								/>
-							</>
-						}
+		<LocalizationContext.Provider value={localizer}>
+			<CurrentUserContext.Provider value={user}>
+				<div className={styles.app}>
+					<Routes>
+						<Route
+							exact
+							path="/"
+							element={
+								<>
+									<Header
+										onLogin={setVisiblePopupLogin}
+										onUserClick={setVisiblePopupEditUser}
+										onPasswordClick={setVisiblePopupChangePassword}
+										logout={logout}
+									/>
+									<Main
+										onNewEventClick={setVisiblePopupNewEvent}
+										onEventDoubleClick={setVisiblePopupEditEvent}
+										onNewCalendarClick={setVisiblePopupNewCalendar}
+										onEditCalendarClick={setVisiblePopupEditCalendar}
+									/>
+								</>
+							}
+						/>
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+
+					<Loader isLoading={isLoading} />
+
+					<PopupLogin
+						visible={visiblePopupLogin}
+						setVisible={setVisiblePopupLogin}
+						handleRegister={handleRegister}
+						handleLogin={handleLogin}
 					/>
-					<Route path="*" element={<NotFound />} />
-				</Routes>
 
-				<PopupLogin
-					visible={visiblePopupLogin}
-					setVisible={setVisiblePopupLogin}
-					handleRegister={handleRegister}
-					handleLogin={handleLogin}
-				/>
+					<PopupNewEvent
+						visible={visiblePopupNewEvent}
+						setVisible={setVisiblePopupNewEvent}
+						onCreateEvent={handleCreateEvent}
+					/>
 
-				<PopupNewEvent
-					visible={visiblePopupNewEvent}
-					setVisible={setVisiblePopupNewEvent}
-					onCreateEvent={handleCreateEvent}
-					allUserCalendars={allUserCalendars}
-				/>
+					<PopupNewCalendar
+						visible={visiblePopupNewCalendar}
+						setVisible={setVisiblePopupNewCalendar}
+						onCreateCalendar={handleCreateCalendar}
+					/>
 
-				<PopupNewCalendar
-					visible={visiblePopupNewCalendar}
-					setVisible={setVisiblePopupNewCalendar}
-					onCreateCalendar={handleCreateCalendar}
-				/>
-			</div>
-		</CurrentUserContext.Provider>
+					<PopupEditUser
+						visible={visiblePopupEditUser}
+						setVisible={setVisiblePopupEditUser}
+						onUpdateUser={handleUpdateUser}
+						onDeleteUser={handleDeleteUser}
+					/>
+
+					<PopupEditCalendar
+						visible={visiblePopupEditCalendar}
+						setVisible={setVisiblePopupEditCalendar}
+						onEditCalendar={handleEditCalendar}
+						onDeleteCalendar={handleDeleteCalendar}
+					/>
+
+					<PopupChangePassword
+						visible={visiblePopupChangePassword}
+						setVisible={setVisiblePopupChangePassword}
+						onChangePassword={handleChangePassword}
+					/>
+
+					<PopupEditEvent
+						visible={visiblePopupEditEvent}
+						setVisible={setVisiblePopupEditEvent}
+						onEditEvent={handleEditEvent}
+						onDeleteEvent={handleDeleteEvent}
+					/>
+
+					<Toast ref={toast} />
+
+					<PopupDialog
+						showMessage={showMessage}
+						setShowMessage={setShowMessage}
+						isDialogError={isDialogError}
+						dialogMessage={dialogMessage}
+					/>
+				</div>
+			</CurrentUserContext.Provider>
+		</LocalizationContext.Provider>
 	);
 }
 

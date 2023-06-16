@@ -35,14 +35,20 @@
 	font-size: 14px;
 	line-height: 125%;
 	color: var(--text-color);
+	grid-row-gap: 12px;
 }
 
 .list {
 	display: grid;
-	grid-template-columns: 16px 1fr;
+	grid-template-columns: 16px 1fr 16px;
 	grid-column-gap: 8px;
-	grid-row-gap: 12px;
 	align-items: start;
+	cursor: pointer;
+	transition: all 0.2s ease-out;
+}
+
+.list:hover {
+	color: var(--surface-200);
 }
 
 .list input {
@@ -52,8 +58,8 @@
 }
 
 .checkbox {
-	height: 13px;
-	width: 13px;
+	height: 16px;
+	width: 16xpx;
 	margin-top: 1.5px;
 	border: 1px solid var(--surface-200);
 	display: inline-block;
@@ -71,7 +77,20 @@ label input:checked ~ .checkbox::before {
 	content: '\2714';
 	color: var(--primary-color-text);
 	position: relative;
-	font-size: 11px;
-	top: -5px;
+	font-size: 14px;
+	top: -2px;
 	left: 1px;
+}
+
+.edit {
+	border: none;
+	background-color: transparent;
+	color: var(--text-color);
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.2s ease-out;
+}
+
+.edit:hover {
+	color: var(--surface-200);
 }

@@ -21,6 +21,12 @@
 	min-width: 7rem;
 }
 
+.logoGroup {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .logo {
-	margin-top: 0.2rem;
+	margin-top: 0.3rem;
 }

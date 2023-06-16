@@ -5,16 +5,20 @@ import 'primeicons/primeicons.css';
 import { Button } from 'primereact/button';
 import { SelectButton } from 'primereact/selectbutton';
 import styles from './Header.module.css';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext } from '../../context';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
-import logo from '../../images/logo.svg';
+import logo from '../../images/calendarLogo.svg';
+import logoDark from '../../images/MyCalenDaily_dark.svg';
+import logoLight from '../../images/MyCalenDaily_light.svg';
 
-export function Header({ onLogin }) {
+export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
-	const { loggedIn } = userContext;
+	const { loggedIn, currentUser } = userContext;
+	const { darkMode: userDarkMode } = currentUser;
 
 	const [value, setValue] = useState('light');
 	const [darkMode, setDarkMode] = useState(false);
+
 	const themeOptions = [
 		{ icon: 'pi pi-moon', value: 'dark', constant: darkMode },
 		{ icon: 'pi pi-sun', value: 'light', constant: !darkMode },
@@ -22,9 +26,7 @@ export function Header({ onLogin }) {
 
 	useEffect(() => {
 		const themeLink = document.getElementById('app-theme');
-
 		const darkTheme = 'lara-dark-blue';
-
 		const lightTheme = 'soho-light';
 
 		if (themeLink) {
@@ -34,15 +36,32 @@ export function Header({ onLogin }) {
 		}
 	}, [darkMode]);
 
-	const themeTemplate = (option) => <i className={option.icon} />;
+	useEffect(() => {
+		if (loggedIn) {
+			setDarkMode(userDarkMode);
+		}
+	}, [loggedIn, userDarkMode]);
 
-	// TODO: добавить логотип, удалить логику показа аватарки
+	const themeTemplate = (option) => <i className={option.icon} />;
 
 	return (
 		<header className={styles.header} id="header">
 			<div className={`${styles.wrapper} container`}>
-				<div>
-					<img className={styles.logo} src={logo} alt="Логотип MyCalenDaily" />
+				<div className={styles.logoGroup}>
+					<img src={logo} alt="Логотип MyCalenDaily" />
+					{darkMode ? (
+						<img
+							className={styles.logo}
+							src={logoDark}
+							alt="Логотип MyCalenDaily"
+						/>
+					) : (
+						<img
+							className={styles.logo}
+							src={logoLight}
+							alt="Логотип MyCalenDaily"
+						/>
+					)}
 				</div>
 				<div className={styles.selectGroup}>
 					<SelectButton
@@ -58,7 +77,11 @@ export function Header({ onLogin }) {
 					/>
 				</div>
 				{loggedIn ? (
-					<AvatarGroup />
+					<AvatarGroup
+						onUserClick={onUserClick}
+						onPasswordClick={onPasswordClick}
+						logout={logout}
+					/>
 				) : (
 					<Button
 						label="Войти"
@@ -74,4 +97,7 @@ export function Header({ onLogin }) {
 
 Header.propTypes = {
 	onLogin: PropTypes.func.isRequired,
+	onUserClick: PropTypes.func.isRequired,
+	onPasswordClick: PropTypes.func.isRequired,
+	logout: PropTypes.func.isRequired,
 };

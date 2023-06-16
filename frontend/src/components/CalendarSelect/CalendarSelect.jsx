@@ -1,54 +1,30 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import styles from './CalendarSelect.module.css';
+import { CurrentUserContext } from '../../context';
 
-export function CalendarSelect() {
-	// список календарей придет с бэка
-	const list = [
-		{
-			color: '#91DED3',
-			description: null,
-			id: 16,
-			name: 'Личное',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#7F9498',
-			description: null,
-			id: 17,
-			name: 'Личное2',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#FF9086',
-			description: null,
-			id: 18,
-			name: 'Учеба',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#225662',
-			description: null,
-			id: 19,
-			name: 'Праздники',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#7254F3',
-			description: null,
-			id: 20,
-			name: 'Работа',
-			owner: 'yandex@yandex.com',
-		},
-		{
-			color: '#91DED3',
-			description: null,
-			id: 21,
-			name: 'Фигня какая-то с очень длинным названием для проверки',
-			owner: 'yandex@yandex.com',
-		},
-	];
+export function CalendarSelect({ onEditCalendarClick }) {
+	const userContext = useContext(CurrentUserContext);
+	const {
+		allUserCalendars,
+		chosenCalendars,
+		setChosenCalendars,
+		setEditableCalendar,
+	} = userContext;
 
 	const [isActive, setIsActive] = useState(true);
+
+	const handleCheckbox = (e) => {
+		const calendarId = e.target.id;
+		const isChecked = e.target.checked;
+		if (isChecked) {
+			setChosenCalendars((prevState) => [...prevState, +calendarId]);
+		} else {
+			setChosenCalendars((prevState) =>
+				prevState.filter((id) => id !== +calendarId)
+			);
+		}
+	};
 
 	return (
 		<div className={styles.calendarContainer}>
@@ -63,21 +39,41 @@ export function CalendarSelect() {
 			</div>
 			<div className={styles.allCalendars}>
 				{isActive &&
-					list.map((calendar) => (
+					allUserCalendars.map((calendar) => (
 						<label
 							className={styles.list}
 							htmlFor={calendar.id}
 							key={calendar.id}
 						>
-							<input type="checkbox" id={calendar.id} name={calendar.id} />
+							<input
+								type="checkbox"
+								id={calendar.id}
+								name={calendar.id}
+								onChange={handleCheckbox}
+								defaultChecked={chosenCalendars.some((c) => c === calendar.id)}
+							/>
 							<span
 								className={styles.checkbox}
 								style={{ backgroundColor: calendar.color }}
 							/>
-							<span>{calendar.name}</span>
+							<span className={styles.text}>{calendar.name}</span>
+							<button
+								className={styles.edit}
+								type="button"
+								onClick={() => {
+									setEditableCalendar(calendar);
+									onEditCalendarClick(true);
+								}}
+							>
+								{'\u270E'}
+							</button>
 						</label>
 					))}
 			</div>
 		</div>
 	);
 }
+
+CalendarSelect.propTypes = {
+	onEditCalendarClick: PropTypes.func.isRequired,
+};
