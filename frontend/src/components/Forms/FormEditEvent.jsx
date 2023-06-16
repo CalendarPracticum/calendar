@@ -15,8 +15,7 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CurrentUserContext } from '../../context';
 
-const getCalendarByName = (name, calendars) =>
-	calendars.find((c) => c.name === name);
+const getCalendarById = (id, calendars) => calendars.find((c) => c.id === id);
 
 export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 	const userContext = useContext(CurrentUserContext);
@@ -34,7 +33,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		timeStart: editableEvent.start,
 		timeFinish: editableEvent.end,
 		allDay: editableEvent.allDay,
-		calendar: editableEvent.calendar.name,
+		calendar: editableEvent.calendar.id,
 		description: editableEvent.description,
 	};
 
@@ -42,7 +41,6 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		control,
 		formState: { errors, isValid },
 		handleSubmit,
-		reset,
 		getValues,
 		setValue,
 		clearErrors,
@@ -50,6 +48,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (formData) => {
+		console.log(2, { formData });
 		const utcDateStart = zonedTimeToUtc(formData.timeStart);
 		const utcDateFinish = zonedTimeToUtc(formData.timeFinish);
 
@@ -57,25 +56,19 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 			...formData,
 			timeStart: utcDateStart,
 			timeFinish: utcDateFinish,
-			calendar: getCalendarByName(formData.calendar, allUserCalendars),
+			calendar: getCalendarById(formData.calendar, allUserCalendars),
 			id: editableEvent.id,
 		};
 
 		onEditEvent(data);
-		reset();
 	};
 
-	const handleDeleteEvent = (id) => {
-		onDeleteEvent(id);
-		reset();
-	};
+	const handleDeleteEvent = (id) => onDeleteEvent(id);
 
 	const onDropdownChange = () => {
 		const values = getValues();
-		const currentCalendar = getCalendarByName(
-			values.calendar,
-			allUserCalendars
-		);
+
+		const currentCalendar = getCalendarById(values.calendar, allUserCalendars);
 
 		currentColor = currentCalendar?.color;
 		circle.current.style.color = currentColor;
@@ -310,7 +303,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											placeholder="Выберите календарь*"
 											options={allUserCalendars}
 											optionLabel="name"
-											optionValue="name"
+											optionValue="id"
 											filter
 											filterBy="name"
 											itemTemplate={optionItemTemplate}

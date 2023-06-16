@@ -42,6 +42,7 @@ export function FormNewEvent({ onCreateEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (formData) => {
+		console.log(1, { formData });
 		const utcDateStart = zonedTimeToUtc(formData.timeStart);
 		const utcDateFinish = zonedTimeToUtc(formData.timeFinish);
 
