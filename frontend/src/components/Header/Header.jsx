@@ -7,7 +7,9 @@ import { SelectButton } from 'primereact/selectbutton';
 import styles from './Header.module.css';
 import { CurrentUserContext } from '../../context';
 import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
-import logo from '../../images/logo.svg';
+import logo from '../../images/calendarLogo.svg';
+import logoDark from '../../images/MyCalenDaily_dark.svg';
+import logoLight from '../../images/MyCalenDaily_light.svg';
 
 export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 	const userContext = useContext(CurrentUserContext);
@@ -45,8 +47,21 @@ export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 	return (
 		<header className={styles.header} id="header">
 			<div className={`${styles.wrapper} container`}>
-				<div>
-					<img className={styles.logo} src={logo} alt="Логотип MyCalenDaily" />
+				<div className={styles.logoGroup}>
+					<img src={logo} alt="Логотип MyCalenDaily" />
+					{darkMode ? (
+						<img
+							className={styles.logo}
+							src={logoDark}
+							alt="Логотип MyCalenDaily"
+						/>
+					) : (
+						<img
+							className={styles.logo}
+							src={logoLight}
+							alt="Логотип MyCalenDaily"
+						/>
+					)}
 				</div>
 				<div className={styles.selectGroup}>
 					<SelectButton
