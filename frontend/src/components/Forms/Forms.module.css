@@ -19,12 +19,12 @@
 
 /* FormNewCalendar && FormEditCalendar */
 .colorTable {
-	padding: 1rem;
+	padding: 1.2rem;
 	border-radius: 0.3rem;
 	border-color: var(--surface-border);
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
-	column-gap: 1.5rem;
+	column-gap: 1.1rem;
 }
 
 .color {

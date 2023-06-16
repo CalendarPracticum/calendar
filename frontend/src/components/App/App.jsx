@@ -22,7 +22,7 @@ import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { Color, Status } from '../../utils/common';
+import { Color, Status } from '../../utils/constants';
 import {
 	PopupLogin,
 	PopupNewEvent,

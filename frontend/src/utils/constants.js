@@ -1,3 +1,25 @@
+export const Color = {
+	DEFAULT: '#49CBB8',
+	ONE: '#158DE4',
+	TWO: '#9BA434',
+	THREE: '#FF8176',
+	FOUR: '#00759A',
+	FIVE: '#EE316E',
+	SIX: '#40B160',
+	SEVEN: '#225662',
+	EIGHT: '#F43F3F',
+	NINE: '#7F9498',
+	TEN: '#E7B431',
+	ELEVEN: '#74329D',
+};
+
+export const Status = {
+	IDLE: 'idle',
+	LOADING: 'loading',
+	SUCCESS: 'success',
+	ERROR: 'error',
+};
+
 export const noop = () => {};
 
 export const messages = {
