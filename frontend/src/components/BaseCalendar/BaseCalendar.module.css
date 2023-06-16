@@ -11,6 +11,10 @@
 	color: var(--text-color);
 }
 
+.calendar tbody {
+	color: #fff;
+}
+
 .holiday {
 	background-color: var(--surface-ground);
 }
