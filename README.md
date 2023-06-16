@@ -1,4 +1,6 @@
 ![tests](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/backend_lint.yml/badge.svg?branche=backend)
+![frontend lint](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/frontend_lint.yml/badge.svg)
+![deploy](https://github.com/AcceleratorYandexPracticum/calendar/actions/workflows/deploy.yml/badge.svg)
 
 ### Запуск проекта
 
@@ -53,6 +55,7 @@ docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py loaddata ./dump.json
 ```
 #### 4. Создайте суперпользователя или войдите используя данные пользователя admin
+
 ```bash
 docker-compose exec backend python manage.py createsuperuser
 ```

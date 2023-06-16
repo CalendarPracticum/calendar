@@ -1,15 +1,13 @@
 name: backend tests
 
 on:
-  push:
-    branches:
-      - backend
   pull_request:
     branches:
+      - main
+      - develop
       - backend
 
 jobs:
-
   tests:
     runs-on: ubuntu-20.04
     steps:

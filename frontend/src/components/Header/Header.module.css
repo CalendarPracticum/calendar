@@ -1,0 +1,26 @@
+.header {
+	position: fixed;
+	width: 100%;
+	background-color: var(--surface-a);
+	z-index: 10;
+	/* box-shadow: 0 4px 10px rgba(2, 89, 192, 0.1); */
+}
+
+.wrapper {
+	min-height: 3.75rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.selectGroup {
+	margin: 0 3.25rem 0 auto;
+}
+
+.button {
+	min-width: 7rem;
+}
+
+.logo {
+	margin-top: 0.2rem;
+}
