@@ -7,7 +7,7 @@ import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
 import styles from './Forms.module.css';
-import { Color } from '../../utils/common';
+import { Color } from '../../utils/constants';
 
 export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 	const userContext = useContext(CurrentUserContext);

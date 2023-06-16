@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
-import { Color } from '../../utils/common';
+import { Color } from '../../utils/constants';
 
 export function FormNewCalendar({ onCreateCalendar }) {
 	const defaultValues = {
