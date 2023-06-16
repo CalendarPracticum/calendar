@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+![LOGO](src/images/calendarLogoFull.svg)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# MyCalenDaily
 
-## Available Scripts
+MyCalenDaily - приложение, которое позволяет зарегистрированным пользователям планировать дела, разделяя их на разные календари. Им так же доступен Производственный календарь.
 
-In the project directory, you can run:
+Для не зарегистрированных пользователей доступен только Производственный календарь\* - информация о количестве рабочих, выходных и праздничных дней, необходимая бухгалтерам и кадровикам для работы, а сотрудникам - для планирования отпусков.
 
-### `npm start`
+### Функционал
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Запросы к API (refresh и access токены)
+- Регистрация/авторизация пользователя
+- Личный профиль с возможностью смены пароля, email, почты и настройки предпочтительной темы
+- Светлая и тёмная темы приложения
+- Добавление и редактирование календарей
+- Добавление и редактирование событий
+- Выборочное отображение календарей
+- Просмотр событий на месяц/неделю/день, общая сводка событий
+- Производственный календарь
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Макет
 
-### `npm test`
+> https://www.figma.com/file/ntxfCZU5xIGqwyRwPfp83z/%D0%9A%D0%B0%D0%BB%D0%B5%D0%BD%D0%B4%D0%B0%D1%80%D1%8C-0.2?node-id=0-1&t=jXp4OWR4r2bu7fsd-0
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Деплой
 
-### `npm run build`
+> https://mycalendaily.practicum.ru
+> IP-адрес сервера: 193.107.236.224
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Запуск проекта
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `frontend/`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+`npm start`
 
-### `npm run eject`
+### Библиотеки/npm-пакеты
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- [React](https://react.dev/)
+- [React Router](https://reactrouter.com/en/main)
+- [PrimeReact](https://primereact.org/) (русификация https://github.com/primefaces/primelocale)
+- [Big Calendar](http://jquense.github.io/react-big-calendar/examples/?path=/story/about-big-calendar--page)
+- [date-fns](https://date-fns.org/)
+- [React Hook Form](https://react-hook-form.com/)
+- [EsLint](https://eslint.org/)
+- [Prettier](https://prettier.io/)
+- [prop-types](https://www.npmjs.com/package/prop-types)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Следующий релиз
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Командные календари
+- Drag and Drop событий в календаре
+- Infinity Scroll
+- tanstack
+- TypeScript
+- тестирование
+- промо-страница с онбордингом
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+_\*Производственный календарь на 2023 год составлен в соответствии с Постановлением Правительства РФ "О переносе выходных дней в 2023 году" от 29.08.2022 № 1505._
