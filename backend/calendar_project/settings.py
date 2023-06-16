@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'calendar_project.urls'
@@ -160,6 +161,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = [BASE_DIR / 'calendar_project/locale']
 
 # smtp conf
 

@@ -152,7 +152,7 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                     'Неправильный формат даты. '
                     'Пожалуйста, укажите дату в формате YYYY-MM-DD')
 
-            if start >= finish:
+            if start > finish:
                 raise ValidationError(
                     'Начальная дата не может быть больше конечной'
                 )
