@@ -368,17 +368,6 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							/>
 						</div>
 
-						<div className={styles.deleteWrapper}>
-							<Button
-								type="button"
-								icon="pi pi-times"
-								className="p-button-rounded p-button-danger p-button-text"
-								aria-label="Удалить событие"
-								onClick={() => handleDeleteEvent(editableEvent.id)}
-							/>
-							<p>Удалить событие</p>
-						</div>
-
 						<Button
 							type="submit"
 							label="Редактировать событие"
@@ -386,6 +375,16 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							disabled={!isValid}
 						/>
 					</form>
+
+					<Button
+						type="button"
+						className={cn(
+							'p-button-outlined p-button-danger',
+							styles.dangerBtn
+						)}
+						label="Удалить событие"
+						onClick={() => handleDeleteEvent(editableEvent.id)}
+					/>
 				</div>
 			</div>
 		</div>
