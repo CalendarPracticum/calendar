@@ -26,7 +26,7 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 
 	const {
 		control,
-		formState: { errors, isValid },
+		formState: { errors, isValid, isDirty },
 		handleSubmit,
 		reset,
 	} = useForm({ defaultValues, mode: 'onChange' });
@@ -163,7 +163,7 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 							type="submit"
 							label="Изменить данные"
 							className="mt-2"
-							disabled={!isValid}
+							disabled={!isValid || !isDirty}
 						/>
 					</form>
 
