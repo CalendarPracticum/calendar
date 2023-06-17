@@ -171,20 +171,20 @@ export const fullChangeEvent = (formData) =>
     }
   }
 */
-export const partChangeEvent = (formData) =>
-	fetch(`${BASE_URL}/v1/events/${formData.id}/`, {
+export const partChangeEvent = (data) =>
+	fetch(`${BASE_URL}/v1/events/${data.id}/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({
-			datetime_start: formData.timeStart,
-			datetime_finish: formData.timeFinish,
-			all_day: formData.allDay,
-			name: formData.name,
-			description: formData.description,
-			calendar: formData.calendar.id,
+			datetime_start: data.timeStart,
+			datetime_finish: data.timeFinish,
+			all_day: data.allDay,
+			name: data.name,
+			description: data.description,
+			calendar: data.calendar.id,
 		}),
 	}).then(getJson);
 
