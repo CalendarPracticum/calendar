@@ -20,7 +20,7 @@ export function YearCalendar() {
 	return (
 		<div className={styles.year}>
 			<h1>Производственный календарь на {info.year} год</h1>
-			<div className={styles.months}>
+			<ul className={`${styles.months} ${styles.ulReset}`}>
 				{months.map((month, index) => (
 					<li className={styles.month} key={month}>
 						<p>{month}</p>
@@ -55,7 +55,7 @@ export function YearCalendar() {
 						/>
 					</li>
 				))}
-			</div>
+			</ul>
 			<div className={styles.about}>
 				<p>
 					* Предпраздничные дни, в которые продолжительность работы сокращается
@@ -85,14 +85,16 @@ export function YearCalendar() {
 					<p>
 						В соответствии с частью первой ст. 112 ТК РФ ТК РФ нерабочими
 						праздничными днями в Российской Федерации являются:
-						<li>1, 2, 3, 4, 5, 6 и 8 января - Новогодние каникулы;</li>
-						<li>7 января - Рождество Христово;</li>
-						<li>23 февраля - День защитника Отечества;</li>
-						<li>8 марта - Международный женский день;</li>
-						<li>1 мая - Праздник Весны и Труда;</li>
-						<li>9 мая - День Победы;</li>
-						<li>12 июня - День России;</li>
-						<li>4 ноября - День народного единства.</li>
+						<ul>
+							<li>1, 2, 3, 4, 5, 6 и 8 января - Новогодние каникулы;</li>
+							<li>7 января - Рождество Христово;</li>
+							<li>23 февраля - День защитника Отечества;</li>
+							<li>8 марта - Международный женский день;</li>
+							<li>1 мая - Праздник Весны и Труда;</li>
+							<li>9 мая - День Победы;</li>
+							<li>12 июня - День России;</li>
+							<li>4 ноября - День народного единства.</li>
+						</ul>
 					</p>
 					<p>
 						Согласно части второй ст. 112 ТК РФ при совпадении выходного и
@@ -106,9 +108,11 @@ export function YearCalendar() {
 						Постановлением Правительства РФ от {info.decreeDate} №{' '}
 						{info.decreeNumber} &ldquo;О переносе выходных дней в {info.year}{' '}
 						году&rdquo; предусмотрен перенос выходных дней:
-						{info.listOfChanges.map((e) => (
-							<li key={e}>{e}</li>
-						))}
+						<ul>
+							{info.listOfChanges.map((e) => (
+								<li key={e}>{e}</li>
+							))}
+						</ul>
 					</p>
 
 					<p>{info.aboutAllHoliday}</p>
@@ -117,14 +121,16 @@ export function YearCalendar() {
 						Количество рабочих, выходных и нерабочих праздничных дней в{' '}
 						{info.year} году по месяцам:
 					</h3>
-					{info.numberOfDays.map((e) => (
-						<ul key={e.name}>
-							{e.name}
-							<li key={e.workDays}>{e.workDays}</li>
-							<li key={e.weekends}>{e.weekends}</li>
-							{e.holidays ? <li key={e.holidays}>{e.holidays}</li> : ''}
-						</ul>
-					))}
+					<ul className={`${styles.statistic} ${styles.ulReset}`}>
+						{info.numberOfDays.map((e) => (
+							<ul key={e.name}>
+								{e.name}
+								<li key={e.workDays}>{e.workDays}</li>
+								<li key={e.weekends}>{e.weekends}</li>
+								{e.holidays ? <li key={e.holidays}>{e.holidays}</li> : ''}
+							</ul>
+						))}
+					</ul>
 					<p>
 						Норма рабочего времени конкретного месяца рассчитывается следующим
 						образом: продолжительность рабочей недели (40, 39, 36, 30, 24 и т.д.
@@ -143,25 +149,28 @@ export function YearCalendar() {
 						выходными днями будет {info.numberOfDays[0].workDays},{' '}
 						{info.numberOfDays[0].weekends} и {info.numberOfDays[0].holidays}.
 						Норма рабочего времени в этом месяце составит:
-						<li>
-							при 40-часовой рабочей неделе - {info.normHoursJanuary.fortyHours}{' '}
-							ч. (8 ч. x {info.numberOfDays[0].workDays});
-						</li>
-						<li>
-							при 39-часовой рабочей неделе -{' '}
-							{info.normHoursJanuary.thirtyNineHours} ч. (7,8 ч. x{' '}
-							{info.numberOfDays[0].workDays});
-						</li>
-						<li>
-							при 36-часовой рабочей неделе -{' '}
-							{info.normHoursJanuary.thirtySixHours} ч. (7,2 ч. x{' '}
-							{info.numberOfDays[0].workDays});
-						</li>
-						<li>
-							при 24-часовой рабочей неделе -{' '}
-							{info.normHoursJanuary.twentyFourHours} ч. (4,8 ч. x{' '}
-							{info.numberOfDays[0].workDays}).
-						</li>
+						<ul>
+							<li>
+								при 40-часовой рабочей неделе -{' '}
+								{info.normHoursJanuary.fortyHours} ч. (8 ч. x{' '}
+								{info.numberOfDays[0].workDays});
+							</li>
+							<li>
+								при 39-часовой рабочей неделе -{' '}
+								{info.normHoursJanuary.thirtyNineHours} ч. (7,8 ч. x{' '}
+								{info.numberOfDays[0].workDays});
+							</li>
+							<li>
+								при 36-часовой рабочей неделе -{' '}
+								{info.normHoursJanuary.thirtySixHours} ч. (7,2 ч. x{' '}
+								{info.numberOfDays[0].workDays});
+							</li>
+							<li>
+								при 24-часовой рабочей неделе -{' '}
+								{info.normHoursJanuary.twentyFourHours} ч. (4,8 ч. x{' '}
+								{info.numberOfDays[0].workDays}).
+							</li>
+						</ul>
 					</p>
 					<p>
 						В {info.year} г. при пятидневной рабочей неделе с двумя выходными
@@ -170,29 +179,34 @@ export function YearCalendar() {
 						рабочих дня, указанных выше, и {info.numberWeekendAndHolidayYear}{' '}
 						выходных и нерабочих праздничных дней.
 					</p>
-					<ul>
+					<p>
 						Норма рабочего времени в {info.year} г. составит:
-						<li>
-							при 40-часовой рабочей неделе - {info.normHoursYear.fortyHours} ч.
-							(8 ч. x {info.numberWorkDaysYear} дней -{' '}
-							{info.numberPreHolidaysYear} ч.);
-						</li>
-						<li>
-							при 39-часовой рабочей неделе -{' '}
-							{info.normHoursYear.thirtyNineHours} ч. (7,8 ч. x{' '}
-							{info.numberWorkDaysYear} дней - {info.numberPreHolidaysYear} ч.);
-						</li>
-						<li>
-							при 36-часовой рабочей неделе -{' '}
-							{info.normHoursYear.thirtySixHours} ч. (7,2 ч. x{' '}
-							{info.numberWorkDaysYear} дней - {info.numberPreHolidaysYear} ч.);
-						</li>
-						<li>
-							при 24-часовой рабочей неделе -{' '}
-							{info.normHoursYear.twentyFourHours} ч. (4,8 ч. x{' '}
-							{info.numberWorkDaysYear} дней - {info.numberPreHolidaysYear} ч.).
-						</li>
-					</ul>
+						<ul>
+							<li>
+								при 40-часовой рабочей неделе - {info.normHoursYear.fortyHours}{' '}
+								ч. (8 ч. x {info.numberWorkDaysYear} дней -{' '}
+								{info.numberPreHolidaysYear} ч.);
+							</li>
+							<li>
+								при 39-часовой рабочей неделе -{' '}
+								{info.normHoursYear.thirtyNineHours} ч. (7,8 ч. x{' '}
+								{info.numberWorkDaysYear} дней - {info.numberPreHolidaysYear}{' '}
+								ч.);
+							</li>
+							<li>
+								при 36-часовой рабочей неделе -{' '}
+								{info.normHoursYear.thirtySixHours} ч. (7,2 ч. x{' '}
+								{info.numberWorkDaysYear} дней - {info.numberPreHolidaysYear}{' '}
+								ч.);
+							</li>
+							<li>
+								при 24-часовой рабочей неделе -{' '}
+								{info.normHoursYear.twentyFourHours} ч. (4,8 ч. x{' '}
+								{info.numberWorkDaysYear} дней - {info.numberPreHolidaysYear}{' '}
+								ч.).
+							</li>
+						</ul>
+					</p>
 				</div>
 			</div>
 		</div>
