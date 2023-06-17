@@ -9,19 +9,8 @@ export function PopupEditUser({
 	onUpdateUser,
 	onDeleteUser,
 }) {
-	const handleOverlayClick = (evt) => {
-		if (evt.target === evt.currentTarget) {
-			setVisible(false);
-		}
-	};
-
 	return (
-		<Dialog
-			visible={visible}
-			onHide={() => setVisible(false)}
-			onMaskClick={handleOverlayClick}
-			blockScroll
-		>
+		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
 			<FormEditUser onUpdateUser={onUpdateUser} onDeleteUser={onDeleteUser} />
 		</Dialog>
 	);

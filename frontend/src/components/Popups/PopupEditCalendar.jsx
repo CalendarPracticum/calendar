@@ -9,19 +9,8 @@ export function PopupEditCalendar({
 	onEditCalendar,
 	onDeleteCalendar,
 }) {
-	const handleOverlayClick = (evt) => {
-		if (evt.target === evt.currentTarget) {
-			setVisible(false);
-		}
-	};
-
 	return (
-		<Dialog
-			visible={visible}
-			onHide={() => setVisible(false)}
-			onMaskClick={handleOverlayClick}
-			blockScroll
-		>
+		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
 			<FormEditCalendar
 				onEditCalendar={onEditCalendar}
 				onDeleteCalendar={onDeleteCalendar}

@@ -12,19 +12,8 @@ export function PopupLogin({
 }) {
 	const [showFormLogin, setShowFormLogin] = useState(true);
 
-	const handleOverlayClick = (evt) => {
-		if (evt.target === evt.currentTarget) {
-			setVisible(false);
-		}
-	};
-
 	return (
-		<Dialog
-			visible={visible}
-			onHide={() => setVisible(false)}
-			onMaskClick={handleOverlayClick}
-			blockScroll
-		>
+		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
 			{showFormLogin ? (
 				<FormLogin showFormLogin={setShowFormLogin} handleLogin={handleLogin} />
 			) : (
