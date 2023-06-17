@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
+import getUnixTime from 'date-fns/getUnixTime';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
@@ -42,7 +43,6 @@ export function FormNewEvent({ onCreateEvent }) {
 	} = useForm({ defaultValues, mode: 'onChange', reValidateMode: 'onChange' });
 
 	const onSubmit = (formData) => {
-		console.log(1, { formData });
 		const utcDateStart = zonedTimeToUtc(formData.timeStart);
 		const utcDateFinish = zonedTimeToUtc(formData.timeFinish);
 
@@ -82,20 +82,15 @@ export function FormNewEvent({ onCreateEvent }) {
 
 			setValue('timeStart', start);
 			setValue('timeFinish', end);
-		} else {
-			setValue('timeStart', null);
-			setValue('timeFinish', null);
 		}
 
-		clearErrors('timeStart');
-		clearErrors('timeFinish');
 		trigger('timeStart', 'timeFinish');
 	};
 
 	const setAllDayFalse = () => setValue('allDay', false);
-
 	const onHideCalendar = () => {
-		// TODO: написать логику, завязанную на allDay
+		clearErrors('timeStart');
+		clearErrors('timeFinish');
 		trigger('timeStart', 'timeFinish');
 	};
 
@@ -168,10 +163,23 @@ export function FormNewEvent({ onCreateEvent }) {
 										validate: {
 											checkTimeFinish: (value) => {
 												const { timeFinish } = getValues();
+
 												return timeFinish
-													? timeFinish > value ||
+													? getUnixTime(new Date(timeFinish)) >=
+															getUnixTime(new Date(value)) ||
 															'Дата начала события не может быть позже даты конца'
 													: true;
+											},
+											checkAllDay: (value) => {
+												const { allDay } = getValues();
+												const start = startOfDay(value);
+
+												if (allDay && value.toString() !== start.toString()) {
+													setValue('timeStart', start);
+													return 'Нельзя менять время, если проставлено событие на Весь день';
+												}
+
+												return true;
 											},
 										},
 									}}
@@ -212,9 +220,21 @@ export function FormNewEvent({ onCreateEvent }) {
 											checkTimeStart: (value) => {
 												const { timeStart } = getValues();
 												return timeStart
-													? timeStart < value ||
+													? getUnixTime(new Date(timeStart)) <=
+															getUnixTime(new Date(value)) ||
 															'Дата конца события не может быть раньше даты начала'
 													: true;
+											},
+											checkAllDay: (value) => {
+												const { allDay } = getValues();
+												const end = endOfDay(value);
+
+												if (allDay && value.toString() !== end.toString()) {
+													setValue('timeFinish', end);
+													return 'Нельзя менять время, если проставлено событие на Весь день';
+												}
+
+												return true;
 											},
 										},
 									}}
