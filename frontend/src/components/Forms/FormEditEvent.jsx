@@ -40,7 +40,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 
 	const {
 		control,
-		formState: { errors, isValid },
+		formState: { errors, isValid, isDirty },
 		handleSubmit,
 		getValues,
 		setValue,
@@ -372,7 +372,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							type="submit"
 							label="Редактировать событие"
 							className="mt-2"
-							disabled={!isValid}
+							disabled={!isValid || !isDirty}
 						/>
 					</form>
 
