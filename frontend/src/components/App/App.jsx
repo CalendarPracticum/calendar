@@ -113,7 +113,7 @@ function App() {
 			});
 	};
 
-	const logout = useCallback((message) => {
+	const logout = useCallback((message = null) => {
 		localStorage.clear();
 		setLoggedIn(false);
 		setCurrentUser({});
@@ -260,7 +260,8 @@ function App() {
 				.createNewCalendar({ name, description, color })
 				.then((newCalendar) => {
 					setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
-					setVisiblePopupNewCalendar(false);
+					setChosenCalendars((prevState) => [+newCalendar.id, ...prevState]);
+          setVisiblePopupNewCalendar(false);
 					showToast('Новый календарь создан!', Status.SUCCESS);
 				})
 				.catch((err) => {
