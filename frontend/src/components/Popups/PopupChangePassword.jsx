@@ -4,19 +4,8 @@ import { Dialog } from 'primereact/dialog';
 import { FormChangePassword } from '../Forms';
 
 export function PopupChangePassword({ visible, setVisible, onChangePassword }) {
-	const handleOverlayClick = (evt) => {
-		if (evt.target === evt.currentTarget) {
-			setVisible(false);
-		}
-	};
-
 	return (
-		<Dialog
-			visible={visible}
-			onHide={() => setVisible(false)}
-			onMaskClick={handleOverlayClick}
-			blockScroll
-		>
+		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
 			<FormChangePassword onChangePassword={onChangePassword} />
 		</Dialog>
 	);

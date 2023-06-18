@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
+import getUnixTime from 'date-fns/getUnixTime';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
@@ -15,8 +16,7 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CurrentUserContext } from '../../context';
 
-const getCalendarByName = (name, calendars) =>
-	calendars.find((c) => c.name === name);
+const getCalendarById = (id, calendars) => calendars.find((c) => c.id === id);
 
 export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 	const userContext = useContext(CurrentUserContext);
@@ -34,15 +34,14 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		timeStart: editableEvent.start,
 		timeFinish: editableEvent.end,
 		allDay: editableEvent.allDay,
-		calendar: editableEvent.calendar.name,
+		calendar: editableEvent.calendar.id,
 		description: editableEvent.description,
 	};
 
 	const {
 		control,
-		formState: { errors, isValid },
+		formState: { errors, isValid, isDirty },
 		handleSubmit,
-		reset,
 		getValues,
 		setValue,
 		clearErrors,
@@ -57,25 +56,18 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 			...formData,
 			timeStart: utcDateStart,
 			timeFinish: utcDateFinish,
-			calendar: getCalendarByName(formData.calendar, allUserCalendars),
+			calendar: getCalendarById(formData.calendar, allUserCalendars),
 			id: editableEvent.id,
 		};
 
 		onEditEvent(data);
-		reset();
 	};
 
-	const handleDeleteEvent = (id) => {
-		onDeleteEvent(id);
-		reset();
-	};
+	const handleDeleteEvent = () => onDeleteEvent(editableEvent.id);
 
 	const onDropdownChange = () => {
 		const values = getValues();
-		const currentCalendar = getCalendarByName(
-			values.calendar,
-			allUserCalendars
-		);
+		const currentCalendar = getCalendarById(values.calendar, allUserCalendars);
 
 		currentColor = currentCalendar?.color;
 		circle.current.style.color = currentColor;
@@ -101,20 +93,15 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 
 			setValue('timeStart', start);
 			setValue('timeFinish', end);
-		} else {
-			setValue('timeStart', null);
-			setValue('timeFinish', null);
 		}
 
-		clearErrors('timeStart');
-		clearErrors('timeFinish');
 		trigger('timeStart', 'timeFinish');
 	};
 
 	const setAllDayFalse = () => setValue('allDay', false);
-
 	const onHideCalendar = () => {
-		// TODO: написать логику, завязанную на allDay
+		clearErrors('timeStart');
+		clearErrors('timeFinish');
 		trigger('timeStart', 'timeFinish');
 	};
 
@@ -187,10 +174,23 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 										validate: {
 											checkTimeFinish: (value) => {
 												const { timeFinish } = getValues();
+
 												return timeFinish
-													? timeFinish > value ||
+													? getUnixTime(new Date(timeFinish)) >=
+															getUnixTime(new Date(value)) ||
 															'Дата начала события не может быть позже даты конца'
 													: true;
+											},
+											checkAllDay: (value) => {
+												const { allDay } = getValues();
+												const start = startOfDay(value);
+
+												if (allDay && value.toString() !== start.toString()) {
+													setValue('timeStart', start);
+													return 'Нельзя менять время, если проставлено событие на Весь день';
+												}
+
+												return true;
 											},
 										},
 									}}
@@ -232,9 +232,21 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											checkTimeStart: (value) => {
 												const { timeStart } = getValues();
 												return timeStart
-													? timeStart < value ||
+													? getUnixTime(new Date(timeStart)) <=
+															getUnixTime(new Date(value)) ||
 															'Дата конца события не может быть раньше даты начала'
 													: true;
+											},
+											checkAllDay: (value) => {
+												const { allDay } = getValues();
+												const end = endOfDay(value);
+
+												if (allDay && value.toString() !== end.toString()) {
+													setValue('timeFinish', end);
+													return 'Нельзя менять время, если проставлено событие на Весь день';
+												}
+
+												return true;
 											},
 										},
 									}}
@@ -310,7 +322,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											placeholder="Выберите календарь*"
 											options={allUserCalendars}
 											optionLabel="name"
-											optionValue="name"
+											optionValue="id"
 											filter
 											filterBy="name"
 											itemTemplate={optionItemTemplate}
@@ -356,24 +368,23 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							/>
 						</div>
 
-						<div className={styles.deleteWrapper}>
-							<Button
-								type="button"
-								icon="pi pi-times"
-								className="p-button-rounded p-button-danger p-button-text"
-								aria-label="Удалить событие"
-								onClick={() => handleDeleteEvent(editableEvent.id)}
-							/>
-							<p>Удалить событие</p>
-						</div>
-
 						<Button
 							type="submit"
 							label="Редактировать событие"
 							className="mt-2"
-							disabled={!isValid}
+							disabled={!isValid || !isDirty}
 						/>
 					</form>
+
+					<Button
+						type="button"
+						className={cn(
+							'p-button-outlined p-button-danger',
+							styles.dangerBtn
+						)}
+						label="Удалить событие"
+						onClick={handleDeleteEvent}
+					/>
 				</div>
 			</div>
 		</div>
