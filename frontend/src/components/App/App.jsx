@@ -22,7 +22,7 @@ import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { Color, Status } from '../../utils/constants';
+import { Color, Status, holidays } from '../../utils/constants';
 import {
 	PopupLogin,
 	PopupNewEvent,
@@ -101,8 +101,10 @@ function App() {
 		calendarApi
 			.getAllUserCalendars()
 			.then((data) => {
-				setAllUserCalendars(data);
-				setChosenCalendars(data.map((c) => c.id));
+				setAllUserCalendars(data.concat(holidays));
+				setChosenCalendars(
+					data.map((c) => c.id).concat(holidays.map((c) => c.id))
+				);
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
@@ -184,13 +186,15 @@ function App() {
 
 	// TODO: переписать это чудовище, чтобы запросы не улетали первеее всех + использовать новую переменную
 	useEffect(() => {
-		const calendarsId = allUserCalendars.map((c) => c.id);
+		const calendarsId = allUserCalendars
+			.map((c) => c.id)
+			.concat(holidays.map((c) => c.id));
 
 		eventApi
 			.getAllUserEvents({
 				start,
 				finish,
-				calendar: allUserCalendars.length !== 0 ? calendarsId : '',
+				calendar: calendarsId,
 			})
 			.then((result) => {
 				setAllUserEvents(
@@ -200,10 +204,14 @@ function App() {
 						event.start = parseISO(event.datetime_start);
 						event.end = parseISO(event.datetime_finish);
 						event.allDay = event.all_day;
-
 						return event;
 					})
 				);
+
+				if (allUserCalendars.length === 0) {
+					setChosenCalendars(holidays.map((c) => c.id));
+					setAllUserCalendars(holidays);
+				}
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
@@ -414,7 +422,8 @@ function App() {
 							color: Color.DEFAULT,
 						})
 						.then((newCalendar) => {
-							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+							setAllUserCalendars([newCalendar]);
+							setChosenCalendars([newCalendar.id]);
 							setLoggedIn(true);
 							handleGetAllCalendars();
 							setVisiblePopupLogin(false);

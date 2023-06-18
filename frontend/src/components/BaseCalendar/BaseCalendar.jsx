@@ -30,6 +30,9 @@ export function BaseCalendar({ onEventDoubleClick }) {
 	);
 
 	const handleDoubleClick = (event) => {
+		if (event.calendar.id === 1) {
+			return;
+		}
 		onEventDoubleClick(true);
 		setEditableEvent(event);
 	};
