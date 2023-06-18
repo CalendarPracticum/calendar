@@ -33,10 +33,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 		reset();
 	};
 
-	const handleDeleteCalendar = () => {
-		onDeleteCalendar(id);
-		reset();
-	};
+	const handleDeleteCalendar = () => onDeleteCalendar(id);
 
 	const getFormErrorMessage = (errorName) =>
 		errors[errorName] && (

@@ -63,7 +63,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		onEditEvent(data);
 	};
 
-	const handleDeleteEvent = (id) => onDeleteEvent(id);
+	const handleDeleteEvent = () => onDeleteEvent(editableEvent.id);
 
 	const onDropdownChange = () => {
 		const values = getValues();
@@ -383,7 +383,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							styles.dangerBtn
 						)}
 						label="Удалить событие"
-						onClick={() => handleDeleteEvent(editableEvent.id)}
+						onClick={handleDeleteEvent}
 					/>
 				</div>
 			</div>

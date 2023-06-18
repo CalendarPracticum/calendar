@@ -42,10 +42,7 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 		reset();
 	};
 
-	const handleDeleteUserClick = (password) => {
-		onDeleteUser(password);
-		reset();
-	};
+	const handleDeleteUserClick = (password) => onDeleteUser(password);
 
 	const getFormErrorMessage = (fieldName) =>
 		errors[fieldName] && (
