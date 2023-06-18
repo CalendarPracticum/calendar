@@ -24,16 +24,16 @@
 	font: inherit;
 	background-color: transparent;
 	cursor: pointer;
-  color: var(--text-color);
-  font-weight: 400;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
+	color: var(--text-color);
+	font-weight: 400;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
 }
 
 .pointer {
-  font-size: 10px;
-  padding-right: 4px;
+	font-size: 10px;
+	padding-right: 4px;
 }
 
 .allCalendars {
@@ -93,9 +93,9 @@ label input:checked ~ .checkbox::before {
 }
 
 .text {
-  white-space: break-spaces;
-  word-wrap: break-word;
-  overflow: hidden;
+	white-space: break-spaces;
+	word-wrap: break-word;
+	overflow: hidden;
 }
 
 .edit {
