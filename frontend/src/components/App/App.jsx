@@ -101,8 +101,10 @@ function App() {
 		calendarApi
 			.getAllUserCalendars()
 			.then((data) => {
-				setAllUserCalendars((prevState) => [...data, ...prevState]);
-				setChosenCalendars((prevState) => [...data.map((c) => c.id), ...prevState]);
+        setAllUserCalendars(data);
+        setChosenCalendars(data.map((c) => c.id));
+        // setAllUserCalendars(data.concat(holidays));
+        // setChosenCalendars(data.map((c) => c.id).concat(holidays.map((c)=>c.id)));
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
@@ -200,14 +202,15 @@ function App() {
 						event.start = parseISO(event.datetime_start);
 						event.end = parseISO(event.datetime_finish);
 						event.allDay = event.all_day;
-
 						return event;
 					})
 				);
+
         if (allUserCalendars.length === 0) {
           setChosenCalendars(holidays.map(c => c.id));
           setAllUserCalendars(holidays);
         }
+
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
@@ -223,10 +226,6 @@ function App() {
 			checkTokens(access, refresh, true);
 		}
 	}, [checkTokens]);
-
-  console.log({chosenCalendars});
-  console.log ({allUserCalendars});
-  // console.log(chosenCalendars.concat(otherChosenCalendars));
 
 	const user = useMemo(
 		() => ({
@@ -422,7 +421,8 @@ function App() {
 							color: Color.DEFAULT,
 						})
 						.then((newCalendar) => {
-							setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+              console.log({newCalendar});
+							setAllUserCalendars(newCalendar);
 							setLoggedIn(true);
 							handleGetAllCalendars();
 							setVisiblePopupLogin(false);
