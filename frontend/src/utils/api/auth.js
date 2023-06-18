@@ -43,7 +43,7 @@ export const authorize = (email, password) =>
 
 /*
   Получение access токена в случае, если в localStorage ещё остался refresh токен
-  в случае успеха возвращает {access, refresh}
+  в случае успеха возвращает {access}
 */
 export const refreshAccess = (refreshToken) =>
 	fetch(`${BASE_URL}/auth/refresh/`, {
@@ -56,11 +56,11 @@ export const refreshAccess = (refreshToken) =>
   Проверка access токена на действительность
   в случае успешной проверки возвращается {}
 */
-export const verify = () =>
+export const verify = (accessToken) =>
 	fetch(`${BASE_URL}/auth/verify/`, {
 		method: 'POST',
 		headers: HEADERS,
-		body: JSON.stringify({ access: getAccessToken() }),
+		body: JSON.stringify({ token: accessToken }),
 	}).then(getJson);
 
 /*
