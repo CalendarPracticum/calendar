@@ -180,8 +180,8 @@ function App() {
 		}
 	}, []);
 
-  console.log(chosenCalendars);
-  console.log (allUserCalendars);
+  console.log({chosenCalendars});
+  console.log ({allUserCalendars});
 
 	const user = useMemo(
 		() => ({
