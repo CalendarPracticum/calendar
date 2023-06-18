@@ -136,7 +136,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 							styles.dangerBtn
 						)}
 						label="Удалить календарь"
-						onClick={() => handleDeleteCalendar}
+						onClick={handleDeleteCalendar}
 					/>
 				</div>
 			</div>
