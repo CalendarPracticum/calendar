@@ -261,7 +261,7 @@ function App() {
 				.then((newCalendar) => {
 					setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
 					setChosenCalendars((prevState) => [+newCalendar.id, ...prevState]);
-          setVisiblePopupNewCalendar(false);
+					setVisiblePopupNewCalendar(false);
 					showToast('Новый календарь создан!', Status.SUCCESS);
 				})
 				.catch((err) => {
