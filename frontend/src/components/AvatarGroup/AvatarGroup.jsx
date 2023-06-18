@@ -67,7 +67,7 @@ export function AvatarGroup({
 				{
 					label: 'Выход',
 					icon: 'pi pi-sign-out',
-					command: () => logout(),
+					command: () => logout('Вы вышли из аккаунта!'),
 				},
 			],
 		},
