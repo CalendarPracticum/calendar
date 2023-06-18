@@ -166,7 +166,7 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 
 					<Divider />
 					<h2 className="text-center">
-						Для удаления аккаунта введите свой пароль
+						Для удаления профиля введите свой пароль
 					</h2>
 
 					<div className={styles.dangerZone}>
@@ -188,7 +188,7 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 
 						<Button
 							type="button"
-							label="Удалить аккаунт"
+							label="Удалить профиль"
 							className={cn('p-button-danger', styles.dangerBtn)}
 							disabled={passwordValue.length < 8}
 							onClick={() => handleDeleteUserClick(passwordValue)}

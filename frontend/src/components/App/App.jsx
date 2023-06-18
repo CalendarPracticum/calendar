@@ -32,6 +32,7 @@ import {
 	PopupChangePassword,
 	PopupEditEvent,
 	PopupDialog,
+	PopupEditAvatar,
 } from '../Popups';
 
 const locales = {
@@ -60,6 +61,7 @@ function App() {
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
+	const [visiblePopupEditAvatar, setVisiblePopupEditAvatar] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [showMessage, setShowMessage] = useState(false);
@@ -455,6 +457,14 @@ function App() {
 			});
 	};
 
+	const handleEditAvatar = () => {
+		console.log('edit');
+	};
+
+	const handleDeleteAvatar = () => {
+		console.log('delete');
+	};
+
 	return (
 		<LocalizationContext.Provider value={localizer}>
 			<CurrentUserContext.Provider value={user}>
@@ -467,6 +477,7 @@ function App() {
 								<>
 									<Header
 										onLogin={setVisiblePopupLogin}
+										onAvatarClick={setVisiblePopupEditAvatar}
 										onUserClick={setVisiblePopupEditUser}
 										onPasswordClick={setVisiblePopupChangePassword}
 										logout={logout}
@@ -529,6 +540,13 @@ function App() {
 						setVisible={setVisiblePopupEditEvent}
 						onEditEvent={handleEditEvent}
 						onDeleteEvent={handleDeleteEvent}
+					/>
+
+					<PopupEditAvatar
+						visible={visiblePopupEditAvatar}
+						setVisible={setVisiblePopupEditAvatar}
+						onEditAvatar={handleEditAvatar}
+						onDeleteAvatar={handleDeleteAvatar}
 					/>
 
 					<Toast ref={toast} />

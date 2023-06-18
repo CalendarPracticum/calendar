@@ -6,7 +6,12 @@ import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
 import styles from './AvatarGroup.module.css';
 
-export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
+export function AvatarGroup({
+	onAvatarClick,
+	onUserClick,
+	onPasswordClick,
+	logout,
+}) {
 	const userContext = useContext(CurrentUserContext);
 	const { currentUser } = userContext;
 	const { username, email, picture } = currentUser;
@@ -16,7 +21,7 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 	const items = [
 		{
 			command: () => {
-				onUserClick(true);
+				onAvatarClick(true);
 			},
 			// eslint-disable-next-line react/no-unstable-nested-components
 			template: (item, options) => (
@@ -45,6 +50,13 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 		{
 			label: 'Настройки',
 			items: [
+				{
+					label: 'Профиль',
+					icon: 'pi pi-user',
+					command: () => {
+						onUserClick(true);
+					},
+				},
 				{
 					label: 'Пароли и безопасность',
 					icon: 'pi pi-lock',
@@ -86,6 +98,7 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 }
 
 AvatarGroup.propTypes = {
+	onAvatarClick: PropTypes.func.isRequired,
 	onUserClick: PropTypes.func.isRequired,
 	onPasswordClick: PropTypes.func.isRequired,
 	logout: PropTypes.func.isRequired,
