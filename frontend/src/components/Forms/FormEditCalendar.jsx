@@ -23,7 +23,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 
 	const {
 		control,
-		formState: { errors, isValid },
+		formState: { errors, isValid, isDirty },
 		handleSubmit,
 		reset,
 	} = useForm({ defaultValues, mode: 'onChange' });
@@ -33,10 +33,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 		reset();
 	};
 
-	const handleDeleteCalendar = () => {
-		onDeleteCalendar(id);
-		reset();
-	};
+	const handleDeleteCalendar = () => onDeleteCalendar(id);
 
 	const getFormErrorMessage = (errorName) =>
 		errors[errorName] && (
@@ -125,7 +122,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 							type="submit"
 							label="Редактировать календарь"
 							className="mt-2"
-							disabled={!isValid}
+							disabled={!isValid || !isDirty}
 						/>
 					</form>
 
@@ -136,7 +133,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 							styles.dangerBtn
 						)}
 						label="Удалить календарь"
-						onClick={() => handleDeleteCalendar}
+						onClick={handleDeleteCalendar}
 					/>
 				</div>
 			</div>

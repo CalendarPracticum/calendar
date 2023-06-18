@@ -55,7 +55,7 @@ export function AvatarGroup({ onUserClick, onPasswordClick, logout }) {
 				{
 					label: 'Выход',
 					icon: 'pi pi-sign-out',
-					command: () => logout(),
+					command: () => logout('Вы вышли из аккаунта!'),
 				},
 			],
 		},

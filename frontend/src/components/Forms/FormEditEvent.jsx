@@ -40,7 +40,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 
 	const {
 		control,
-		formState: { errors, isValid },
+		formState: { errors, isValid, isDirty },
 		handleSubmit,
 		getValues,
 		setValue,
@@ -63,7 +63,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		onEditEvent(data);
 	};
 
-	const handleDeleteEvent = (id) => onDeleteEvent(id);
+	const handleDeleteEvent = () => onDeleteEvent(editableEvent.id);
 
 	const onDropdownChange = () => {
 		const values = getValues();
@@ -372,7 +372,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							type="submit"
 							label="Редактировать событие"
 							className="mt-2"
-							disabled={!isValid}
+							disabled={!isValid || !isDirty}
 						/>
 					</form>
 
@@ -383,7 +383,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							styles.dangerBtn
 						)}
 						label="Удалить событие"
-						onClick={() => handleDeleteEvent(editableEvent.id)}
+						onClick={handleDeleteEvent}
 					/>
 				</div>
 			</div>
