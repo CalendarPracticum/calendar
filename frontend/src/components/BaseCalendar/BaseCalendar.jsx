@@ -46,10 +46,9 @@ export function BaseCalendar({ onEventDoubleClick }) {
 				if (dateOfMonth !== nowMonth) {
 					return { className: styles.otherMonth };
 				}
-				if (nowDay === dayOfMonth) {
+				if (nowDay === dayOfMonth && nowMonth === dateOfMonth) {
 					return { className: styles.today };
 				}
-
 				return dayOfWeek === 0 || dayOfWeek === 6
 					? { className: styles.holiday }
 					: {};
