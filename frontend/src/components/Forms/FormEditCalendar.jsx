@@ -33,10 +33,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 		reset();
 	};
 
-	const handleDeleteCalendar = () => {
-		onDeleteCalendar(id);
-		reset();
-	};
+	const handleDeleteCalendar = () => onDeleteCalendar(id);
 
 	const getFormErrorMessage = (errorName) =>
 		errors[errorName] && (
@@ -136,7 +133,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 							styles.dangerBtn
 						)}
 						label="Удалить календарь"
-						onClick={() => handleDeleteCalendar}
+						onClick={handleDeleteCalendar}
 					/>
 				</div>
 			</div>
