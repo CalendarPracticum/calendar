@@ -34,7 +34,10 @@ export function CalendarSelect({ onEditCalendarClick }) {
 					onClick={() => setIsActive(!isActive)}
 					type="button"
 				>
-					Календари {isActive ? '\u15D0' : '\u15D2'}
+					<span>Календари</span>
+					<span className={styles.pointer}>
+						{isActive ? '\u142f' : '\u1433'}
+					</span>
 				</button>
 			</div>
 			<div className={styles.allCalendars}>
