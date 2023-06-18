@@ -101,8 +101,6 @@ function App() {
 		calendarApi
 			.getAllUserCalendars()
 			.then((data) => {
-				// setAllUserCalendars(data);
-				// setChosenCalendars(data.map((c) => c.id));
 				setAllUserCalendars(data.concat(holidays));
 				setChosenCalendars(
 					data.map((c) => c.id).concat(holidays.map((c) => c.id))
