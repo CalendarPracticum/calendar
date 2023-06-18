@@ -65,7 +65,7 @@ function App() {
 	const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
-	const [chosenCalendars, setChosenCalendars] = useState([])
+	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
 	const [editableEvent, setEditableEvent] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
@@ -101,10 +101,12 @@ function App() {
 		calendarApi
 			.getAllUserCalendars()
 			.then((data) => {
-        setAllUserCalendars(data);
-        setChosenCalendars(data.map((c) => c.id));
-        // setAllUserCalendars(data.concat(holidays));
-        // setChosenCalendars(data.map((c) => c.id).concat(holidays.map((c)=>c.id)));
+				// setAllUserCalendars(data);
+				// setChosenCalendars(data.map((c) => c.id));
+				setAllUserCalendars(data.concat(holidays));
+				setChosenCalendars(
+					data.map((c) => c.id).concat(holidays.map((c) => c.id))
+				);
 			})
 			.catch((err) => {
 				// eslint-disable-next-line no-console
@@ -186,7 +188,9 @@ function App() {
 
 	// TODO: переписать это чудовище, чтобы запросы не улетали первеее всех + использовать новую переменную
 	useEffect(() => {
-		const calendarsId = (allUserCalendars.map((c) => c.id)).concat(holidays.map(c => c.id));
+		const calendarsId = allUserCalendars
+			.map((c) => c.id)
+			.concat(holidays.map((c) => c.id));
 
 		eventApi
 			.getAllUserEvents({
@@ -206,11 +210,10 @@ function App() {
 					})
 				);
 
-        if (allUserCalendars.length === 0) {
-          setChosenCalendars(holidays.map(c => c.id));
-          setAllUserCalendars(holidays);
-        }
-
+				if (allUserCalendars.length === 0) {
+					setChosenCalendars(holidays.map((c) => c.id));
+					setAllUserCalendars(holidays);
+				}
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
@@ -268,7 +271,7 @@ function App() {
 				.then((newCalendar) => {
 					setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
 					setChosenCalendars((prevState) => [+newCalendar.id, ...prevState]);
-          setVisiblePopupNewCalendar(false);
+					setVisiblePopupNewCalendar(false);
 					showToast('Новый календарь создан!', Status.SUCCESS);
 				})
 				.catch((err) => {
@@ -421,8 +424,8 @@ function App() {
 							color: Color.DEFAULT,
 						})
 						.then((newCalendar) => {
-              console.log({newCalendar});
-							setAllUserCalendars(newCalendar);
+							setAllUserCalendars([newCalendar]);
+							setChosenCalendars([newCalendar.id]);
 							setLoggedIn(true);
 							handleGetAllCalendars();
 							setVisiblePopupLogin(false);

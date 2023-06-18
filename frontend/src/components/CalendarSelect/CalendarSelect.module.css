@@ -1,3 +1,9 @@
+.calendarsBlock {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
 .calendarContainer {
 	margin: 0;
 	margin-top: 32px;
