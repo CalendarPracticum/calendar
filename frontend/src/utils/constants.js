@@ -56,7 +56,7 @@ export const months = [
 	'Декабрь',
 ];
 
-export const holidays = [{ color: '#E7B431', description: '', id: 1, name: 'Праздники России', owner: 'admin@yandex.ru' }];
+export const holidays = [{ color: '#FFF000', description: '', id: 1, name: 'Праздники России', owner: 'admin@yandex.ru' }];
 
 export const info = {
 	year: 2023,
