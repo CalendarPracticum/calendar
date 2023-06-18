@@ -153,6 +153,9 @@ function App() {
 						return event;
 					})
 				);
+        if (allUserCalendars.length === 0) {
+          setChosenCalendars('1');
+        }
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
@@ -176,6 +179,9 @@ function App() {
 				});
 		}
 	}, []);
+
+  console.log(chosenCalendars);
+  console.log (allUserCalendars);
 
 	const user = useMemo(
 		() => ({
