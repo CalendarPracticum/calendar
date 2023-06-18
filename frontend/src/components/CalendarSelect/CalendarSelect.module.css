@@ -24,6 +24,16 @@
 	font: inherit;
 	background-color: transparent;
 	cursor: pointer;
+	color: var(--text-color);
+	font-weight: 400;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.pointer {
+	font-size: 10px;
+	padding-right: 4px;
 }
 
 .allCalendars {
@@ -80,6 +90,12 @@ label input:checked ~ .checkbox::before {
 	font-size: 14px;
 	top: -2px;
 	left: 1px;
+}
+
+.text {
+	white-space: break-spaces;
+	word-wrap: break-word;
+	overflow: hidden;
 }
 
 .edit {
