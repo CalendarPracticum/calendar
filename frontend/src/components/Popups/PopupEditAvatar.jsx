@@ -14,6 +14,7 @@ export function PopupEditAvatar({
 			<FormEditAvatar
 				onEditAvatar={onEditAvatar}
 				onDeleteAvatar={onDeleteAvatar}
+				setVisible={setVisible}
 			/>
 		</Dialog>
 	);

@@ -1,70 +1,80 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
+import { FileUpload } from 'primereact/fileupload';
 import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
 import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
 import styles from './Forms.module.css';
+import { updateUserData } from '../../utils/api/auth';
+import { BASE_URL } from '../../utils/constants';
 
-export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
+// { onEditAvatar }
+export function FormEditAvatar({ setVisible, onDeleteAvatar }) {
 	const userContext = useContext(CurrentUserContext);
-	const { currentUser } = userContext;
-	const { picture } = currentUser;
+	const { setCurrentUser } = userContext;
 
-	const defaultValues = {
-		picture: `${picture || ''}`,
-	};
+	const handleDeleteAvatar = () => onDeleteAvatar();
 
-	const {
-		// control,
-		// formState: { isValid, isDirty },
-		handleSubmit,
-		reset,
-	} = useForm({ defaultValues, mode: 'onChange' });
+	const customBase64Uploader = async (event) => {
+		// convert file to base64 encoded
+		const file = event.files[0];
+		const reader = new FileReader();
+		// eslint-disable-next-line prefer-const
+		let blob = await fetch(file.objectURL).then((r) => r.blob()); // blob:url
+		reader.readAsDataURL(blob);
+		// eslint-disable-next-line func-names
+		reader.onloadend = function () {
+			const base64data = reader.result;
+			const data = { picture: base64data };
+			updateUserData(data).then((result) => {
+				const picture = `${BASE_URL}${result.profile_picture}`;
 
-	const onSubmit = (data) => {
-		const preparedData = {
-			picture: data.picture || null,
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture,
+					darkMode: result.settings.dark_mode,
+				});
+
+				setVisible(false);
+			});
 		};
-		onEditAvatar(preparedData);
-		reset();
 	};
-
-	const handleDeleteAvatarClick = () => onDeleteAvatar();
-
-	// const getFormErrorMessage = (fieldName) =>
-	//   errors[fieldName] && (
-	//     <small className="p-error">{errors[fieldName].message}</small>
-	//   );
 
 	return (
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
-				<div className={styles.card}>
-					<h2 className="text-center">Редактировать аватар</h2>
+				<div className={styles.avatar}>
+					<h2 className="text-center">Загрузить аватар</h2>
 
-					<form
-						onSubmit={handleSubmit(onSubmit)}
-						className={`p-fluid ${styles.form}`}
-					>
-						<Button
-							type="submit"
-							label="Изменить аватар"
-							className="mt-2"
-							// disabled={!isValid || !isDirty}
+					<div>
+						<FileUpload
+							url={`${BASE_URL}/api/v1/users/me/`}
+							name=""
+							accept="image/*"
+							maxFileSize={1000000}
+							emptyTemplate={<p className="m-0">Перетащите сюда файл</p>}
+							customUpload
+							uploadHandler={customBase64Uploader}
+							chooseLabel="Выбрать"
+							uploadLabel="Сохранить"
+							cancelLabel="Отменить"
+							onUpload={() => console.log('onUpload')}
+							onBeforeSend={() => console.log('onBeforeSend')}
+							onError={() => console.log('onError')}
+							onRemove={() => console.log('onRemove')}
 						/>
-					</form>
 
-					<Divider />
-					<h2 className="text-center">Удалить аватар</h2>
-
-					<Button
-						type="button"
-						label="Удалить аватар"
-						className={cn('p-button-danger', styles.dangerBtn)}
-						onClick={() => handleDeleteAvatarClick()}
-					/>
+						<Button
+							type="button"
+							className={cn(
+								'p-button-outlined p-button-danger',
+								styles.dangerBtn
+							)}
+							label="Удалить аватар"
+							onClick={handleDeleteAvatar}
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -72,6 +82,7 @@ export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
 }
 
 FormEditAvatar.propTypes = {
-	onEditAvatar: PropTypes.func.isRequired,
+	setVisible: PropTypes.func.isRequired,
+	// onEditAvatar: PropTypes.func.isRequired,
 	onDeleteAvatar: PropTypes.func.isRequired,
 };

@@ -22,7 +22,7 @@ import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { Color, Status } from '../../utils/constants';
+import { Color, Status, BASE_URL } from '../../utils/constants';
 import {
 	PopupLogin,
 	PopupNewEvent,
@@ -170,10 +170,13 @@ function App() {
 			auth
 				.getUserData()
 				.then((result) => {
+					const fullUrl = result.profile_picture
+						? `${BASE_URL}${result.profile_picture}`
+						: result.profile_picture;
 					setCurrentUser({
 						email: result.email,
 						username: result.username,
-						picture: result.profile_picture,
+						picture: fullUrl,
 						darkMode: result.settings.dark_mode,
 					});
 				})
