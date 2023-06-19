@@ -99,7 +99,7 @@ export const getUserData = () =>
     }
   }
 */
-export const updateUserData = ({ email, username, picture, darkMode }) =>
+export const updateUserData = ({ email, username, darkMode }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
 		headers: {
@@ -109,10 +109,21 @@ export const updateUserData = ({ email, username, picture, darkMode }) =>
 		body: JSON.stringify({
 			email,
 			username,
-			profile_picture: picture,
 			settings: {
 				dark_mode: darkMode,
 			},
+		}),
+	}).then(getJson);
+
+export const updateAvatar = ({ picture }) =>
+	fetch(`${BASE_URL}/v1/users/me/`, {
+		method: 'PATCH',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+			profile_picture: picture,
 		}),
 	}).then(getJson);
 
