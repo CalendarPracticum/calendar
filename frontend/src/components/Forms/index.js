@@ -6,6 +6,7 @@ import { FormNewCalendar } from './FormNewCalendar';
 import { FormNewEvent } from './FormNewEvent';
 import { FormRegistration } from './FormRegistration';
 import { FormEditEvent } from './FormEditEvent';
+import { FormEditAvatar } from './FormEditAvatar';
 
 export {
 	FormChangePassword,
@@ -16,4 +17,5 @@ export {
 	FormNewEvent,
 	FormRegistration,
 	FormEditEvent,
+	FormEditAvatar,
 };

@@ -1,3 +1,5 @@
+export const BASE_URL = 'http://mycalendaily.acceleratorpracticum.ru';
+
 export const Color = {
 	DEFAULT: '#49CBB8',
 	ONE: '#158DE4',
@@ -54,6 +56,16 @@ export const months = [
 	'Октябрь',
 	'Ноябрь',
 	'Декабрь',
+];
+
+export const holidays = [
+	{
+		color: '#FFF000',
+		description: '',
+		id: 1,
+		name: 'Праздники России',
+		owner: 'admin@yandex.ru',
+	},
 ];
 
 export const info = {

@@ -1,18 +1,20 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styles from './CalendarSelect.module.css';
 import { CurrentUserContext } from '../../context';
+import { CalendarBlock } from './CalendarsBlock';
 
 export function CalendarSelect({ onEditCalendarClick }) {
 	const userContext = useContext(CurrentUserContext);
 	const {
+		currentUser,
 		allUserCalendars,
 		chosenCalendars,
 		setChosenCalendars,
 		setEditableCalendar,
 	} = userContext;
 
-	const [isActive, setIsActive] = useState(true);
+	const { email } = currentUser;
 
 	const handleCheckbox = (e) => {
 		const calendarId = e.target.id;
@@ -26,53 +28,37 @@ export function CalendarSelect({ onEditCalendarClick }) {
 		}
 	};
 
+	const handleClick = (calendar) => {
+		setEditableCalendar(calendar);
+		onEditCalendarClick(true);
+	};
+
+	const myCalendars = allUserCalendars.filter(
+		(calendar) => email === calendar.owner
+	);
+
+	const otherCalendars = allUserCalendars.filter(
+		(calendar) => email !== calendar.owner
+	);
+
 	return (
-		<div className={styles.calendarContainer}>
-			<div className={styles.acordion}>
-				<button
-					className={styles.button}
-					onClick={() => setIsActive(!isActive)}
-					type="button"
-				>
-					<span>Календари</span>
-					<span className={styles.pointer}>
-						{isActive ? '\u142f' : '\u1433'}
-					</span>
-				</button>
-			</div>
-			<div className={styles.allCalendars}>
-				{isActive &&
-					allUserCalendars.map((calendar) => (
-						<label
-							className={styles.list}
-							htmlFor={calendar.id}
-							key={calendar.id}
-						>
-							<input
-								type="checkbox"
-								id={calendar.id}
-								name={calendar.id}
-								onChange={handleCheckbox}
-								defaultChecked={chosenCalendars.some((c) => c === calendar.id)}
-							/>
-							<span
-								className={styles.checkbox}
-								style={{ backgroundColor: calendar.color }}
-							/>
-							<span className={styles.text}>{calendar.name}</span>
-							<button
-								className={styles.edit}
-								type="button"
-								onClick={() => {
-									setEditableCalendar(calendar);
-									onEditCalendarClick(true);
-								}}
-							>
-								{'\u270E'}
-							</button>
-						</label>
-					))}
-			</div>
+		<div className={styles.calendarsBlock}>
+			<CalendarBlock
+				name="Личные календари"
+				calendars={myCalendars}
+				handleCheckbox={handleCheckbox}
+				chosenCalendars={chosenCalendars}
+				handleClick={handleClick}
+				editButton
+			/>
+			<CalendarBlock
+				name="Другие"
+				calendars={otherCalendars}
+				handleCheckbox={handleCheckbox}
+				chosenCalendars={chosenCalendars}
+				handleClick={handleClick}
+				editButton={false}
+			/>
 		</div>
 	);
 }
