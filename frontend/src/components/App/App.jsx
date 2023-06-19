@@ -456,12 +456,15 @@ function App() {
 			auth
 				.updateUserData(userData)
 				.then((result) => {
+					const picture = `${BASE_URL}${result.profile_picture}`;
+
 					setCurrentUser({
 						email: result.email,
 						username: result.username,
-						picture: result.profile_picture,
+						picture: result.profile_picture ? picture : null,
 						darkMode: result.settings.dark_mode,
 					});
+
 					setVisiblePopupEditUser(false);
 					showToast('Данные успешно обновлены!', Status.SUCCESS);
 				})
@@ -613,7 +616,7 @@ function App() {
 
 			setIsLoading(true);
 			auth
-				.updateUserData(data)
+				.updateAvatar(data)
 				.then((result) => {
 					const picture = `${BASE_URL}${result.profile_picture}`;
 
@@ -649,7 +652,7 @@ function App() {
 
 			setIsLoading(true);
 			auth
-				.updateUserData({ picture: null })
+				.updateAvatar({ picture: null })
 				.then((result) => {
 					setCurrentUser({
 						email: result.email,

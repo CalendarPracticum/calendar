@@ -19,8 +19,7 @@ export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
 		// eslint-disable-next-line func-names
 		reader.onloadend = function () {
 			const base64data = reader.result;
-			const data = { picture: base64data };
-			onEditAvatar(data);
+			onEditAvatar({ picture: base64data });
 		};
 	};
 

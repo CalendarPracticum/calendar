@@ -13,14 +13,13 @@ import styles from './Forms.module.css';
 export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 	const userContext = useContext(CurrentUserContext);
 	const { currentUser } = userContext;
-	const { username, email, darkMode, picture } = currentUser;
+	const { username, email, darkMode } = currentUser;
 
 	const [passwordValue, setPasswordValue] = useState('');
 
 	const defaultValues = {
 		email,
 		username: `${username || ''}`,
-		picture: `${picture || ''}`,
 		darkMode,
 	};
 
@@ -35,7 +34,6 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 		const preparedData = {
 			email: data.email,
 			username: data.username || null,
-			picture: data.picture || null,
 			darkMode: data.darkMode,
 		};
 		onUpdateUser(preparedData);
