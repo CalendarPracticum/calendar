@@ -35,7 +35,9 @@ export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
 							name=""
 							accept="image/*"
 							maxFileSize={1000000}
-							emptyTemplate={<p className="m-0">Перетащите сюда файл</p>}
+							emptyTemplate={
+								<p className="m-0">Выберите или перетащите сюда файл</p>
+							}
 							customUpload
 							uploadHandler={customBase64Uploader}
 							chooseLabel="Выбрать"
