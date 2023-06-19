@@ -1,19 +1,42 @@
-import { React, useMemo } from 'react';
+import { React, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
-import { culture, messages } from '../../utils/constants';
+import { culture, messages, noop } from '../../utils/constants';
+import { CurrentUserContext, LocalizationContext } from '../../context';
 
-export function BaseCalendar({ localizer, events }) {
-	const { defaultDate, formats } = useMemo(
-		() => ({
-			defaultDate: new Date(),
-			formats: {
-				weekdayFormat: (date) => localizer.format(date, 'eeeeee', culture),
-			},
-		}),
-		[localizer]
+export function BaseCalendar({ onEventDoubleClick }) {
+	const localizer = useContext(LocalizationContext);
+	const { format } = localizer;
+
+	const userContext = useContext(CurrentUserContext);
+	const { allUserEvents, chosenCalendars, setEditableEvent } = userContext;
+
+	const displayedEvents = allUserEvents.filter((e) =>
+		chosenCalendars.includes(e.calendar.id)
 	);
+
+	const { defaultDate, formats } = {
+		defaultDate: new Date(),
+		formats: {
+			weekdayFormat: (date) => format(date, 'eeee', culture),
+			monthHeaderFormat: (date) => format(date, 'LLLL yyyy', culture),
+		},
+	};
+
+	// окрашивание событий
+	const eventPropGetter = useCallback(
+		(event) => ({ style: { backgroundColor: event.calendar.color } }),
+		[]
+	);
+
+	const handleDoubleClick = (event) => {
+		if (event.calendar.id === 1) {
+			return;
+		}
+		onEventDoubleClick(true);
+		setEditableEvent(event);
+	};
 
 	return (
 		<Calendar
@@ -27,10 +50,9 @@ export function BaseCalendar({ localizer, events }) {
 				if (dateOfMonth !== nowMonth) {
 					return { className: styles.otherMonth };
 				}
-				if (nowDay === dayOfMonth) {
+				if (nowDay === dayOfMonth && nowMonth === dateOfMonth) {
 					return { className: styles.today };
 				}
-
 				return dayOfWeek === 0 || dayOfWeek === 6
 					? { className: styles.holiday }
 					: {};
@@ -41,16 +63,19 @@ export function BaseCalendar({ localizer, events }) {
 			endAccessor="end"
 			culture={culture}
 			formats={formats}
-			events={events}
+			events={displayedEvents}
 			className={styles.calendar}
 			messages={messages}
+			eventPropGetter={eventPropGetter}
+			onDoubleClickEvent={handleDoubleClick}
 		/>
 	);
 }
 
 BaseCalendar.propTypes = {
-	// eslint-disable-next-line react/forbid-prop-types
-	localizer: PropTypes.object.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	events: PropTypes.array.isRequired,
+	onEventDoubleClick: PropTypes.func,
+};
+
+BaseCalendar.defaultProps = {
+	onEventDoubleClick: noop,
 };

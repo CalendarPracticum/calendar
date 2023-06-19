@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useMemo, useContext } from 'react';
+import { useContext } from 'react';
 import { Button } from 'primereact/button';
 import { classNames as cn } from 'primereact/utils';
 import { Calendar } from 'react-big-calendar';
@@ -7,27 +7,27 @@ import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './Sidebar.module.css';
 import { culture, noop } from '../../utils/constants';
-import CurrentUserContext from '../../context/CurrentUserContext';
+import { CurrentUserContext, LocalizationContext } from '../../context';
 
 export function Sidebar({
+	onEditCalendarClick,
 	onNewEventClick,
 	onNewCalendarClick,
-	localizer,
 	visibleProdCalendar,
 	showProdCalendar,
 }) {
+	const localizer = useContext(LocalizationContext);
+	const { format } = localizer;
+
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn } = userContext;
 
-	const { defaultDate, formats } = useMemo(
-		() => ({
-			defaultDate: new Date(),
-			formats: {
-				weekdayFormat: (date) => localizer.format(date, 'eeeeee', culture),
-			},
-		}),
-		[localizer]
-	);
+	const { defaultDate, formats } = {
+		defaultDate: new Date(),
+		formats: {
+			weekdayFormat: (date) => format(date, 'eeeeee', culture),
+		},
+	};
 
 	return (
 		<div className={styles.sidebar}>
@@ -70,7 +70,7 @@ export function Sidebar({
 			/>
 			{loggedIn && (
 				<>
-					<CalendarSelect />
+					<CalendarSelect onEditCalendarClick={onEditCalendarClick} />
 					<Button
 						label="Новый календарь"
 						icon="pi pi-plus"
@@ -83,22 +83,24 @@ export function Sidebar({
 					/>
 				</>
 			)}
-			<Button
-				label={`${
-					visibleProdCalendar ? 'Скрыть' : 'Показать'
-				} производственный календарь`}
+
+			<a
+				href="#year-calendar"
 				className={cn(`p-button-sm p-button-link  ${styles.btnProdCalendar}`)}
 				onClick={() => showProdCalendar((prevState) => !prevState)}
-			/>
+			>
+				{`${
+					visibleProdCalendar ? 'Скрыть' : 'Показать'
+				} производственный календарь`}
+			</a>
 		</div>
 	);
 }
-
+// href='#about-project'
 Sidebar.propTypes = {
+	onEditCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	localizer: PropTypes.object.isRequired,
 	visibleProdCalendar: PropTypes.bool.isRequired,
 	showProdCalendar: PropTypes.func.isRequired,
 };

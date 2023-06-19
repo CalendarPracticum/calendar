@@ -123,6 +123,10 @@ class WriteEventSerializer(serializers.ModelSerializer):
                      'null': 'Календарь не может быть null',
                      }
                  },
+            'all_day':
+                {'required': False, 'error_messages':
+                    {'invalid': 'Флаг all_day должен быть True или False'}
+                 }
         }
 
     def to_representation(self, instance):
@@ -134,13 +138,11 @@ class WriteEventSerializer(serializers.ModelSerializer):
         return ReadEventSerializer(
             instance=instance, context=self.context).data
 
-    def create(self, validated_data):
-        calendar = validated_data.get('calendar')
-        user = self.context.get('request').user
-        if user != calendar.owner:
-            raise ValidationError(
-                {'calendar': 'Можно использовать только свой календарь'}
-            )
+    def set_event_date(self, validated_data):
+        """
+        Метод для установки времени начала и завершения мероприятия, если
+        флаг all_day установлен.
+        """
 
         keys = ('all_day', 'datetime_start', 'datetime_finish')
         all_day, start, finish = [validated_data.get(key) for key in keys]
@@ -151,14 +153,37 @@ class WriteEventSerializer(serializers.ModelSerializer):
             validated_data['datetime_finish'] = finish.replace(
                 hour=23, minute=59, second=59,
             )
+        return validated_data
 
+    def create(self, validated_data):
+        validated_data = self.set_event_date(validated_data)
         return super().create(validated_data)
 
-    def validate(self, data):
-        datatime_start = data.get('datetime_start')
-        datetime_finish = data.get('datetime_finish')
+    def update(self, instance, validated_data):
+        params = {
+            'all_day': instance.all_day,
+            'datetime_start': instance.datetime_start,
+            'datetime_finish': instance.datetime_finish,
+        }
+        for key, value in params.items():
+            if validated_data.get(key) is None:
+                validated_data[key] = value
 
-        if datatime_start >= datetime_finish:
+        validated_data = self.set_event_date(validated_data)
+        return super().update(instance, validated_data)
+
+    def validate(self, data):
+        calendar = data.get('calendar')
+        user = self.context.get('request').user
+        if calendar and user != calendar.owner:
+            raise ValidationError(
+                {'calendar': 'Можно использовать только свой календарь'}
+            )
+        event = self.instance
+        datetime_start = data.get('datetime_start') or event.datetime_start
+        datetime_finish = data.get('datetime_finish') or event.datetime_finish
+
+        if datetime_start > datetime_finish:
             message = 'Мероприятие не может начинаться после даты окончания.'
             raise serializers.ValidationError(message)
 

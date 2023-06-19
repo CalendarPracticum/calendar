@@ -2,6 +2,6 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background-color: var(--surface-0);
+	background-color: var(--surface-e);
 	color: var(--text-color);
 }

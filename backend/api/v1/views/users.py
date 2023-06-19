@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from djoser.serializers import SetPasswordSerializer
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -89,3 +90,26 @@ class UsersViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
                 request.user.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
         return Response()
+
+    @extend_schema(
+        methods=['POST'],
+        summary='Смена пароля пользователя',
+        description=' ',
+        responses={
+            204: {}
+        }
+    )
+    @action(
+        ['post'],
+        detail=False,
+        permission_classes=[IsAuthenticated],
+        serializer_class=SetPasswordSerializer,
+    )
+    def set_password(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

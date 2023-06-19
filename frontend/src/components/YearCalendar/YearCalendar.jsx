@@ -1,27 +1,26 @@
-import { useMemo } from 'react';
+import { useContext } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './YearCalendar.module.css';
 import { culture, months, info, noop } from '../../utils/constants';
+import { LocalizationContext } from '../../context';
 
-// eslint-disable-next-line react/prop-types
-export function YearCalendar({ localizer }) {
+export function YearCalendar() {
+	const localizer = useContext(LocalizationContext);
+	const { format } = localizer;
+
 	// задаем формат шапки месяца
-	const { defaultDate, formats } = useMemo(
-		() => ({
-			defaultDate: new Date(),
-			formats: {
-				// eslint-disable-next-line react/prop-types
-				weekdayFormat: (date) => localizer.format(date, 'eeeeee', culture),
-			},
-		}),
-		[localizer]
-	);
+	const { defaultDate, formats } = {
+		defaultDate: new Date(),
+		formats: {
+			weekdayFormat: (date) => format(date, 'eeeeee', culture),
+		},
+	};
 
 	return (
-		<div className={styles.year}>
+		<div className={styles.year} id="year-calendar">
 			<h1>Производственный календарь на {info.year} год</h1>
-			<div className={styles.months}>
+			<ul className={`${styles.months} ${styles.ulReset}`}>
 				{months.map((month, index) => (
 					<li className={styles.month} key={month}>
 						<p>{month}</p>
@@ -56,7 +55,7 @@ export function YearCalendar({ localizer }) {
 						/>
 					</li>
 				))}
-			</div>
+			</ul>
 			<div className={styles.about}>
 				<p>
 					* Предпраздничные дни, в которые продолжительность работы сокращается
@@ -86,6 +85,8 @@ export function YearCalendar({ localizer }) {
 					<p>
 						В соответствии с частью первой ст. 112 ТК РФ ТК РФ нерабочими
 						праздничными днями в Российской Федерации являются:
+					</p>
+					<ul>
 						<li>1, 2, 3, 4, 5, 6 и 8 января - Новогодние каникулы;</li>
 						<li>7 января - Рождество Христово;</li>
 						<li>23 февраля - День защитника Отечества;</li>
@@ -94,7 +95,8 @@ export function YearCalendar({ localizer }) {
 						<li>9 мая - День Победы;</li>
 						<li>12 июня - День России;</li>
 						<li>4 ноября - День народного единства.</li>
-					</p>
+					</ul>
+
 					<p>
 						Согласно части второй ст. 112 ТК РФ при совпадении выходного и
 						нерабочего праздничного дней выходной день переносится на следующий
@@ -107,10 +109,12 @@ export function YearCalendar({ localizer }) {
 						Постановлением Правительства РФ от {info.decreeDate} №{' '}
 						{info.decreeNumber} &ldquo;О переносе выходных дней в {info.year}{' '}
 						году&rdquo; предусмотрен перенос выходных дней:
+					</p>
+					<ul>
 						{info.listOfChanges.map((e) => (
 							<li key={e}>{e}</li>
 						))}
-					</p>
+					</ul>
 
 					<p>{info.aboutAllHoliday}</p>
 					<p>{info.aboutPreHolidays}</p>
@@ -118,14 +122,16 @@ export function YearCalendar({ localizer }) {
 						Количество рабочих, выходных и нерабочих праздничных дней в{' '}
 						{info.year} году по месяцам:
 					</h3>
-					{info.numberOfDays.map((e) => (
-						<ul key={e.name}>
-							{e.name}
-							<li key={e.workDays}>{e.workDays}</li>
-							<li key={e.weekends}>{e.weekends}</li>
-							{e.holidays ? <li key={e.holidays}>{e.holidays}</li> : ''}
-						</ul>
-					))}
+					<ul className={`${styles.statistic} ${styles.ulReset}`}>
+						{info.numberOfDays.map((e) => (
+							<ul key={e.name}>
+								{e.name}
+								<li key={e.workDays}>{e.workDays}</li>
+								<li key={e.weekends}>{e.weekends}</li>
+								{e.holidays ? <li key={e.holidays}>{e.holidays}</li> : ''}
+							</ul>
+						))}
+					</ul>
 					<p>
 						Норма рабочего времени конкретного месяца рассчитывается следующим
 						образом: продолжительность рабочей недели (40, 39, 36, 30, 24 и т.д.
@@ -144,6 +150,8 @@ export function YearCalendar({ localizer }) {
 						выходными днями будет {info.numberOfDays[0].workDays},{' '}
 						{info.numberOfDays[0].weekends} и {info.numberOfDays[0].holidays}.
 						Норма рабочего времени в этом месяце составит:
+					</p>
+					<ul>
 						<li>
 							при 40-часовой рабочей неделе - {info.normHoursJanuary.fortyHours}{' '}
 							ч. (8 ч. x {info.numberOfDays[0].workDays});
@@ -163,7 +171,8 @@ export function YearCalendar({ localizer }) {
 							{info.normHoursJanuary.twentyFourHours} ч. (4,8 ч. x{' '}
 							{info.numberOfDays[0].workDays}).
 						</li>
-					</p>
+					</ul>
+
 					<p>
 						В {info.year} г. при пятидневной рабочей неделе с двумя выходными
 						днями будет {info.numberWorkDaysYear} рабочих дней, в том числе{' '}
@@ -171,8 +180,8 @@ export function YearCalendar({ localizer }) {
 						рабочих дня, указанных выше, и {info.numberWeekendAndHolidayYear}{' '}
 						выходных и нерабочих праздничных дней.
 					</p>
+					<p>Норма рабочего времени в {info.year} г. составит:</p>
 					<ul>
-						Норма рабочего времени в {info.year} г. составит:
 						<li>
 							при 40-часовой рабочей неделе - {info.normHoursYear.fortyHours} ч.
 							(8 ч. x {info.numberWorkDaysYear} дней -{' '}
