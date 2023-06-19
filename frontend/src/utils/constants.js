@@ -60,7 +60,7 @@ export const months = [
 
 export const holidays = [
 	{
-		color: '#FFF000',
+		color: '#6C70DE',
 		description: '',
 		id: 1,
 		name: 'Праздники России',
