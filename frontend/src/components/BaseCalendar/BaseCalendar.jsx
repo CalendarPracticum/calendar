@@ -19,7 +19,8 @@ export function BaseCalendar({ onEventDoubleClick }) {
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
 		formats: {
-			weekdayFormat: (date) => format(date, 'eeeeee', culture),
+			weekdayFormat: (date) => format(date, 'eeee', culture),
+			monthHeaderFormat: (date) => format(date, 'LLLL yyyy', culture),
 		},
 	};
 
