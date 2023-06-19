@@ -605,51 +605,73 @@ function App() {
 	};
 
 	const handleEditAvatar = (data) => {
-		setIsLoading(true);
-		auth
-			.updateUserData(data)
-			.then((result) => {
-				const picture = `${BASE_URL}${result.profile_picture}`;
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
 
-				setCurrentUser({
-					email: result.email,
-					username: result.username,
-					picture,
-					darkMode: result.settings.dark_mode,
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateUserData(data)
+				.then((result) => {
+					const picture = `${BASE_URL}${result.profile_picture}`;
+
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditAvatar(false);
+					showToast('Аватарка сохранена', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
 				});
-
-				setVisiblePopupEditAvatar(false);
-				showToast('Аватарка сохранена', Status.SUCCESS);
-			})
-			.catch((err) => {
-				showDialog(err.message, true);
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
 	};
 
 	const handleDeleteAvatar = () => {
-		setIsLoading(true);
-		auth
-			.updateUserData({ picture: null })
-			.then((result) => {
-				setCurrentUser({
-					email: result.email,
-					username: result.username,
-					picture: result.profile_picture,
-					darkMode: result.settings.dark_mode,
-				});
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
 
-				setVisiblePopupEditAvatar(false);
-				showToast('Аватарка удалена', Status.SUCCESS);
-			})
-			.catch((err) => {
-				showDialog(err.message, true);
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateUserData({ picture: null })
+				.then((result) => {
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditAvatar(false);
+					showToast('Аватарка удалена', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
 	};
 
 	return (
