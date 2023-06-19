@@ -84,3 +84,7 @@
 .avatar {
 	min-width: 400px;
 }
+
+.avatar .dangerBtn {
+	margin-top: 3rem;
+}

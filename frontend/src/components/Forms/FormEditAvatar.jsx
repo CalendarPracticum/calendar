@@ -1,18 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { FileUpload } from 'primereact/fileupload';
 import { Button } from 'primereact/button';
 import { classNames as cn } from 'primereact/utils';
-import { CurrentUserContext } from '../../context';
-import styles from './Forms.module.css';
-import { updateUserData } from '../../utils/api/auth';
 import { BASE_URL } from '../../utils/constants';
+import styles from './Forms.module.css';
 
-// { onEditAvatar }
-export function FormEditAvatar({ setVisible, onDeleteAvatar }) {
-	const userContext = useContext(CurrentUserContext);
-	const { setCurrentUser } = userContext;
-
+export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
 	const handleDeleteAvatar = () => onDeleteAvatar();
 
 	const customBase64Uploader = async (event) => {
@@ -26,18 +20,7 @@ export function FormEditAvatar({ setVisible, onDeleteAvatar }) {
 		reader.onloadend = function () {
 			const base64data = reader.result;
 			const data = { picture: base64data };
-			updateUserData(data).then((result) => {
-				const picture = `${BASE_URL}${result.profile_picture}`;
-
-				setCurrentUser({
-					email: result.email,
-					username: result.username,
-					picture,
-					darkMode: result.settings.dark_mode,
-				});
-
-				setVisible(false);
-			});
+			onEditAvatar(data);
 		};
 	};
 
@@ -59,10 +42,6 @@ export function FormEditAvatar({ setVisible, onDeleteAvatar }) {
 							chooseLabel="Выбрать"
 							uploadLabel="Сохранить"
 							cancelLabel="Отменить"
-							onUpload={() => console.log('onUpload')}
-							onBeforeSend={() => console.log('onBeforeSend')}
-							onError={() => console.log('onError')}
-							onRemove={() => console.log('onRemove')}
 						/>
 
 						<Button
@@ -82,7 +61,6 @@ export function FormEditAvatar({ setVisible, onDeleteAvatar }) {
 }
 
 FormEditAvatar.propTypes = {
-	setVisible: PropTypes.func.isRequired,
-	// onEditAvatar: PropTypes.func.isRequired,
+	onEditAvatar: PropTypes.func.isRequired,
 	onDeleteAvatar: PropTypes.func.isRequired,
 };

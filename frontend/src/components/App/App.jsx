@@ -594,12 +594,52 @@ function App() {
 		}
 	};
 
-	const handleEditAvatar = () => {
-		console.log('edit');
+	const handleEditAvatar = (data) => {
+		setIsLoading(true);
+		auth
+			.updateUserData(data)
+			.then((result) => {
+				const picture = `${BASE_URL}${result.profile_picture}`;
+
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture,
+					darkMode: result.settings.dark_mode,
+				});
+
+				setVisiblePopupEditAvatar(false);
+				showToast('Аватарка сохранена', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleDeleteAvatar = () => {
-		console.log('delete');
+		setIsLoading(true);
+		auth
+			.updateUserData({ picture: null })
+			.then((result) => {
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture: result.profile_picture,
+					darkMode: result.settings.dark_mode,
+				});
+
+				setVisiblePopupEditAvatar(false);
+				showToast('Аватарка удалена', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
