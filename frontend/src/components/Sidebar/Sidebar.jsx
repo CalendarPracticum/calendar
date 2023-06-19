@@ -83,17 +83,20 @@ export function Sidebar({
 					/>
 				</>
 			)}
-			<Button
-				label={`${
-					visibleProdCalendar ? 'Скрыть' : 'Показать'
-				} производственный календарь`}
+
+			<a
+				href="#year-calendar"
 				className={cn(`p-button-sm p-button-link  ${styles.btnProdCalendar}`)}
 				onClick={() => showProdCalendar((prevState) => !prevState)}
-			/>
+			>
+				{`${
+					visibleProdCalendar ? 'Скрыть' : 'Показать'
+				} производственный календарь`}
+			</a>
 		</div>
 	);
 }
-
+// href='#about-project'
 Sidebar.propTypes = {
 	onEditCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,

@@ -18,7 +18,7 @@ export function YearCalendar() {
 	};
 
 	return (
-		<div className={styles.year}>
+		<div className={styles.year} id="year-calendar">
 			<h1>Производственный календарь на {info.year} год</h1>
 			<ul className={`${styles.months} ${styles.ulReset}`}>
 				{months.map((month, index) => (
