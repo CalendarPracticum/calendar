@@ -80,3 +80,11 @@
 	margin-right: 8px;
 	flex-shrink: 0;
 }
+
+.avatar {
+	min-width: 400px;
+}
+
+.avatar .dangerBtn {
+	margin-top: 3rem;
+}

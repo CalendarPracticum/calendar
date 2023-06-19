@@ -11,7 +11,13 @@ import logo from '../../images/calendarLogo.svg';
 import logoDark from '../../images/MyCalenDaily_dark.svg';
 import logoLight from '../../images/MyCalenDaily_light.svg';
 
-export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
+export function Header({
+	onLogin,
+	onAvatarClick,
+	onUserClick,
+	onPasswordClick,
+	logout,
+}) {
 	const userContext = useContext(CurrentUserContext);
 	const { loggedIn, currentUser } = userContext;
 	const { darkMode: userDarkMode } = currentUser;
@@ -78,6 +84,7 @@ export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 				</div>
 				{loggedIn ? (
 					<AvatarGroup
+						onAvatarClick={onAvatarClick}
 						onUserClick={onUserClick}
 						onPasswordClick={onPasswordClick}
 						logout={logout}
@@ -97,6 +104,7 @@ export function Header({ onLogin, onUserClick, onPasswordClick, logout }) {
 
 Header.propTypes = {
 	onLogin: PropTypes.func.isRequired,
+	onAvatarClick: PropTypes.func.isRequired,
 	onUserClick: PropTypes.func.isRequired,
 	onPasswordClick: PropTypes.func.isRequired,
 	logout: PropTypes.func.isRequired,

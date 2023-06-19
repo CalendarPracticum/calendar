@@ -94,6 +94,10 @@ export function FormChangePassword({ onChangePassword }) {
 									control={control}
 									rules={{
 										required: 'Обязательное поле Новый пароль.',
+										maxLength: {
+											value: 40,
+											message: 'Максимальная длина 40 символа.',
+										},
 										pattern: {
 											value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
 											message: 'Не корректный пароль',

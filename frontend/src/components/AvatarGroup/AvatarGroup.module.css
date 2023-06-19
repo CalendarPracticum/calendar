@@ -8,6 +8,10 @@
 	color: var(--surface-f);
 }
 
+.avatar img {
+	object-fit: cover;
+}
+
 .menuContainer {
 	flex-wrap: nowrap;
 	max-width: calc(192px - 2.5rem);

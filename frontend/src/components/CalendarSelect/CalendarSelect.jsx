@@ -34,11 +34,11 @@ export function CalendarSelect({ onEditCalendarClick }) {
 	};
 
 	const myCalendars = allUserCalendars.filter(
-		(calendar) => calendar.owner === email
+		(calendar) => email === calendar.owner
 	);
 
 	const otherCalendars = allUserCalendars.filter(
-		(calendar) => calendar.owner !== email
+		(calendar) => email !== calendar.owner
 	);
 
 	return (

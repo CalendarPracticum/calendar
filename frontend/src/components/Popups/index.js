@@ -6,6 +6,7 @@ import { PopupNewCalendar } from './PopupNewCalendar';
 import { PopupNewEvent } from './PopupNewEvent';
 import { PopupEditEvent } from './PopupEditEvent';
 import { PopupDialog } from './PopupDialog';
+import { PopupEditAvatar } from './PopupEditAvatar';
 
 export {
 	PopupChangePassword,
@@ -16,4 +17,5 @@ export {
 	PopupNewEvent,
 	PopupEditEvent,
 	PopupDialog,
+	PopupEditAvatar,
 };

@@ -22,7 +22,8 @@ import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
 import { NotFound } from '../NotFound/NotFound';
-import { Color, Status, holidays } from '../../utils/constants';
+import { Color, Status, holidays, BASE_URL } from '../../utils/constants';
+
 import {
 	PopupLogin,
 	PopupNewEvent,
@@ -32,6 +33,7 @@ import {
 	PopupChangePassword,
 	PopupEditEvent,
 	PopupDialog,
+	PopupEditAvatar,
 } from '../Popups';
 
 const locales = {
@@ -60,6 +62,7 @@ function App() {
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
+	const [visiblePopupEditAvatar, setVisiblePopupEditAvatar] = useState(false);
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [showMessage, setShowMessage] = useState(false);
@@ -170,10 +173,13 @@ function App() {
 			auth
 				.getUserData()
 				.then((result) => {
+					const fullUrl = result.profile_picture
+						? `${BASE_URL}${result.profile_picture}`
+						: result.profile_picture;
 					setCurrentUser({
 						email: result.email,
 						username: result.username,
-						picture: result.profile_picture,
+						picture: fullUrl,
 						darkMode: result.settings.dark_mode,
 					});
 				})
@@ -598,6 +604,76 @@ function App() {
 		}
 	};
 
+	const handleEditAvatar = (data) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateUserData(data)
+				.then((result) => {
+					const picture = `${BASE_URL}${result.profile_picture}`;
+
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditAvatar(false);
+					showToast('Аватарка сохранена', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
+	};
+
+	const handleDeleteAvatar = () => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateUserData({ picture: null })
+				.then((result) => {
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditAvatar(false);
+					showToast('Аватарка удалена', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
+	};
+
 	return (
 		<LocalizationContext.Provider value={localizer}>
 			<CurrentUserContext.Provider value={user}>
@@ -610,6 +686,7 @@ function App() {
 								<>
 									<Header
 										onLogin={setVisiblePopupLogin}
+										onAvatarClick={setVisiblePopupEditAvatar}
 										onUserClick={setVisiblePopupEditUser}
 										onPasswordClick={setVisiblePopupChangePassword}
 										logout={logout}
@@ -672,6 +749,13 @@ function App() {
 						setVisible={setVisiblePopupEditEvent}
 						onEditEvent={handleEditEvent}
 						onDeleteEvent={handleDeleteEvent}
+					/>
+
+					<PopupEditAvatar
+						visible={visiblePopupEditAvatar}
+						setVisible={setVisiblePopupEditAvatar}
+						onEditAvatar={handleEditAvatar}
+						onDeleteAvatar={handleDeleteAvatar}
 					/>
 
 					<Toast ref={toast} />
