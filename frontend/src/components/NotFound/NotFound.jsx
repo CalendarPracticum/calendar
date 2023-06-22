@@ -1,8 +1,11 @@
 import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
 
-export function NotFound() {
+export function NotFound({ setIsLoading }) {
+	setIsLoading(false);
+
 	const nums = useRef(null);
 	const one = useRef(null);
 	const two = useRef(null);
@@ -69,3 +72,7 @@ export function NotFound() {
 		</div>
 	);
 }
+
+NotFound.propTypes = {
+	setIsLoading: PropTypes.func.isRequired,
+};

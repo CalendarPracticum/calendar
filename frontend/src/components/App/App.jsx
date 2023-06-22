@@ -703,7 +703,10 @@ function App() {
 								</>
 							}
 						/>
-						<Route path="*" element={<NotFound />} />
+						<Route
+							path="*"
+							element={<NotFound setIsLoading={setIsLoading} />}
+						/>
 					</Routes>
 
 					<Loader isLoading={isLoading} />

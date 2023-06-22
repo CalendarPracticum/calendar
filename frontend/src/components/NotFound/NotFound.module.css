@@ -138,27 +138,27 @@
 }
 
 .onShowOne {
-	animation-delay: 1.5s;
+	animation-delay: 2s;
 }
 
 .onShowTwo {
-	animation-delay: 3s;
+	animation-delay: 3.5s;
 }
 
 .onShowThree {
-	animation-delay: 4.5s;
+	animation-delay: 5s;
 }
 
 .onShowFour {
-	animation-delay: 6s;
+	animation-delay: 6.5s;
 }
 
 .onShowFive {
-	animation-delay: 7.5s;
+	animation-delay: 8s;
 }
 
 .onShowSix {
-	animation-delay: 9s;
+	animation-delay: 9.5s;
 }
 
 .nums {
@@ -176,6 +176,7 @@
 	animation-duration: 1.2s;
 	animation-fill-mode: forwards;
 	animation-timing-function: cubic-bezier(0.7, 0.06, 0.58, 1.34);
+	animation-delay: 0.8s;
 }
 
 .numFourStart,
