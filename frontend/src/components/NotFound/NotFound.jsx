@@ -2,53 +2,6 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
 
-// const ItemLeft = ({ text, icon }) => (
-//   <div className={styles.itemLeft} >{`${text} ${icon}`}</div>
-// );
-
-// const ItemRight = ({ text, icon }) => (
-//   <div className={styles.itemRight} >{`${text} ${icon}`}</div>
-// );
-
-// const dialogData = [
-//   {
-//     id: 'one',
-//     text: 'Ошибка 404, страница не найдена',
-//     icon: '😔',
-//     isLeft: true,
-//   },
-//   {
-//     id: 'two',
-//     text: 'И что же мне делать?',
-//     icon: '😮',
-//     isLeft: false,
-//   },
-//   {
-//     id: 'three',
-//     text: 'Возвращайся на Главную!',
-//     icon: '💃',
-//     isLeft: true,
-//   },
-//   {
-//     id: 'four',
-//     text: 'А как это сделать?',
-//     icon: '🤔',
-//     isLeft: false,
-//   },
-//   {
-//     id: 'five',
-//     text: 'Нажать на большую жёлтую кнопку',
-//     icon: '🚀',
-//     isLeft: true,
-//   },
-//   {
-//     id: 'six',
-//     text: 'Так бы сразу и сказали!',
-//     icon: '😅',
-//     isLeft: false,
-//   },
-// ];
-
 export function NotFound() {
 	const nums = useRef(null);
 	const one = useRef(null);
@@ -83,13 +36,6 @@ export function NotFound() {
 					<div className={styles.line} />
 				</div>
 				<div className={styles.dialog}>
-					{/* {dialogData.map(({ text, icon, isLeft, id }) =>
-            isLeft ? (
-              <ItemLeft text={text} icon={icon} key={id} />
-            ) : (
-              <ItemRight text={text} icon={icon} key={id} />
-            )
-          )} */}
 					<div className={styles.itemLeft} ref={one} key="one">
 						`Ошибка 404, страница не найдена 😔`
 					</div>
