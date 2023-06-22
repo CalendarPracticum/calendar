@@ -1,8 +1,143 @@
-.wrapper {
+.notFound {
 	width: 100vw;
 	height: 100vh;
-	justify-content: center;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	background-color: #071426;
+}
+
+.wrapper {
+	position: relative;
+	width: 1036px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.lines {
+	display: grid;
+	grid-template-columns: 12px 101px 77px 145px 7px 23px auto;
+	padding-left: 90px;
+}
+
+.line {
+	width: 4px;
+	height: 100vh;
+	background-color: #7254f3;
+}
+
+.fourthLine {
+	height: 493px;
+	position: relative;
+}
+
+.hook {
+	position: absolute;
+	left: 0;
+	bottom: -48px;
+	width: 54px;
+	height: 48px;
+	border-left: 4px solid #7254f3;
+	border-bottom: 4px solid #7254f3;
+	border-top: transparent;
+	border-right: transparent;
+	border-radius: 0 0 16px 38px;
+}
+
+.nums {
+	position: absolute;
+	top: 271px;
+	left: 0;
+	padding-left: 4px;
+	display: flex;
+	align-items: center;
+	gap: 21px;
+}
+
+.dialog {
+	padding-top: 200px;
+	width: 396px;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.itemLeft,
+.itemRight {
+	margin: 0;
+	padding: 9px 24px;
+	width: fit-content;
+	font-size: 16px;
+	line-height: 130%;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.itemLeft {
+	color: #93c5fd;
+	border: 2px solid #06eaad;
+}
+
+.itemRight {
+	align-self: flex-end;
+	background-color: #2a19d9;
+	border: 2px solid #2a19d9;
+}
+
+.numFourStart,
+.numFourEnd {
+	width: 151px;
+	height: 211px;
+	background-color: #7254f3;
+}
+
+.numZero {
+	width: 141px;
+	height: 206px;
+	background-color: #7254f3;
+}
+
+.link {
+	position: absolute;
+	top: 607px;
+	left: 0;
+	display: block;
+	width: 100%;
+	padding: 21px 21px 21px 116px;
+	font-size: 26px;
+	text-decoration: none;
+	color: #06eaad;
+	background-color: #071426;
+	border: 4px solid #7254f3;
+	border-radius: 12px;
+	box-sizing: border-box;
+	transition: all 0.3s ease-out;
+}
+
+.link::before {
+	position: absolute;
+	content: '';
+	bottom: -4px;
+	left: -4px;
+	width: 40px;
+	height: 40px;
+	background-color: #071426;
+}
+
+.link::after {
+	position: absolute;
+	content: '';
+	bottom: -4px;
+	left: -4px;
+	width: 0;
+	height: 0;
+	border-top: 19px solid #06eaad;
+	border-right: 19px solid #06eaad;
+	border-bottom: 19px solid transparent;
+	border-left: 19px solid transparent;
+	border-radius: 0 12px 0 0;
+}
+
+.link:hover {
+	transform: translateY(-5px);
 }
