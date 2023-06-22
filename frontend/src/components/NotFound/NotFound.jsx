@@ -40,22 +40,22 @@ export function NotFound({ setIsLoading }) {
 				</div>
 				<div className={styles.dialog}>
 					<div className={styles.itemLeft} ref={one} key="one">
-						`Ошибка 404, страница не найдена 😔`
+						Ошибка 404, страница не найдена 😔
 					</div>
 					<div className={styles.itemRight} ref={two} key="two">
-						`И что же мне делать? 😮`
+						И что же мне делать? 😮
 					</div>
 					<div className={styles.itemLeft} ref={three} key="three">
-						`Возвращайся на Главную! 💃`
+						Возвращайся на Главную! 💃
 					</div>
 					<div className={styles.itemRight} ref={four} key="four">
-						`А как это сделать? 🤔`
+						А как это сделать? 🤔
 					</div>
 					<div className={styles.itemLeft} ref={five} key="five">
-						`Нажать на большую жёлтую кнопку 🚀`
+						Нажать на большую жёлтую кнопку 🚀
 					</div>
 					<div className={styles.itemRight} ref={six} key="six">
-						`Так бы сразу и сказали! 😅`
+						Так бы сразу и сказали! 😅
 					</div>
 				</div>
 
