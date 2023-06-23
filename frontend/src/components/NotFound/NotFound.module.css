@@ -51,8 +51,9 @@
 	position: relative;
 }
 
-.hook {
+.fourthLine::after {
 	position: absolute;
+	content: '';
 	left: 0;
 	bottom: -48px;
 	width: 54px;

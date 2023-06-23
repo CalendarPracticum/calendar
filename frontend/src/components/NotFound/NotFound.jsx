@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
+import { Lines } from './Lines';
 
 export function NotFound({ setIsLoading }) {
 	setIsLoading(false);
@@ -27,17 +28,8 @@ export function NotFound({ setIsLoading }) {
 	return (
 		<div className={styles.notFound}>
 			<div className={styles.wrapper}>
-				<div className={styles.lines}>
-					<div className={styles.line} />
-					<div className={styles.line} />
-					<div className={styles.line} />
-					<div className={`${styles.line} ${styles.fourthLine}`}>
-						<div className={styles.hook} />
-					</div>
-					<div className={styles.line} />
-					<div className={styles.line} />
-					<div className={styles.line} />
-				</div>
+				<Lines />
+
 				<div className={styles.dialog}>
 					<div className={styles.itemLeft} ref={one} key="one">
 						Ошибка 404, страница не найдена 😔
