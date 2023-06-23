@@ -62,9 +62,9 @@
 	box-shadow: 0 0.1rem 0 var(--primary-500);
 }
 
-/* FormNewEvent */
+/* FormNewEvent && FormEditEvent */
 .calendar {
-	max-width: 282px;
+	max-width: 288px;
 }
 
 .item {
