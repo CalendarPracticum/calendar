@@ -1,12 +1,10 @@
 import { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
 import { Lines } from './Lines';
+import { Numbers404 } from './Numbers404';
 
-export function NotFound({ setIsLoading }) {
-	setIsLoading(false);
-
+export function NotFound() {
 	const nums = useRef(null);
 	const one = useRef(null);
 	const two = useRef(null);
@@ -51,11 +49,7 @@ export function NotFound({ setIsLoading }) {
 					</div>
 				</div>
 
-				<div className={styles.nums} ref={nums}>
-					<div className={styles.numFourStart} />
-					<div className={styles.numZero} />
-					<div className={styles.numFourEnd} />
-				</div>
+				<Numbers404 ref={nums} />
 
 				<Link to="/" className={styles.link}>
 					Большая жёлтая кнопка
@@ -64,7 +58,3 @@ export function NotFound({ setIsLoading }) {
 		</div>
 	);
 }
-
-NotFound.propTypes = {
-	setIsLoading: PropTypes.func.isRequired,
-};

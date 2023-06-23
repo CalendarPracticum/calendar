@@ -163,6 +163,9 @@ function App() {
 								closeAllPopups();
 							});
 					}
+				})
+				.finally(() => {
+					setIsLoading(false);
 				});
 		},
 		[logout]
