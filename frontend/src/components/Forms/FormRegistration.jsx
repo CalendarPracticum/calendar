@@ -49,7 +49,7 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Регистрация</h2>
+					<h2 className={cn('text-center', styles.title)}>Регистрация</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}

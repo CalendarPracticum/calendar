@@ -44,7 +44,9 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Редактировать календарь</h2>
+					<h2 className={cn('text-center', styles.title)}>
+						Редактировать календарь
+					</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}

@@ -34,7 +34,7 @@ export function FormNewCalendar({ onCreateCalendar }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Создайте новый календарь</h2>
+					<h2 className={cn('text-center', styles.title)}>Новый календарь</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
