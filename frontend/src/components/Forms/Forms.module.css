@@ -35,8 +35,12 @@
 }
 
 /* FormEditUser */
+.titleH3 {
+	margin: 3rem 0 0 0;
+}
+
 .dangerZone {
-	margin-top: 2.75rem;
+	margin-top: 2rem;
 }
 
 .dangerBtn,

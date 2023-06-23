@@ -4,7 +4,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
-import { Divider } from 'primereact/divider';
 import { Password } from 'primereact/password';
 import { classNames as cn } from 'primereact/utils';
 import { CurrentUserContext } from '../../context';
@@ -158,16 +157,15 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 
 						<Button
 							type="submit"
-							label="Изменить данные"
+							label="Сохранить"
 							className="mt-2"
 							disabled={!isValid || !isDirty}
 						/>
 					</form>
 
-					<Divider />
-					<h2 className="text-center">
-						Для удаления профиля введите свой пароль
-					</h2>
+					<h3 className={cn('text-center', styles.titleH3)}>
+						Для удаления аккаунта введите свой пароль
+					</h3>
 
 					<div className={styles.dangerZone}>
 						<div className={styles.field}>
@@ -188,7 +186,7 @@ export function FormEditUser({ onUpdateUser, onDeleteUser }) {
 
 						<Button
 							type="button"
-							label="Удалить профиль"
+							label="Удалить"
 							className={cn('p-button-danger', styles.dangerBtn)}
 							disabled={passwordValue.length < 8}
 							onClick={() => handleDeleteUserClick(passwordValue)}

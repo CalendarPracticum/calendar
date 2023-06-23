@@ -163,7 +163,7 @@ export function FormChangePassword({ onChangePassword }) {
 
 						<Button
 							type="submit"
-							label="Сменить пароль"
+							label="Сохранить"
 							className="mt-2"
 							disabled={!isValid}
 						/>

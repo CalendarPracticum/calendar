@@ -48,17 +48,17 @@ export function AvatarGroup({
 		},
 		{ separator: true },
 		{
-			label: 'Настройки',
+			// label: 'Настройки',
 			items: [
 				{
 					label: 'Профиль',
-					icon: 'pi pi-user',
+					icon: 'pi pi-cog',
 					command: () => {
 						onUserClick(true);
 					},
 				},
 				{
-					label: 'Пароли и безопасность',
+					label: `Пароли и${'\u00A0'}безопасность`,
 					icon: 'pi pi-lock',
 					command: () => {
 						onPasswordClick(true);
