@@ -3,54 +3,72 @@ import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
 import { Lines } from './Lines';
 import { Numbers404 } from './Numbers404';
+import { Dialog } from './Dialog';
 
 export function NotFound() {
 	const nums = useRef(null);
-	const one = useRef(null);
-	const two = useRef(null);
-	const three = useRef(null);
-	const four = useRef(null);
-	const five = useRef(null);
-	const six = useRef(null);
+	const oneMessage = useRef(null);
+	const twoMessage = useRef(null);
+	const threeMessage = useRef(null);
+	const fourMessage = useRef(null);
+	const fiveMessage = useRef(null);
+	const sixMessage = useRef(null);
+
+	const messages = [
+		{
+			id: 'oneMessage',
+			ref: oneMessage,
+			message: 'Ошибка 404, страница не найдена 😔',
+			isLeft: true,
+		},
+		{
+			id: 'twoMessage',
+			ref: twoMessage,
+			message: 'И что же мне делать? 😮',
+			isLeft: false,
+		},
+		{
+			id: 'threeMessage',
+			ref: threeMessage,
+			message: 'Возвращайся на Главную! 💃',
+			isLeft: true,
+		},
+		{
+			id: 'fourMessage',
+			ref: fourMessage,
+			message: 'А как это сделать? 🤔',
+			isLeft: false,
+		},
+		{
+			id: 'fiveMessage',
+			ref: fiveMessage,
+			message: 'Нажать на большую жёлтую кнопку 🚀',
+			isLeft: true,
+		},
+		{
+			id: 'sixMessage',
+			ref: sixMessage,
+			message: 'Так бы сразу и сказали! 😅',
+			isLeft: false,
+		},
+	];
 
 	useEffect(() => {
 		nums.current.classList.add(`${styles.onShowNums}`);
-		one.current.classList.add(`${styles.onShowOne}`);
-		two.current.classList.add(`${styles.onShowTwo}`);
-		three.current.classList.add(`${styles.onShowThree}`);
-		four.current.classList.add(`${styles.onShowFour}`);
-		five.current.classList.add(`${styles.onShowFive}`);
-		six.current.classList.add(`${styles.onShowSix}`);
+		oneMessage.current.classList.add(`${styles.onShowOne}`);
+		twoMessage.current.classList.add(`${styles.onShowTwo}`);
+		threeMessage.current.classList.add(`${styles.onShowThree}`);
+		fourMessage.current.classList.add(`${styles.onShowFour}`);
+		fiveMessage.current.classList.add(`${styles.onShowFive}`);
+		sixMessage.current.classList.add(`${styles.onShowSix}`);
 	}, []);
 
 	return (
 		<div className={styles.notFound}>
 			<div className={styles.wrapper}>
 				<Lines />
-
-				<div className={styles.dialog}>
-					<div className={styles.itemLeft} ref={one} key="one">
-						Ошибка 404, страница не найдена 😔
-					</div>
-					<div className={styles.itemRight} ref={two} key="two">
-						И что же мне делать? 😮
-					</div>
-					<div className={styles.itemLeft} ref={three} key="three">
-						Возвращайся на Главную! 💃
-					</div>
-					<div className={styles.itemRight} ref={four} key="four">
-						А как это сделать? 🤔
-					</div>
-					<div className={styles.itemLeft} ref={five} key="five">
-						Нажать на большую жёлтую кнопку 🚀
-					</div>
-					<div className={styles.itemRight} ref={six} key="six">
-						Так бы сразу и сказали! 😅
-					</div>
-				</div>
-
+				<Dialog messages={messages} />
 				<Numbers404 ref={nums} />
-
 				<Link to="/" className={styles.link}>
 					Большая жёлтая кнопка
 				</Link>
