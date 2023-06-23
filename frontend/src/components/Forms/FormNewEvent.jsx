@@ -110,7 +110,9 @@ export function FormNewEvent({ onCreateEvent }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Создать новое событие</h2>
+					<h2 className={cn('text-center', styles.title)}>
+						Создать новое событие
+					</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}

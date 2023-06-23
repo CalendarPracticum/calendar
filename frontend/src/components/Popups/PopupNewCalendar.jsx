@@ -5,7 +5,12 @@ import { FormNewCalendar } from '../Forms';
 
 export function PopupNewCalendar({ visible, setVisible, onCreateCalendar }) {
 	return (
-		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
+		<Dialog
+			visible={visible}
+			onHide={() => setVisible(false)}
+			blockScroll
+			headerStyle={{ padding: `16px 16px 8px` }}
+		>
 			<FormNewCalendar onCreateCalendar={onCreateCalendar} />
 		</Dialog>
 	);

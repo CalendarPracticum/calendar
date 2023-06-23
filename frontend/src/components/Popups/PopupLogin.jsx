@@ -13,7 +13,12 @@ export function PopupLogin({
 	const [showFormLogin, setShowFormLogin] = useState(true);
 
 	return (
-		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
+		<Dialog
+			visible={visible}
+			onHide={() => setVisible(false)}
+			blockScroll
+			headerStyle={{ padding: `16px 16px 8px` }}
+		>
 			{showFormLogin ? (
 				<FormLogin showFormLogin={setShowFormLogin} handleLogin={handleLogin} />
 			) : (
