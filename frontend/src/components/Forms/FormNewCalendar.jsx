@@ -78,7 +78,7 @@ export function FormNewCalendar({ onCreateCalendar }) {
 
 						<div className={styles.field}>
 							<fieldset className={styles.colorTable}>
-								<legend>Выберите один из вариантов*</legend>
+								<legend>Выберите цвет календаря*</legend>
 								{Object.values(Color).map((hexColor) => (
 									<div key={hexColor} className="field-radiobutton">
 										<Controller
@@ -110,7 +110,7 @@ export function FormNewCalendar({ onCreateCalendar }) {
 
 						<Button
 							type="submit"
-							label="Добавить новый календарь"
+							label="Сохранить"
 							className="mt-2"
 							disabled={!isValid}
 						/>

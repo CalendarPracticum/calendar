@@ -285,7 +285,7 @@ export function FormNewEvent({ onCreateEvent }) {
 						</div>
 
 						<div className={styles.field}>
-							<span className="flex align-items-center gap-3">
+							<span className="flex align-items-center gap-2">
 								<i
 									ref={circle}
 									className="pi pi-circle-fill"
