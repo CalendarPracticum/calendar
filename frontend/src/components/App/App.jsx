@@ -18,7 +18,12 @@ import { Toast } from 'primereact/toast';
 
 /* Instruments */
 import ruPrime from '../../utils/ruPrime.json';
-import { Color, Status, holidays, BASE_URL } from '../../utils/constants';
+import {
+	Color,
+	Status,
+	holidaysCalendar,
+	BASE_URL,
+} from '../../utils/constants';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
@@ -63,6 +68,7 @@ function App() {
 
 	// Calendars & Events
 	const [allUserCalendars, setAllUserCalendars] = useState([]);
+	const [holidays, setHolidays] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
@@ -112,46 +118,33 @@ function App() {
 		setShowMessage(true);
 	};
 
-	const handleGetAllCalendars = () => {
-		setIsLoading(true);
-		calendarApi
-			.getAllUserCalendars()
-			.then((data) => {
-				setAllUserCalendars(data.concat(holidays));
-				setChosenCalendars(
-					data.map((c) => c.id).concat(holidays.map((c) => c.id))
-				);
-			})
-			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', err.message);
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
+	const logout = useCallback(
+		(message = null) => {
+			localStorage.clear();
+			setLoggedIn(false);
+			setCurrentUser({});
 
-	const logout = useCallback((message = null) => {
-		localStorage.clear();
-		setLoggedIn(false);
-		setCurrentUser({});
-		setAllUserCalendars([]);
-		setAllUserEvents([]);
-		if (message) {
-			showToast(message, Status.SUCCESS);
-		}
-	}, []);
+			setAllUserCalendars(holidaysCalendar);
+			setChosenCalendars(holidaysCalendar.map((c) => c.id));
+			setAllUserEvents(holidays);
 
-	const closeAllPopups = () => {
-		setVisiblePopupLogin(false);
-		setVisiblePopupNewEvent(false);
-		setVisiblePopupNewCalendar(false);
-		setVisiblePopupEditUser(false);
-		setVisiblePopupEditEvent(false);
-		setVisiblePopupEditAvatar(false);
-		setVisiblePopupEditCalendar(false);
-		setVisiblePopupChangePassword(false);
-	};
+			if (message) {
+				showToast(message, Status.SUCCESS);
+			}
+		},
+		[holidays]
+	);
+
+	// const closeAllPopups = () => {
+	//   setVisiblePopupLogin(false);
+	//   setVisiblePopupNewEvent(false);
+	//   setVisiblePopupNewCalendar(false);
+	//   setVisiblePopupEditUser(false);
+	//   setVisiblePopupEditEvent(false);
+	//   setVisiblePopupEditAvatar(false);
+	//   setVisiblePopupEditCalendar(false);
+	//   setVisiblePopupChangePassword(false);
+	// };
 
 	const checkTokens = useCallback(
 		(access, refresh, launch) => {
@@ -160,7 +153,6 @@ function App() {
 				.then(() => {
 					if (launch) {
 						setLoggedIn(true);
-						handleGetAllCalendars();
 					}
 				})
 				.catch(() => {
@@ -170,12 +162,11 @@ function App() {
 							.then((data) => {
 								localStorage.setItem('jwtAccess', data.access);
 								setLoggedIn(true);
-								handleGetAllCalendars();
 							})
 							.catch(() => {
 								logout();
 								showDialog('Введите логин и пароль повторно.', true);
-								closeAllPopups();
+								// closeAllPopups();
 							});
 					}
 				})
@@ -187,6 +178,97 @@ function App() {
 	);
 
 	useEffect(() => {
+		setAllUserCalendars(holidaysCalendar);
+		setChosenCalendars(holidaysCalendar.map((c) => c.id));
+	}, []);
+
+	useEffect(() => {
+		eventApi
+			.getHolidays({
+				start,
+				finish,
+			})
+			.then((result) => {
+				console.log('---getHolidays-result', { result });
+				const preparedData = result.map((event) => {
+					/* eslint-disable no-param-reassign */
+					event.title = event.name;
+					event.start = parseISO(event.datetime_start);
+					event.end = parseISO(event.datetime_finish);
+					event.allDay = event.all_day;
+					return event;
+				});
+
+				setHolidays(preparedData);
+				setAllUserEvents(preparedData);
+			})
+			.catch((error) => {
+				// eslint-disable-next-line no-console
+				console.log('ОШИБКА: ', error.message);
+			});
+	}, [start, finish]);
+
+	useEffect(() => {
+		if (loggedIn) {
+			setIsLoading(true);
+			console.log('зашли в getAllUserCalendars');
+
+			calendarApi
+				.getAllUserCalendars()
+				.then((data) => {
+					console.log({ data });
+
+					setAllUserCalendars((prevState) => [...prevState, ...data]);
+					setChosenCalendars((prevState) => [
+						...prevState,
+						...data.map((c) => c.id),
+					]);
+				})
+				.catch((err) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', err.message);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		}
+	}, [loggedIn]);
+
+	useEffect(() => {
+		if (loggedIn) {
+			const calendarsId = allUserCalendars.map((c) => c.id);
+			console.log({ calendarsId });
+
+			eventApi
+				.getAllUserEvents({
+					start,
+					finish,
+					calendar: calendarsId,
+				})
+				.then((result) => {
+					console.log('result --- setAllUserEvents', result);
+
+					const preparedData = result.map((event) => {
+						/* eslint-disable no-param-reassign */
+						event.title = event.name;
+						event.start = parseISO(event.datetime_start);
+						event.end = parseISO(event.datetime_finish);
+						event.allDay = event.all_day;
+						return event;
+					});
+
+					console.log('preparedData --- setAllUserEvents', preparedData);
+
+					setAllUserEvents(preparedData);
+				})
+				.catch((error) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', error.message);
+				});
+		}
+	}, [loggedIn, allUserCalendars, start, finish]);
+
+	useEffect(() => {
 		if (loggedIn) {
 			auth
 				.getUserData()
@@ -194,6 +276,7 @@ function App() {
 					const fullUrl = result.profile_picture
 						? `${BASE_URL}${result.profile_picture}`
 						: result.profile_picture;
+
 					setCurrentUser({
 						email: result.email,
 						username: result.username,
@@ -207,41 +290,6 @@ function App() {
 				});
 		}
 	}, [loggedIn]);
-
-	// TODO: переписать это чудовище, чтобы запросы не улетали первеее всех + использовать новую переменную
-	useEffect(() => {
-		const calendarsId = allUserCalendars
-			.map((c) => c.id)
-			.concat(holidays.map((c) => c.id));
-
-		eventApi
-			.getAllUserEvents({
-				start,
-				finish,
-				calendar: calendarsId,
-			})
-			.then((result) => {
-				setAllUserEvents(
-					result.map((event) => {
-						/* eslint-disable no-param-reassign */
-						event.title = event.name;
-						event.start = parseISO(event.datetime_start);
-						event.end = parseISO(event.datetime_finish);
-						event.allDay = event.all_day;
-						return event;
-					})
-				);
-
-				if (allUserCalendars.length === 0) {
-					setChosenCalendars(holidays.map((c) => c.id));
-					setAllUserCalendars(holidays);
-				}
-			})
-			.catch((error) => {
-				// eslint-disable-next-line no-console
-				console.log('ОШИБКА: ', error.message);
-			});
-	}, [allUserCalendars, start, finish]);
 
 	useEffect(() => {
 		const access = localStorage.getItem('jwtAccess');
@@ -290,7 +338,6 @@ function App() {
 				localStorage.setItem('jwtRefresh', data.refresh);
 
 				setLoggedIn(true);
-				handleGetAllCalendars();
 				setVisiblePopupLogin(false);
 				showDialog('Вы успешно вошли!', false);
 			})
@@ -307,9 +354,9 @@ function App() {
 		auth
 			.register(email, password)
 			.then(() =>
-				auth.authorize(email, password).then((data) => {
-					localStorage.setItem('jwtAccess', data.access);
-					localStorage.setItem('jwtRefresh', data.refresh);
+				auth.authorize(email, password).then((tokens) => {
+					localStorage.setItem('jwtAccess', tokens.access);
+					localStorage.setItem('jwtRefresh', tokens.refresh);
 
 					calendarApi
 						.createNewCalendar({
@@ -317,11 +364,8 @@ function App() {
 							description: '',
 							color: Color.DEFAULT,
 						})
-						.then((newCalendar) => {
-							setAllUserCalendars([newCalendar]);
-							setChosenCalendars([newCalendar.id]);
+						.then(() => {
 							setLoggedIn(true);
-							handleGetAllCalendars();
 							setVisiblePopupLogin(false);
 							showDialog('Регистрация прошла успешно!', false);
 						});

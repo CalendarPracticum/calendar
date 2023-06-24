@@ -58,7 +58,7 @@ export const months = [
 	'Декабрь',
 ];
 
-export const holidays = [
+export const holidaysCalendar = [
 	{
 		color: '#6C70DE',
 		description: '',
