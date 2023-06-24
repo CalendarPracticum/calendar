@@ -1,6 +1,8 @@
+/* Core */
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import parseISO from 'date-fns/parseISO';
+
+/* Libraries */
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
@@ -9,21 +11,25 @@ import parse from 'date-fns/parse';
 import ruLocale from 'date-fns/locale/ru';
 import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
+import parseISO from 'date-fns/parseISO';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { addLocale } from 'primereact/api';
 import { Toast } from 'primereact/toast';
-import { Main } from '../Main/Main';
-import { Header } from '../Header/Header';
-import { Loader } from '../Loader/Loader';
-import styles from './App.module.css';
-import { CurrentUserContext, LocalizationContext } from '../../context';
+
+/* Instruments */
 import ruPrime from '../../utils/ruPrime.json';
+import { Color, Status, holidays, BASE_URL } from '../../utils/constants';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
-import { NotFound } from '../NotFound/NotFound';
-import { Color, Status, holidays, BASE_URL } from '../../utils/constants';
+import { CurrentUserContext, LocalizationContext } from '../../context';
+import styles from './App.module.css';
 
+/* Components */
+import { Main } from '../Main/Main';
+import { Header } from '../Header/Header';
+import { Loader } from '../Loader/Loader';
+import { NotFound } from '../NotFound/NotFound';
 import {
 	PopupLogin,
 	PopupNewEvent,
@@ -51,26 +57,33 @@ const localizer = dateFnsLocalizer({
 addLocale('ru', ruPrime);
 
 function App() {
-	const [currentUser, setCurrentUser] = useState({});
+	// User
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [currentUser, setCurrentUser] = useState({});
+
+	// Calendars & Events
+	const [allUserCalendars, setAllUserCalendars] = useState([]);
+	const [allUserEvents, setAllUserEvents] = useState([]);
+	const [chosenCalendars, setChosenCalendars] = useState([]);
+	const [editableCalendar, setEditableCalendar] = useState({});
+	const [editableEvent, setEditableEvent] = useState({});
+
+	// Popups
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
 	const [visiblePopupNewEvent, setVisiblePopupNewEvent] = useState(false);
 	const [visiblePopupNewCalendar, setVisiblePopupNewCalendar] = useState(false);
 	const [visiblePopupEditUser, setVisiblePopupEditUser] = useState(false);
 	const [visiblePopupEditEvent, setVisiblePopupEditEvent] = useState(false);
+	const [visiblePopupEditAvatar, setVisiblePopupEditAvatar] = useState(false);
 	const [visiblePopupEditCalendar, setVisiblePopupEditCalendar] =
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
-	const [visiblePopupEditAvatar, setVisiblePopupEditAvatar] = useState(false);
-	const [allUserCalendars, setAllUserCalendars] = useState([]);
-	const [allUserEvents, setAllUserEvents] = useState([]);
+
+	// Helpers
 	const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
-	const [chosenCalendars, setChosenCalendars] = useState([]);
-	const [editableCalendar, setEditableCalendar] = useState({});
-	const [editableEvent, setEditableEvent] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
 
 	const today = new Date();
@@ -130,10 +143,12 @@ function App() {
 	}, []);
 
 	const closeAllPopups = () => {
+		setVisiblePopupLogin(false);
 		setVisiblePopupNewEvent(false);
 		setVisiblePopupNewCalendar(false);
 		setVisiblePopupEditUser(false);
 		setVisiblePopupEditEvent(false);
+		setVisiblePopupEditAvatar(false);
 		setVisiblePopupEditCalendar(false);
 		setVisiblePopupChangePassword(false);
 	};
@@ -265,6 +280,230 @@ function App() {
 		]
 	);
 
+	// User
+	const handleLogin = ({ email, password }) => {
+		setIsLoading(true);
+		auth
+			.authorize(email, password)
+			.then((data) => {
+				localStorage.setItem('jwtAccess', data.access);
+				localStorage.setItem('jwtRefresh', data.refresh);
+
+				setLoggedIn(true);
+				handleGetAllCalendars();
+				setVisiblePopupLogin(false);
+				showDialog('Вы успешно вошли!', false);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleRegister = ({ email, password }) => {
+		setIsLoading(true);
+		auth
+			.register(email, password)
+			.then(() =>
+				auth.authorize(email, password).then((data) => {
+					localStorage.setItem('jwtAccess', data.access);
+					localStorage.setItem('jwtRefresh', data.refresh);
+
+					calendarApi
+						.createNewCalendar({
+							name: 'Личное',
+							description: '',
+							color: Color.DEFAULT,
+						})
+						.then((newCalendar) => {
+							setAllUserCalendars([newCalendar]);
+							setChosenCalendars([newCalendar.id]);
+							setLoggedIn(true);
+							handleGetAllCalendars();
+							setVisiblePopupLogin(false);
+							showDialog('Регистрация прошла успешно!', false);
+						});
+				})
+			)
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleUpdateUser = (userData) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateUserData(userData)
+				.then((result) => {
+					const picture = `${BASE_URL}${result.profile_picture}`;
+
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture ? picture : null,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditUser(false);
+					showToast('Данные успешно обновлены!', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditUser(false);
+		}
+	};
+
+	const handleChangePassword = (data) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.changePassword(data)
+				.then((res) => {
+					if (res.status === 204) {
+						setVisiblePopupChangePassword(false);
+						showToast('Пароль изменён', Status.SUCCESS);
+					} else {
+						throw new Error(`Неверный пароль`);
+					}
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupChangePassword(false);
+		}
+	};
+
+	const handleEditAvatar = (data) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateAvatar(data)
+				.then((result) => {
+					const picture = `${BASE_URL}${result.profile_picture}`;
+
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditAvatar(false);
+					showToast('Аватарка сохранена', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
+	};
+
+	const handleDeleteAvatar = () => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.updateAvatar({ picture: null })
+				.then((result) => {
+					setCurrentUser({
+						email: result.email,
+						username: result.username,
+						picture: result.profile_picture,
+						darkMode: result.settings.dark_mode,
+					});
+
+					setVisiblePopupEditAvatar(false);
+					showToast('Аватарка удалена', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
+	};
+
+	const handleDeleteUser = (password) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			auth
+				.deleteUser(password)
+				.then((res) => {
+					if (res.status === 204) {
+						setVisiblePopupEditUser(false);
+						logout('Вы удалили аккаунт!');
+					} else {
+						throw new Error(`Неверный пароль`);
+					}
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditUser(false);
+		}
+	};
+
+	// Calendars
 	const handleCreateCalendar = ({ name, description, color }) => {
 		const access = localStorage.getItem('jwtAccess');
 		const refresh = localStorage.getItem('jwtRefresh');
@@ -294,6 +533,71 @@ function App() {
 		}
 	};
 
+	const handleEditCalendar = (calendar) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			calendarApi
+				.partChangeCalendar(calendar)
+				.then((updatedCalendar) => {
+					setAllUserCalendars((prevState) =>
+						prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
+					);
+					setVisiblePopupEditCalendar(false);
+					showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
+	};
+
+	const handleDeleteCalendar = (idCalendar) => {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+
+		if (access && refresh) {
+			checkTokens(access, refresh, false);
+
+			setIsLoading(true);
+			calendarApi
+				.deleteCalendar(idCalendar)
+				.then((res) => {
+					if (res.status === 204) {
+						setVisiblePopupEditCalendar(false);
+						showToast('Календарь удалён', Status.SUCCESS);
+						setAllUserCalendars((prevState) =>
+							prevState.filter((c) => c.id !== idCalendar)
+						);
+					} else {
+						throw new Error(`Что-то пошло не так`);
+					}
+				})
+				.catch((err) => {
+					showDialog(err.message, true);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			logout();
+			showDialog('Введите логин и пароль повторно.', true);
+			setVisiblePopupEditCalendar(false);
+		}
+	};
+
+	// Events
 	const handleCreateEvent = (data) => {
 		const access = localStorage.getItem('jwtAccess');
 		const refresh = localStorage.getItem('jwtRefresh');
@@ -393,290 +697,6 @@ function App() {
 			logout();
 			showDialog('Введите логин и пароль повторно.', true);
 			setVisiblePopupEditEvent(false);
-		}
-	};
-
-	const handleLogin = ({ email, password }) => {
-		setIsLoading(true);
-		auth
-			.authorize(email, password)
-			.then((data) => {
-				localStorage.setItem('jwtAccess', data.access);
-				localStorage.setItem('jwtRefresh', data.refresh);
-				setLoggedIn(true);
-				handleGetAllCalendars();
-				setVisiblePopupLogin(false);
-				showDialog('Вы успешно вошли!', false);
-			})
-			.catch((err) => {
-				showDialog(err.message, true);
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
-	const handleRegister = ({ email, password }) => {
-		setIsLoading(true);
-		auth
-			.register(email, password)
-			.then(() =>
-				auth.authorize(email, password).then((data) => {
-					localStorage.setItem('jwtAccess', data.access);
-					localStorage.setItem('jwtRefresh', data.refresh);
-					calendarApi
-						.createNewCalendar({
-							name: 'Личное',
-							description: '',
-							color: Color.DEFAULT,
-						})
-						.then((newCalendar) => {
-							setAllUserCalendars([newCalendar]);
-							setChosenCalendars([newCalendar.id]);
-							setLoggedIn(true);
-							handleGetAllCalendars();
-							setVisiblePopupLogin(false);
-							showDialog('Регистрация прошла успешно!', false);
-						});
-				})
-			)
-			.catch((err) => {
-				showDialog(err.message, true);
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
-	const handleUpdateUser = (userData) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			auth
-				.updateUserData(userData)
-				.then((result) => {
-					const picture = `${BASE_URL}${result.profile_picture}`;
-
-					setCurrentUser({
-						email: result.email,
-						username: result.username,
-						picture: result.profile_picture ? picture : null,
-						darkMode: result.settings.dark_mode,
-					});
-
-					setVisiblePopupEditUser(false);
-					showToast('Данные успешно обновлены!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditUser(false);
-		}
-	};
-
-	const handleChangePassword = (data) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			auth
-				.changePassword(data)
-				.then((res) => {
-					if (res.status === 204) {
-						setVisiblePopupChangePassword(false);
-						showToast('Пароль изменён', Status.SUCCESS);
-					} else {
-						throw new Error(`Неверный пароль`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupChangePassword(false);
-		}
-	};
-
-	const handleDeleteUser = (password) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			auth
-				.deleteUser(password)
-				.then((res) => {
-					if (res.status === 204) {
-						setVisiblePopupEditUser(false);
-						logout('Вы удалили аккаунт!');
-					} else {
-						throw new Error(`Неверный пароль`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditUser(false);
-		}
-	};
-
-	const handleEditCalendar = (calendar) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			calendarApi
-				.partChangeCalendar(calendar)
-				.then((updatedCalendar) => {
-					setAllUserCalendars((prevState) =>
-						prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
-					);
-					setVisiblePopupEditCalendar(false);
-					showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
-	};
-
-	const handleDeleteCalendar = (idCalendar) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			calendarApi
-				.deleteCalendar(idCalendar)
-				.then((res) => {
-					if (res.status === 204) {
-						setVisiblePopupEditCalendar(false);
-						showToast('Календарь удалён', Status.SUCCESS);
-						setAllUserCalendars((prevState) =>
-							prevState.filter((c) => c.id !== idCalendar)
-						);
-					} else {
-						throw new Error(`Что-то пошло не так`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
-	};
-
-	const handleEditAvatar = (data) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			auth
-				.updateAvatar(data)
-				.then((result) => {
-					const picture = `${BASE_URL}${result.profile_picture}`;
-
-					setCurrentUser({
-						email: result.email,
-						username: result.username,
-						picture,
-						darkMode: result.settings.dark_mode,
-					});
-
-					setVisiblePopupEditAvatar(false);
-					showToast('Аватарка сохранена', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
-	};
-
-	const handleDeleteAvatar = () => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-
-			setIsLoading(true);
-			auth
-				.updateAvatar({ picture: null })
-				.then((result) => {
-					setCurrentUser({
-						email: result.email,
-						username: result.username,
-						picture: result.profile_picture,
-						darkMode: result.settings.dark_mode,
-					});
-
-					setVisiblePopupEditAvatar(false);
-					showToast('Аватарка удалена', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
 		}
 	};
 
