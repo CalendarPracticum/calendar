@@ -10,6 +10,7 @@ export function PopupNewEvent({ visible, setVisible, onCreateEvent }) {
 			onHide={() => setVisible(false)}
 			blockScroll
 			draggable={false}
+			headerStyle={{ padding: `16px 16px 8px` }}
 		>
 			<FormNewEvent onCreateEvent={onCreateEvent} />
 		</Dialog>

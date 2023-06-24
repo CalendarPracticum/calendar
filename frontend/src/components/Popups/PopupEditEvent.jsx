@@ -15,6 +15,7 @@ export function PopupEditEvent({
 			onHide={() => setVisible(false)}
 			blockScroll
 			draggable={false}
+			headerStyle={{ padding: `16px 16px 8px` }}
 		>
 			<FormEditEvent onEditEvent={onEditEvent} onDeleteEvent={onDeleteEvent} />
 		</Dialog>

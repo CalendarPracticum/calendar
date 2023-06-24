@@ -23,7 +23,11 @@ export function CalendarBlock(props) {
 				>
 					<span>{name}</span>
 					<span className={styles.pointer}>
-						{isActive ? '\u142f' : '\u1433'}
+						{isActive ? (
+							<i className="pi pi-angle-up" style={{ fontSize: '1.2rem' }} />
+						) : (
+							<i className="pi pi-angle-down" style={{ fontSize: '1.2rem' }} />
+						)}
 					</span>
 				</button>
 			</div>
@@ -53,7 +57,7 @@ export function CalendarBlock(props) {
 									type="button"
 									onClick={() => handleClick(calendar)}
 								>
-									{'\u270E'}
+									<i className="pi pi-pencil" style={{ fontSize: '0.75rem' }} />
 								</button>
 							)}
 						</label>

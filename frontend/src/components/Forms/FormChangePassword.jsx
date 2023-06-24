@@ -48,7 +48,9 @@ export function FormChangePassword({ onChangePassword }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Пароли и безопасность</h2>
+					<h2 className={cn('text-center', styles.title)}>
+						Пароли и безопасность
+					</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -161,7 +163,7 @@ export function FormChangePassword({ onChangePassword }) {
 
 						<Button
 							type="submit"
-							label="Сменить пароль"
+							label="Сохранить"
 							className="mt-2"
 							disabled={!isValid}
 						/>

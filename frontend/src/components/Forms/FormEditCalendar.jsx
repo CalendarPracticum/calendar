@@ -44,7 +44,9 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Редактировать календарь</h2>
+					<h2 className={cn('text-center', styles.title)}>
+						Редактировать календарь
+					</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -88,7 +90,7 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 
 						<div className={styles.field}>
 							<fieldset className={styles.colorTable}>
-								<legend>Выберите один из вариантов*</legend>
+								<legend>Выберите цвет календаря*</legend>
 								{Object.values(Color).map((hexColor) => (
 									<div key={hexColor} className="field-radiobutton">
 										<Controller
@@ -118,23 +120,25 @@ export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 							{getFormErrorMessage('color')}
 						</div>
 
-						<Button
-							type="submit"
-							label="Редактировать календарь"
-							className="mt-2"
-							disabled={!isValid || !isDirty}
-						/>
-					</form>
+						<div className={styles.btnWrapper}>
+							<Button
+								type="button"
+								icon="pi pi-trash"
+								className={cn(
+									'p-button-rounded p-button-danger p-button-outlined',
+									styles.dangerBtn
+								)}
+								aria-label="Удалить календарь"
+								onClick={handleDeleteCalendar}
+							/>
 
-					<Button
-						type="button"
-						className={cn(
-							'p-button-outlined p-button-danger',
-							styles.dangerBtn
-						)}
-						label="Удалить календарь"
-						onClick={handleDeleteCalendar}
-					/>
+							<Button
+								type="submit"
+								label="Сохранить"
+								disabled={!isValid || !isDirty}
+							/>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

@@ -1,6 +1,7 @@
 .top {
 	top: 54px !important;
 	width: 230px;
+	padding-bottom: 1.5rem;
 }
 
 .avatar {

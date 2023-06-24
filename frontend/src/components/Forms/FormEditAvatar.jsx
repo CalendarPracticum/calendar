@@ -27,7 +27,7 @@ export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.avatar}>
-					<h2 className="text-center">Загрузить аватар</h2>
+					<h2 className={cn('text-center', styles.title)}>Загрузить аватар</h2>
 
 					<div>
 						<FileUpload

@@ -87,7 +87,6 @@ export function FormNewEvent({ onCreateEvent }) {
 		trigger('timeStart', 'timeFinish');
 	};
 
-	const setAllDayFalse = () => setValue('allDay', false);
 	const onHideCalendar = () => {
 		clearErrors('timeStart');
 		clearErrors('timeFinish');
@@ -111,7 +110,9 @@ export function FormNewEvent({ onCreateEvent }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Создайте новое событие</h2>
+					<h2 className={cn('text-center', styles.title)}>
+						Создать новое событие
+					</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -128,7 +129,7 @@ export function FormNewEvent({ onCreateEvent }) {
 										minLength: 1,
 										maxLength: {
 											value: 100,
-											message: 'Максимальная длина 100 символа.',
+											message: 'Максимальная длина 100 символов',
 										},
 									}}
 									render={({ field, fieldState }) => (
@@ -191,9 +192,6 @@ export function FormNewEvent({ onCreateEvent }) {
 											onHide={onHideCalendar}
 											showTime
 											showIcon
-											showButtonBar
-											onClearButtonClick={setAllDayFalse}
-											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>
@@ -246,9 +244,6 @@ export function FormNewEvent({ onCreateEvent }) {
 											onHide={onHideCalendar}
 											showTime
 											showIcon
-											showButtonBar
-											onClearButtonClick={setAllDayFalse}
-											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>
@@ -290,19 +285,19 @@ export function FormNewEvent({ onCreateEvent }) {
 						</div>
 
 						<div className={styles.field}>
-							<span className="flex align-items-center gap-3">
+							<span className="flex align-items-center gap-2">
 								<i
 									ref={circle}
 									className="pi pi-circle-fill"
 									style={{
-										fontSize: '2.75em',
+										fontSize: '1.4rem',
 										color: 'var(--primary-color)',
 									}}
 								/>
 								<Controller
 									name="calendar"
 									control={control}
-									rules={{ required: 'Календарь - поле обязательное.' }}
+									rules={{ required: 'Выберите календарь' }}
 									render={({ field, fieldState }) => (
 										<Dropdown
 											id={field.name}
@@ -357,7 +352,7 @@ export function FormNewEvent({ onCreateEvent }) {
 
 						<Button
 							type="submit"
-							label="Добавить новое событие"
+							label="Сохранить"
 							className="mt-2"
 							disabled={!isValid}
 						/>
