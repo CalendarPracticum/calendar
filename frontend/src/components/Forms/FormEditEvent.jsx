@@ -122,7 +122,9 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		<div className={styles.paddings}>
 			<div className="flex justify-content-center">
 				<div className={styles.card}>
-					<h2 className="text-center">Редактировать/удалить событие</h2>
+					<h2 className={cn('text-center', styles.title)}>
+						Редактировать событие
+					</h2>
 
 					<form
 						onSubmit={handleSubmit(onSubmit)}
@@ -302,12 +304,12 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 						</div>
 
 						<div className={styles.field}>
-							<span className="flex align-items-center gap-3">
+							<span className="flex align-items-center gap-2">
 								<i
 									ref={circle}
 									className="pi pi-circle-fill"
 									style={{
-										fontSize: '2.75em',
+										fontSize: '1.4rem',
 										color: 'var(--primary-color)',
 									}}
 								/>
@@ -368,23 +370,25 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							/>
 						</div>
 
-						<Button
-							type="submit"
-							label="Редактировать событие"
-							className="mt-2"
-							disabled={!isValid || !isDirty}
-						/>
-					</form>
+						<div className={styles.btnWrapper}>
+							<Button
+								type="button"
+								icon="pi pi-trash"
+								className={cn(
+									'p-button-rounded p-button-danger p-button-outlined',
+									styles.dangerBtn
+								)}
+								aria-label="Удалить событие"
+								onClick={handleDeleteEvent}
+							/>
 
-					<Button
-						type="button"
-						className={cn(
-							'p-button-outlined p-button-danger',
-							styles.dangerBtn
-						)}
-						label="Удалить событие"
-						onClick={handleDeleteEvent}
-					/>
+							<Button
+								type="submit"
+								label="Сохранить"
+								disabled={!isValid || !isDirty}
+							/>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

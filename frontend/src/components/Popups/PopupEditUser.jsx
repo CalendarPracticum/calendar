@@ -10,7 +10,12 @@ export function PopupEditUser({
 	onDeleteUser,
 }) {
 	return (
-		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
+		<Dialog
+			visible={visible}
+			onHide={() => setVisible(false)}
+			blockScroll
+			headerStyle={{ padding: `16px 16px 8px` }}
+		>
 			<FormEditUser onUpdateUser={onUpdateUser} onDeleteUser={onDeleteUser} />
 		</Dialog>
 	);

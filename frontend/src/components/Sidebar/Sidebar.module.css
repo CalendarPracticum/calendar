@@ -13,7 +13,7 @@
 }
 
 .calendar {
-	margin-top: 1rem;
+	margin: 1rem 3rem;
 }
 
 .calendar .div {
@@ -37,7 +37,7 @@
 }
 
 .btnNewCalendar {
-	margin-top: 1rem;
+	margin-top: 2rem;
 	width: 100%;
 }
 

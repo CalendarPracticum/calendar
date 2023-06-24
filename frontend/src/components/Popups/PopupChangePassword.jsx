@@ -5,7 +5,12 @@ import { FormChangePassword } from '../Forms';
 
 export function PopupChangePassword({ visible, setVisible, onChangePassword }) {
 	return (
-		<Dialog visible={visible} onHide={() => setVisible(false)} blockScroll>
+		<Dialog
+			visible={visible}
+			onHide={() => setVisible(false)}
+			blockScroll
+			headerStyle={{ padding: `16px 16px 8px` }}
+		>
 			<FormChangePassword onChangePassword={onChangePassword} />
 		</Dialog>
 	);

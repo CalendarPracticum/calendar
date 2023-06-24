@@ -4,15 +4,19 @@
 }
 
 .form {
-	margin: 2.75rem 0;
+	margin: 0 0 1.5rem;
+}
+
+.title {
+	margin: 0 0 2.5rem;
 }
 
 .field {
-	margin-bottom: 2rem;
+	margin-bottom: 1.75rem;
 }
 
 .paddings {
-	padding: 0 1.25rem 2.25rem;
+	padding: 0 1.25rem;
 }
 
 /* FormNewCalendar && FormEditCalendar */
@@ -30,9 +34,13 @@
 	height: 1.5rem;
 }
 
-/* FormEditUser, FormEditEvent, FormEditCalendar */
+/* FormEditUser */
+.titleH3 {
+	margin: 3rem 0 0 0;
+}
+
 .dangerZone {
-	margin-top: 2.75rem;
+	margin-top: 2rem;
 }
 
 .dangerBtn,
@@ -56,7 +64,7 @@
 
 /* FormNewEvent */
 .calendar {
-	max-width: 260px;
+	max-width: 282px;
 }
 
 .item {
@@ -81,6 +89,19 @@
 	flex-shrink: 0;
 }
 
+/* FormEditEvent && FormEditCalendar */
+.btnWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.btnWrapper .dangerBtn {
+	flex-shrink: 0;
+}
+
+/* FormEditAvatar */
 .avatar {
 	min-width: 400px;
 }
