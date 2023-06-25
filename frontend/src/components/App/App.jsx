@@ -197,10 +197,10 @@ function App() {
 			calendarApi
 				.getAllUserCalendars()
 				.then((calendars) => {
-					setAllUserCalendars((prevState) => [...prevState, ...calendars]);
+					setAllUserCalendars((prevState) => [...calendars, ...prevState]);
 					setChosenCalendars((prevState) => [
-						...prevState,
 						...calendars.map((c) => c.id),
+						...prevState,
 					]);
 				})
 				.catch((err) => {
@@ -744,7 +744,7 @@ function App() {
 						<Route path="*" element={<NotFound />} />
 					</Routes>
 
-					<Loader isLoading={isLoading} />
+					{isLoading && <Loader />}
 
 					<PopupLogin
 						visible={visiblePopupLogin}

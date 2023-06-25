@@ -51,6 +51,8 @@
 
 /* FormLogin && FormRegistration*/
 .linkRegistry {
+	padding: 0;
+	font-size: 1rem;
 	color: var(--primary-500);
 	background-color: transparent;
 	border: none;
