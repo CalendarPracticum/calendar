@@ -172,6 +172,7 @@ function App() {
 			.getHolidays({
 				start: start.current,
 				finish: finish.current,
+				calendar: holidaysCalendar.map((c) => c.id),
 			})
 			.then((result) => {
 				const preparedData = result.map((event) => {

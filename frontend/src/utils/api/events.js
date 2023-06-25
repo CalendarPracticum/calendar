@@ -50,9 +50,9 @@ export const getAllUserEvents = ({ start, finish, calendar }) =>
 		}
 	).then(getJson);
 
-export const getHolidays = ({ start, finish }) =>
+export const getHolidays = ({ start, finish, calendar }) =>
 	fetch(
-		`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=1`
+		`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`
 	).then(getJson);
 
 /*
