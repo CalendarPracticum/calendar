@@ -176,7 +176,7 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 						>
 							Войдите,
 						</button>
-						если у вас уже есть аккаунт
+						{`${'\u00A0'}если у вас уже есть аккаунт`}
 					</p>
 				</div>
 			</div>

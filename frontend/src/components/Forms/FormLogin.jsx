@@ -115,7 +115,7 @@ export function FormLogin({ showFormLogin, handleLogin }) {
 						>
 							Зарегистрируйтесь,
 						</button>
-						если ещё нет аккаунта
+						{`${'\u00A0'}если ещё нет аккаунта`}
 					</p>
 				</div>
 			</div>
