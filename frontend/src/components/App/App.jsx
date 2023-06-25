@@ -93,8 +93,8 @@ function App() {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const today = new Date();
-	const start = [today.getFullYear(), '-01-01'].join('');
-	const finish = [today.getFullYear() + 1, '-01-01'].join('');
+	const start = useRef([today.getFullYear(), '-01-01'].join(''));
+	const finish = useRef([today.getFullYear() + 1, '-01-01'].join(''));
 
 	const toast = useRef(null);
 
@@ -135,17 +135,6 @@ function App() {
 		[holidays]
 	);
 
-	// const closeAllPopups = () => {
-	//   setVisiblePopupLogin(false);
-	//   setVisiblePopupNewEvent(false);
-	//   setVisiblePopupNewCalendar(false);
-	//   setVisiblePopupEditUser(false);
-	//   setVisiblePopupEditEvent(false);
-	//   setVisiblePopupEditAvatar(false);
-	//   setVisiblePopupEditCalendar(false);
-	//   setVisiblePopupChangePassword(false);
-	// };
-
 	const checkTokens = useCallback(
 		(access, refresh, launch) => {
 			auth
@@ -166,12 +155,8 @@ function App() {
 							.catch(() => {
 								logout();
 								showDialog('Введите логин и пароль повторно.', true);
-								// closeAllPopups();
 							});
 					}
-				})
-				.finally(() => {
-					setIsLoading(false);
 				});
 		},
 		[logout]
@@ -185,11 +170,10 @@ function App() {
 	useEffect(() => {
 		eventApi
 			.getHolidays({
-				start,
-				finish,
+				start: start.current,
+				finish: finish.current,
 			})
 			.then((result) => {
-				console.log('---getHolidays-result', { result });
 				const preparedData = result.map((event) => {
 					/* eslint-disable no-param-reassign */
 					event.title = event.name;
@@ -206,30 +190,22 @@ function App() {
 				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
-	}, [start, finish]);
+	}, []);
 
 	useEffect(() => {
 		if (loggedIn) {
-			setIsLoading(true);
-			console.log('зашли в getAllUserCalendars');
-
 			calendarApi
 				.getAllUserCalendars()
-				.then((data) => {
-					console.log({ data });
-
-					setAllUserCalendars((prevState) => [...prevState, ...data]);
+				.then((calendars) => {
+					setAllUserCalendars((prevState) => [...prevState, ...calendars]);
 					setChosenCalendars((prevState) => [
 						...prevState,
-						...data.map((c) => c.id),
+						...calendars.map((c) => c.id),
 					]);
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
 					console.log('ОШИБКА: ', err.message);
-				})
-				.finally(() => {
-					setIsLoading(false);
 				});
 		}
 	}, [loggedIn]);
@@ -237,17 +213,14 @@ function App() {
 	useEffect(() => {
 		if (loggedIn) {
 			const calendarsId = allUserCalendars.map((c) => c.id);
-			console.log({ calendarsId });
 
 			eventApi
 				.getAllUserEvents({
-					start,
-					finish,
+					start: start.current,
+					finish: finish.current,
 					calendar: calendarsId,
 				})
 				.then((result) => {
-					console.log('result --- setAllUserEvents', result);
-
 					const preparedData = result.map((event) => {
 						/* eslint-disable no-param-reassign */
 						event.title = event.name;
@@ -257,8 +230,6 @@ function App() {
 						return event;
 					});
 
-					console.log('preparedData --- setAllUserEvents', preparedData);
-
 					setAllUserEvents(preparedData);
 				})
 				.catch((error) => {
@@ -266,7 +237,7 @@ function App() {
 					console.log('ОШИБКА: ', error.message);
 				});
 		}
-	}, [loggedIn, allUserCalendars, start, finish]);
+	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
 		if (loggedIn) {
