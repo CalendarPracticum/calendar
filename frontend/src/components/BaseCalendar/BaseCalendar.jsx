@@ -10,7 +10,7 @@ import { culture, messages, noop } from '../../utils/constants';
 import { CalendarsContext, LocalizationContext } from '../../context';
 import styles from './BaseCalendar.module.css';
 
-export function BaseCalendar({ onEventDoubleClick }) {
+export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
@@ -44,6 +44,8 @@ export function BaseCalendar({ onEventDoubleClick }) {
 		setEditableEvent(event);
 	};
 
+	const handleSelectSlot = () => onNewEventClick(true);
+
 	return (
 		<Calendar
 			dayPropGetter={(date) => {
@@ -74,14 +76,18 @@ export function BaseCalendar({ onEventDoubleClick }) {
 			messages={messages}
 			eventPropGetter={eventPropGetter}
 			onDoubleClickEvent={handleDoubleClick}
+			onSelectSlot={handleSelectSlot}
+			selectable
 		/>
 	);
 }
 
 BaseCalendar.propTypes = {
 	onEventDoubleClick: PropTypes.func,
+	onNewEventClick: PropTypes.func,
 };
 
 BaseCalendar.defaultProps = {
 	onEventDoubleClick: noop,
+	onNewEventClick: noop,
 };

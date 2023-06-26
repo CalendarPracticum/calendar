@@ -102,7 +102,6 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		trigger('timeStart', 'timeFinish');
 	};
 
-	const setAllDayFalse = () => setValue('allDay', false);
 	const onHideCalendar = () => {
 		clearErrors('timeStart');
 		clearErrors('timeFinish');
@@ -208,10 +207,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											onHide={onHideCalendar}
 											showTime
 											showIcon
-											showButtonBar
 											selectOtherMonths
-											onClearButtonClick={setAllDayFalse}
-											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>
@@ -264,9 +260,6 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											onHide={onHideCalendar}
 											showTime
 											showIcon
-											showButtonBar
-											onClearButtonClick={setAllDayFalse}
-											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>

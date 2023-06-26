@@ -25,14 +25,22 @@ export function Main({
 		if (visibleProdCalendar && loggedIn) {
 			return (
 				<>
-					<BaseCalendar onEventDoubleClick={onEventDoubleClick} />
+					<BaseCalendar
+						onEventDoubleClick={onEventDoubleClick}
+						onNewEventClick={onNewEventClick}
+					/>
 					<YearCalendar />
 				</>
 			);
 		}
 
 		if (!visibleProdCalendar && loggedIn) {
-			return <BaseCalendar onEventDoubleClick={onEventDoubleClick} />;
+			return (
+				<BaseCalendar
+					onEventDoubleClick={onEventDoubleClick}
+					onNewEventClick={onNewEventClick}
+				/>
+			);
 		}
 
 		if (visibleProdCalendar && !loggedIn) {
