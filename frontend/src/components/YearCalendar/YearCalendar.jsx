@@ -1,9 +1,14 @@
+/* Core */
 import { useContext } from 'react';
-import { Calendar } from 'react-big-calendar';
+
+/* Libraries */
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import styles from './YearCalendar.module.css';
+import { Calendar } from 'react-big-calendar';
+
+/* Instruments */
 import { culture, months, info, noop } from '../../utils/constants';
 import { LocalizationContext } from '../../context';
+import styles from './YearCalendar.module.css';
 
 export function YearCalendar() {
 	const localizer = useContext(LocalizationContext);

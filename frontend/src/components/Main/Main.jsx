@@ -1,11 +1,16 @@
+/* Core */
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+
+/* Instruments */
+import { CurrentUserContext } from '../../context';
+import styles from './Main.module.css';
+
+/* Components */
 import { Sidebar } from '../Sidebar/Sidebar';
 import { BaseCalendar } from '../BaseCalendar/BaseCalendar';
-import { BackToTopButton } from '../BackToTopButton/BackToTopButton';
-import styles from './Main.module.css';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
-import { CurrentUserContext } from '../../context';
+import { BackToTopButton } from '../BackToTopButton/BackToTopButton';
 
 export function Main({
 	onNewEventClick,

@@ -1,13 +1,18 @@
+/* Core */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import { useForm, Controller } from 'react-hook-form';
+import { classNames as cn } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
+import { Color } from '../../utils/constants';
 import { CalendarsContext } from '../../context';
 import styles from './Forms.module.css';
-import { Color } from '../../utils/constants';
 
 export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
 	const { editableCalendar } = useContext(CalendarsContext);
