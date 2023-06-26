@@ -60,6 +60,7 @@ class ShortCalendarSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'color',
+            'owner'
         )
 
 
