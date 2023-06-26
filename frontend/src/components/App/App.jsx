@@ -27,7 +27,11 @@ import {
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
-import { CurrentUserContext, LocalizationContext } from '../../context';
+import {
+	CurrentUserContext,
+	LocalizationContext,
+	CalendarsContext,
+} from '../../context';
 import styles from './App.module.css';
 
 /* Components */
@@ -67,8 +71,8 @@ function App() {
 	const [currentUser, setCurrentUser] = useState({});
 
 	// Calendars & Events
-	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [holidays, setHolidays] = useState([]);
+	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
@@ -278,6 +282,13 @@ function App() {
 			setCurrentUser,
 			loggedIn,
 			setLoggedIn,
+		}),
+		[currentUser, loggedIn]
+	);
+
+	const calendars = useMemo(
+		() => ({
+			holidays,
 			allUserCalendars,
 			setAllUserCalendars,
 			allUserEvents,
@@ -290,8 +301,7 @@ function App() {
 			setEditableEvent,
 		}),
 		[
-			currentUser,
-			loggedIn,
+			holidays,
 			allUserCalendars,
 			allUserEvents,
 			chosenCalendars,
@@ -733,12 +743,14 @@ function App() {
 										onPasswordClick={setVisiblePopupChangePassword}
 										logout={logout}
 									/>
-									<Main
-										onNewEventClick={setVisiblePopupNewEvent}
-										onEventDoubleClick={setVisiblePopupEditEvent}
-										onNewCalendarClick={setVisiblePopupNewCalendar}
-										onEditCalendarClick={setVisiblePopupEditCalendar}
-									/>
+									<CalendarsContext.Provider value={calendars}>
+										<Main
+											onNewEventClick={setVisiblePopupNewEvent}
+											onEventDoubleClick={setVisiblePopupEditEvent}
+											onNewCalendarClick={setVisiblePopupNewCalendar}
+											onEditCalendarClick={setVisiblePopupEditCalendar}
+										/>
+									</CalendarsContext.Provider>
 								</>
 							}
 						/>
