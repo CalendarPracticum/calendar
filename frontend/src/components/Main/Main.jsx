@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { BaseCalendar } from '../BaseCalendar/BaseCalendar';
+import { BackToTopButton } from '../BackToTopButton/BackToTopButton';
 import styles from './Main.module.css';
 import { YearCalendar } from '../YearCalendar/YearCalendar';
 import { CurrentUserContext } from '../../context';
@@ -48,6 +49,7 @@ export function Main({
 				visibleProdCalendar={visibleProdCalendar}
 			/>
 			<div className={styles.content}>{showCalendars()}</div>
+      <BackToTopButton />
 		</main>
 	);
 }

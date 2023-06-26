@@ -23,7 +23,7 @@ export function Header({
 	const { darkMode: userDarkMode } = currentUser;
 
 	const [value, setValue] = useState('light');
-	const [darkMode, setDarkMode] = useState(false);
+	const [darkMode, setDarkMode] = useState(userDarkMode);
 
 	const themeOptions = [
 		{ icon: 'pi pi-moon', value: 'dark', constant: darkMode },
@@ -45,6 +45,7 @@ export function Header({
 	useEffect(() => {
 		if (loggedIn) {
 			setDarkMode(userDarkMode);
+      setValue(userDarkMode ? 'dark' : 'light')
 		}
 	}, [loggedIn, userDarkMode]);
 
