@@ -5,13 +5,12 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { RadioButton } from 'primereact/radiobutton';
 import { classNames as cn } from 'primereact/utils';
-import { CurrentUserContext } from '../../context';
+import { CalendarsContext } from '../../context';
 import styles from './Forms.module.css';
 import { Color } from '../../utils/constants';
 
 export function FormEditCalendar({ onEditCalendar, onDeleteCalendar }) {
-	const userContext = useContext(CurrentUserContext);
-	const { editableCalendar } = userContext;
+	const { editableCalendar } = useContext(CalendarsContext);
 	const { id, name, color, description } = editableCalendar;
 
 	const defaultValues = {

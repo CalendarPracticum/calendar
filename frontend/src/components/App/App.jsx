@@ -729,98 +729,98 @@ function App() {
 	return (
 		<LocalizationContext.Provider value={localizer}>
 			<CurrentUserContext.Provider value={user}>
-				<div className={styles.app}>
-					<Routes>
-						<Route
-							exact
-							path="/"
-							element={
-								<>
-									<Header
-										onLogin={setVisiblePopupLogin}
-										onAvatarClick={setVisiblePopupEditAvatar}
-										onUserClick={setVisiblePopupEditUser}
-										onPasswordClick={setVisiblePopupChangePassword}
-										logout={logout}
-									/>
-									<CalendarsContext.Provider value={calendars}>
+				<CalendarsContext.Provider value={calendars}>
+					<div className={styles.app}>
+						<Routes>
+							<Route
+								exact
+								path="/"
+								element={
+									<>
+										<Header
+											onLogin={setVisiblePopupLogin}
+											onAvatarClick={setVisiblePopupEditAvatar}
+											onUserClick={setVisiblePopupEditUser}
+											onPasswordClick={setVisiblePopupChangePassword}
+											logout={logout}
+										/>
 										<Main
 											onNewEventClick={setVisiblePopupNewEvent}
 											onEventDoubleClick={setVisiblePopupEditEvent}
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
 										/>
-									</CalendarsContext.Provider>
-								</>
-							}
+									</>
+								}
+							/>
+							<Route path="*" element={<NotFound />} />
+						</Routes>
+
+						{isLoading && <Loader />}
+
+						<PopupLogin
+							visible={visiblePopupLogin}
+							setVisible={setVisiblePopupLogin}
+							handleRegister={handleRegister}
+							handleLogin={handleLogin}
 						/>
-						<Route path="*" element={<NotFound />} />
-					</Routes>
 
-					{isLoading && <Loader />}
+						<PopupNewEvent
+							visible={visiblePopupNewEvent}
+							setVisible={setVisiblePopupNewEvent}
+							onCreateEvent={handleCreateEvent}
+						/>
 
-					<PopupLogin
-						visible={visiblePopupLogin}
-						setVisible={setVisiblePopupLogin}
-						handleRegister={handleRegister}
-						handleLogin={handleLogin}
-					/>
+						<PopupNewCalendar
+							visible={visiblePopupNewCalendar}
+							setVisible={setVisiblePopupNewCalendar}
+							onCreateCalendar={handleCreateCalendar}
+						/>
 
-					<PopupNewEvent
-						visible={visiblePopupNewEvent}
-						setVisible={setVisiblePopupNewEvent}
-						onCreateEvent={handleCreateEvent}
-					/>
+						<PopupEditUser
+							visible={visiblePopupEditUser}
+							setVisible={setVisiblePopupEditUser}
+							onUpdateUser={handleUpdateUser}
+							onDeleteUser={handleDeleteUser}
+						/>
 
-					<PopupNewCalendar
-						visible={visiblePopupNewCalendar}
-						setVisible={setVisiblePopupNewCalendar}
-						onCreateCalendar={handleCreateCalendar}
-					/>
+						<PopupEditCalendar
+							visible={visiblePopupEditCalendar}
+							setVisible={setVisiblePopupEditCalendar}
+							onEditCalendar={handleEditCalendar}
+							onDeleteCalendar={handleDeleteCalendar}
+						/>
 
-					<PopupEditUser
-						visible={visiblePopupEditUser}
-						setVisible={setVisiblePopupEditUser}
-						onUpdateUser={handleUpdateUser}
-						onDeleteUser={handleDeleteUser}
-					/>
+						<PopupChangePassword
+							visible={visiblePopupChangePassword}
+							setVisible={setVisiblePopupChangePassword}
+							onChangePassword={handleChangePassword}
+						/>
 
-					<PopupEditCalendar
-						visible={visiblePopupEditCalendar}
-						setVisible={setVisiblePopupEditCalendar}
-						onEditCalendar={handleEditCalendar}
-						onDeleteCalendar={handleDeleteCalendar}
-					/>
+						<PopupEditEvent
+							visible={visiblePopupEditEvent}
+							setVisible={setVisiblePopupEditEvent}
+							onEditEvent={handleEditEvent}
+							onDeleteEvent={handleDeleteEvent}
+						/>
 
-					<PopupChangePassword
-						visible={visiblePopupChangePassword}
-						setVisible={setVisiblePopupChangePassword}
-						onChangePassword={handleChangePassword}
-					/>
+						<PopupEditAvatar
+							visible={visiblePopupEditAvatar}
+							setVisible={setVisiblePopupEditAvatar}
+							onEditAvatar={handleEditAvatar}
+							onDeleteAvatar={handleDeleteAvatar}
+						/>
 
-					<PopupEditEvent
-						visible={visiblePopupEditEvent}
-						setVisible={setVisiblePopupEditEvent}
-						onEditEvent={handleEditEvent}
-						onDeleteEvent={handleDeleteEvent}
-					/>
+						<Toast ref={toast} />
 
-					<PopupEditAvatar
-						visible={visiblePopupEditAvatar}
-						setVisible={setVisiblePopupEditAvatar}
-						onEditAvatar={handleEditAvatar}
-						onDeleteAvatar={handleDeleteAvatar}
-					/>
-
-					<Toast ref={toast} />
-
-					<PopupDialog
-						showMessage={showMessage}
-						setShowMessage={setShowMessage}
-						isDialogError={isDialogError}
-						dialogMessage={dialogMessage}
-					/>
-				</div>
+						<PopupDialog
+							showMessage={showMessage}
+							setShowMessage={setShowMessage}
+							isDialogError={isDialogError}
+							dialogMessage={dialogMessage}
+						/>
+					</div>
+				</CalendarsContext.Provider>
 			</CurrentUserContext.Provider>
 		</LocalizationContext.Provider>
 	);

@@ -1,24 +1,24 @@
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styles from './CalendarSelect.module.css';
-import { CurrentUserContext } from '../../context';
+import { CurrentUserContext, CalendarsContext } from '../../context';
 import { CalendarBlock } from './CalendarsBlock';
 
 export function CalendarSelect({ onEditCalendarClick }) {
-	const userContext = useContext(CurrentUserContext);
+	const { currentUser } = useContext(CurrentUserContext);
+	const { email } = currentUser;
+
 	const {
-		currentUser,
 		allUserCalendars,
 		chosenCalendars,
 		setChosenCalendars,
 		setEditableCalendar,
-	} = userContext;
-
-	const { email } = currentUser;
+	} = useContext(CalendarsContext);
 
 	const handleCheckbox = (e) => {
 		const calendarId = e.target.id;
 		const isChecked = e.target.checked;
+
 		if (isChecked) {
 			setChosenCalendars((prevState) => [...prevState, +calendarId]);
 		} else {

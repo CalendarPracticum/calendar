@@ -19,8 +19,7 @@ export function Sidebar({
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const userContext = useContext(CurrentUserContext);
-	const { loggedIn } = userContext;
+	const { loggedIn } = useContext(CurrentUserContext);
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),

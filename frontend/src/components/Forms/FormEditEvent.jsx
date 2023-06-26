@@ -14,13 +14,12 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
-import { CurrentUserContext } from '../../context';
+import { CalendarsContext } from '../../context';
 
 const getCalendarById = (id, calendars) => calendars.find((c) => c.id === id);
 
 export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
-	const userContext = useContext(CurrentUserContext);
-	const { allUserCalendars, editableEvent } = userContext;
+	const { allUserCalendars, editableEvent } = useContext(CalendarsContext);
 
 	const circle = useRef(null);
 	let currentColor = editableEvent?.calendar?.color;

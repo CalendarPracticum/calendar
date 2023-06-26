@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { Calendar } from 'react-big-calendar';
 import styles from './BaseCalendar.module.css';
 import { culture, messages, noop } from '../../utils/constants';
-import { CurrentUserContext, LocalizationContext } from '../../context';
+import { CalendarsContext, LocalizationContext } from '../../context';
 
 export function BaseCalendar({ onEventDoubleClick }) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const userContext = useContext(CurrentUserContext);
-	const { allUserEvents, chosenCalendars, setEditableEvent } = userContext;
+	const { allUserEvents, chosenCalendars, setEditableEvent } =
+		useContext(CalendarsContext);
 
 	const displayedEvents = allUserEvents.filter((e) =>
 		chosenCalendars.includes(e.calendar.id)

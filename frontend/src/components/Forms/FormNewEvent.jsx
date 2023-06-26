@@ -14,11 +14,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
-import { CurrentUserContext } from '../../context';
+import { CalendarsContext } from '../../context';
 
 export function FormNewEvent({ onCreateEvent }) {
-	const userContext = useContext(CurrentUserContext);
-	const { allUserCalendars } = userContext;
+	const { allUserCalendars } = useContext(CalendarsContext);
 
 	const circle = useRef(null);
 

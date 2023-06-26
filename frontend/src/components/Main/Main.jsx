@@ -12,9 +12,7 @@ export function Main({
 	onEditCalendarClick,
 	onEventDoubleClick,
 }) {
-	const userContext = useContext(CurrentUserContext);
-	const { loggedIn } = userContext;
-
+	const { loggedIn } = useContext(CurrentUserContext);
 	const [visibleProdCalendar, setVisibleProdCalendar] = useState(false);
 
 	const showCalendars = () => {
