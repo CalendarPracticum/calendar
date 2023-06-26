@@ -267,9 +267,7 @@ function App() {
 	const user = useMemo(
 		() => ({
 			currentUser,
-			setCurrentUser,
 			loggedIn,
-			setLoggedIn,
 		}),
 		[currentUser, loggedIn]
 	);
@@ -278,9 +276,7 @@ function App() {
 		() => ({
 			holidays,
 			allUserCalendars,
-			setAllUserCalendars,
 			allUserEvents,
-			setAllUserEvents,
 			chosenCalendars,
 			setChosenCalendars,
 			editableCalendar,
