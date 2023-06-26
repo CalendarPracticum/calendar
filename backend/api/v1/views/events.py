@@ -22,7 +22,8 @@ from api.v1.serializers.events import (
     CalendarSerializer,
     ReadEventSerializer,
     ShareCalendarSerializer,
-    WriteEventSerializer,
+    WriteEventSerializer, ReadUserShareCalendarSerializer,
+    ReadOwnerShareCalendarSerializer,
 )
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
 from events.models import Calendar, Event, ShareCalendar
@@ -65,6 +66,12 @@ from events.models import Calendar, Event, ShareCalendar
     share=extend_schema(
         tags=['Шеринг календаря'],
     ),
+    shared_to_me=extend_schema(
+        tags=['Шеринг календаря'],
+    ),
+    shared_to_user=extend_schema(
+        tags=['Шеринг календаря'],
+    ),
 )
 @extend_schema(
     methods=['PUT', 'PATCH', 'DELETE'],
@@ -82,16 +89,19 @@ class CalendarViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            return Calendar.objects.all()
-        return Calendar.objects.filter(
-            Q(owner=self.request.user) |
-            Q(share_calendars__user=self.request.user)
-        )
+        if self.action == 'shared_to_me':
+            return ShareCalendar.objects.filter(user=self.request.user)
+        elif self.action == 'shared_to_user':
+            return ShareCalendar.objects.filter(owner=self.request.user)
+        return Calendar.objects.filter(owner=self.request.user)
 
     def get_serializer_class(self):
         if self.action == 'share':
             return ShareCalendarSerializer
+        elif self.action == 'shared_to_me':
+            return ReadUserShareCalendarSerializer
+        elif self.action == 'shared_to_user':
+            return ReadOwnerShareCalendarSerializer
         return CalendarSerializer
 
     @extend_schema(
@@ -151,6 +161,24 @@ class CalendarViewSet(viewsets.ModelViewSet):
             )
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        methods=['GET'],
+        summary='Календари, которыми поделились с пользователем'
+    )
+    @action(methods=['get'], detail=False)
+    def shared_to_me(self, request):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        methods=['GET'],
+        summary='Календари, которыми владелец поделился с пользователями'
+    )
+    @action(methods=['get'], detail=False)
+    def shared_to_user(self, request):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=['Событие'])
