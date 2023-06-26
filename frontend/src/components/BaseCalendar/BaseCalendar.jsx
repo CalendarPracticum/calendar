@@ -1,18 +1,24 @@
+/* Core */
 import { React, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import { Calendar } from 'react-big-calendar';
-import styles from './BaseCalendar.module.css';
+
+/* Instruments */
 import { culture, messages, noop } from '../../utils/constants';
 import { CalendarsContext, LocalizationContext } from '../../context';
+import styles from './BaseCalendar.module.css';
 
 export function BaseCalendar({ onEventDoubleClick }) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const { allUserEvents, chosenCalendars, setEditableEvent } =
+	const { holidays, allUserEvents, chosenCalendars, setEditableEvent } =
 		useContext(CalendarsContext);
 
-	const displayedEvents = allUserEvents.filter((e) =>
+	// TODO: потом сюда добавятся события пошаренных календарей
+	const displayedEvents = [...holidays, ...allUserEvents].filter((e) =>
 		chosenCalendars.includes(e.calendar.id)
 	);
 

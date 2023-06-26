@@ -122,22 +122,18 @@ function App() {
 		setShowMessage(true);
 	};
 
-	const logout = useCallback(
-		(message = null) => {
-			localStorage.clear();
-			setLoggedIn(false);
-			setCurrentUser({});
+	const logout = useCallback((message = null) => {
+		localStorage.clear();
+		setLoggedIn(false);
+		setCurrentUser({});
+		setAllUserCalendars([]);
+		setAllUserEvents([]);
+		setChosenCalendars(holidaysCalendar.map((c) => c.id));
 
-			setAllUserCalendars(holidaysCalendar);
-			setChosenCalendars(holidaysCalendar.map((c) => c.id));
-			setAllUserEvents(holidays);
-
-			if (message) {
-				showToast(message, Status.SUCCESS);
-			}
-		},
-		[holidays]
-	);
+		if (message) {
+			showToast(message, Status.SUCCESS);
+		}
+	}, []);
 
 	const checkTokens = useCallback(
 		(access, refresh, launch) => {
@@ -167,11 +163,6 @@ function App() {
 	);
 
 	useEffect(() => {
-		setAllUserCalendars(holidaysCalendar);
-		setChosenCalendars(holidaysCalendar.map((c) => c.id));
-	}, []);
-
-	useEffect(() => {
 		eventApi
 			.getHolidays({
 				start: start.current,
@@ -185,11 +176,12 @@ function App() {
 					event.start = parseISO(event.datetime_start);
 					event.end = parseISO(event.datetime_finish);
 					event.allDay = event.all_day;
+
 					return event;
 				});
 
 				setHolidays(preparedData);
-				setAllUserEvents(preparedData);
+				setChosenCalendars(holidaysCalendar.map((c) => c.id));
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
@@ -202,11 +194,36 @@ function App() {
 			calendarApi
 				.getAllUserCalendars()
 				.then((calendars) => {
-					setAllUserCalendars((prevState) => [...calendars, ...prevState]);
+					setAllUserCalendars(calendars);
 					setChosenCalendars((prevState) => [
 						...calendars.map((c) => c.id),
 						...prevState,
 					]);
+
+					return calendars;
+				})
+				.then((calendars) => {
+					const calendarsId = calendars.map((c) => c.id);
+
+					eventApi
+						.getAllUserEvents({
+							start: start.current,
+							finish: finish.current,
+							calendar: calendarsId,
+						})
+						.then((result) => {
+							const preparedData = result.map((event) => {
+								/* eslint-disable no-param-reassign */
+								event.title = event.name;
+								event.start = parseISO(event.datetime_start);
+								event.end = parseISO(event.datetime_finish);
+								event.allDay = event.all_day;
+
+								return event;
+							});
+
+							setAllUserEvents(preparedData);
+						});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
@@ -214,35 +231,6 @@ function App() {
 				});
 		}
 	}, [loggedIn]);
-
-	useEffect(() => {
-		if (loggedIn) {
-			const calendarsId = allUserCalendars.map((c) => c.id);
-
-			eventApi
-				.getAllUserEvents({
-					start: start.current,
-					finish: finish.current,
-					calendar: calendarsId,
-				})
-				.then((result) => {
-					const preparedData = result.map((event) => {
-						/* eslint-disable no-param-reassign */
-						event.title = event.name;
-						event.start = parseISO(event.datetime_start);
-						event.end = parseISO(event.datetime_finish);
-						event.allDay = event.all_day;
-						return event;
-					});
-
-					setAllUserEvents(preparedData);
-				})
-				.catch((error) => {
-					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', error.message);
-				});
-		}
-	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -605,6 +593,9 @@ function App() {
 						showToast('Календарь удалён', Status.SUCCESS);
 						setAllUserCalendars((prevState) =>
 							prevState.filter((c) => c.id !== idCalendar)
+						);
+						setAllUserEvents((prevState) =>
+							prevState.filter((evt) => evt.calendar.id !== idCalendar)
 						);
 					} else {
 						throw new Error(`Что-то пошло не так`);
