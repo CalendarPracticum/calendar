@@ -1,51 +1,51 @@
 .button {
-  position: fixed;
-  height: 50px;
-  width: 60px;
-  font-size: 60px;
-  border: none;
-  transition: transform 0.25s linear;
-  cursor: pointer;
+	position: fixed;
+	height: 50px;
+	width: 60px;
+	font-size: 60px;
+	border: none;
+	transition: transform 0.25s linear;
+	cursor: pointer;
 }
 
 .buttonOn {
-  animation: on 0.5s forwards;
+	animation: on 0.5s forwards;
 }
 
 .buttonOff {
-  animation: off 0.1s ease forwards;
+	animation: off 0.1s ease forwards;
 }
 
 .buttonBox {
-  position: absolute;
-  top: 92vh;
-  left: 24px;
-  height: 50px;
-  width: 60px;
+	position: absolute;
+	top: 92vh;
+	left: 24px;
+	height: 50px;
+	width: 60px;
 }
 
 .button:hover {
-  transform: scale(1.25);
+	transform: scale(1.25);
 }
 
 @keyframes on {
-  from {
-    opacity: 0;
-    visibility: hidden;
-  }
-  to {
-    opacity: 1;
-    visibility: visible;
-  }
+	from {
+		opacity: 0;
+		visibility: hidden;
+	}
+	to {
+		opacity: 1;
+		visibility: visible;
+	}
 }
 
 @keyframes off {
-  from {
-    opacity: 1;
-    visibility: visible;
-  }
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
+	from {
+		opacity: 1;
+		visibility: visible;
+	}
+	to {
+		opacity: 0;
+		visibility: hidden;
+	}
 }

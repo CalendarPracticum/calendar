@@ -49,7 +49,7 @@ export function Main({
 				visibleProdCalendar={visibleProdCalendar}
 			/>
 			<div className={styles.content}>{showCalendars()}</div>
-      <BackToTopButton />
+			<BackToTopButton />
 		</main>
 	);
 }

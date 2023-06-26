@@ -45,7 +45,7 @@ export function Header({
 	useEffect(() => {
 		if (loggedIn) {
 			setDarkMode(userDarkMode);
-      setValue(userDarkMode ? 'dark' : 'light')
+			setValue(userDarkMode ? 'dark' : 'light');
 		}
 	}, [loggedIn, userDarkMode]);
 
