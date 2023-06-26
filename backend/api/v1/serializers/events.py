@@ -240,3 +240,41 @@ class ShareCalendarSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+
+class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
+
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    user = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    calendar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ShareCalendar
+        fields = (
+            'owner',
+            'user',
+            'calendar'
+        )
+
+    @staticmethod
+    def get_calendar(instance):
+        calendar = instance.calendar
+        return {
+            'id': calendar.id,
+            'name': calendar.name,
+            'color': calendar.color,
+        }
+
+
+class ReadUserShareCalendarSerializer(ReadOwnerShareCalendarSerializer):
+
+    class Meta:
+        model = ShareCalendar
+        fields = (
+            'id',
+            'owner',
+            'user',
+            'calendar',
+            'custom_name',
+            'custom_color',
+        )
