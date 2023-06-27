@@ -1,15 +1,21 @@
-/* eslint-disable react/jsx-no-comment-textnodes */
+/* Core */
 import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import 'primeicons/primeicons.css';
 import { Button } from 'primereact/button';
 import { SelectButton } from 'primereact/selectbutton';
-import styles from './Header.module.css';
+
+/* Instruments */
 import { CurrentUserContext } from '../../context';
-import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
+import styles from './Header.module.css';
 import logo from '../../images/calendarLogo.svg';
 import logoDark from '../../images/MyCalenDaily_dark.svg';
 import logoLight from '../../images/MyCalenDaily_light.svg';
+
+/* Components */
+import { AvatarGroup } from '../AvatarGroup/AvatarGroup';
 
 export function Header({
 	onLogin,
@@ -23,7 +29,7 @@ export function Header({
 	const { darkMode: userDarkMode } = currentUser;
 
 	const [value, setValue] = useState('light');
-	const [darkMode, setDarkMode] = useState(false);
+	const [darkMode, setDarkMode] = useState(userDarkMode);
 
 	const themeOptions = [
 		{ icon: 'pi pi-moon', value: 'dark', constant: darkMode },
@@ -45,6 +51,7 @@ export function Header({
 	useEffect(() => {
 		if (loggedIn) {
 			setDarkMode(userDarkMode);
+			setValue(userDarkMode ? 'dark' : 'light');
 		}
 	}, [loggedIn, userDarkMode]);
 

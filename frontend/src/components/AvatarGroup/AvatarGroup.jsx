@@ -1,8 +1,13 @@
+/* Core */
 import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
+import { classNames as cn } from 'primereact/utils';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
 import { CurrentUserContext } from '../../context';
 import styles from './AvatarGroup.module.css';
 

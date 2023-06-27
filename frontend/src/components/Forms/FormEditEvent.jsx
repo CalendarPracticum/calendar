@@ -1,26 +1,30 @@
+/* Core */
 import React, { useRef, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
 import getUnixTime from 'date-fns/getUnixTime';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
+import { classNames as cn } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
+import { CalendarsContext } from '../../context';
 import styles from './Forms.module.css';
-import { CurrentUserContext } from '../../context';
 
 const getCalendarById = (id, calendars) => calendars.find((c) => c.id === id);
 
 export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
-	const userContext = useContext(CurrentUserContext);
-	const { allUserCalendars, editableEvent } = userContext;
+	const { allUserCalendars, editableEvent } = useContext(CalendarsContext);
 
 	const circle = useRef(null);
 	let currentColor = editableEvent?.calendar?.color;
@@ -98,7 +102,6 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 		trigger('timeStart', 'timeFinish');
 	};
 
-	const setAllDayFalse = () => setValue('allDay', false);
 	const onHideCalendar = () => {
 		clearErrors('timeStart');
 		clearErrors('timeFinish');
@@ -204,10 +207,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											onHide={onHideCalendar}
 											showTime
 											showIcon
-											showButtonBar
 											selectOtherMonths
-											onClearButtonClick={setAllDayFalse}
-											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>
@@ -260,9 +260,6 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 											onHide={onHideCalendar}
 											showTime
 											showIcon
-											showButtonBar
-											onClearButtonClick={setAllDayFalse}
-											onTodayButtonClick={setAllDayFalse}
 											locale="ru"
 											{...field}
 										/>

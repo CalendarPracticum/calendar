@@ -1,24 +1,27 @@
+/* Core */
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
+
+/* Instruments */
+import { holidaysCalendar } from '../../utils/constants';
+import { CalendarsContext } from '../../context';
 import styles from './CalendarSelect.module.css';
-import { CurrentUserContext } from '../../context';
+
+/* Components */
 import { CalendarBlock } from './CalendarsBlock';
 
 export function CalendarSelect({ onEditCalendarClick }) {
-	const userContext = useContext(CurrentUserContext);
 	const {
-		currentUser,
 		allUserCalendars,
 		chosenCalendars,
 		setChosenCalendars,
 		setEditableCalendar,
-	} = userContext;
-
-	const { email } = currentUser;
+	} = useContext(CalendarsContext);
 
 	const handleCheckbox = (e) => {
 		const calendarId = e.target.id;
 		const isChecked = e.target.checked;
+
 		if (isChecked) {
 			setChosenCalendars((prevState) => [...prevState, +calendarId]);
 		} else {
@@ -33,19 +36,14 @@ export function CalendarSelect({ onEditCalendarClick }) {
 		onEditCalendarClick(true);
 	};
 
-	const myCalendars = allUserCalendars.filter(
-		(calendar) => email === calendar.owner
-	);
-
-	const otherCalendars = allUserCalendars.filter(
-		(calendar) => email !== calendar.owner
-	);
+	// TODO: потом сюда добявятся пошаренные календари
+	const otherCalendars = [...holidaysCalendar];
 
 	return (
 		<div className={styles.calendarsBlock}>
 			<CalendarBlock
 				name="Личные календари"
-				calendars={myCalendars}
+				calendars={allUserCalendars}
 				handleCheckbox={handleCheckbox}
 				chosenCalendars={chosenCalendars}
 				handleClick={handleClick}

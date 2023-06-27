@@ -1,6 +1,11 @@
+/* Core */
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+
+/* Instruments */
 import styles from './NotFound.module.css';
+
+/* Components */
 import { Lines } from './Lines';
 import { Numbers404 } from './Numbers404';
 import { Dialog } from './Dialog';
