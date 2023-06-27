@@ -1,18 +1,24 @@
+/* Core */
 import { React, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Calendar } from 'react-big-calendar';
-import styles from './BaseCalendar.module.css';
-import { culture, messages, noop } from '../../utils/constants';
-import { CurrentUserContext, LocalizationContext } from '../../context';
 
-export function BaseCalendar({ onEventDoubleClick }) {
+/* Libraries */
+import { Calendar } from 'react-big-calendar';
+
+/* Instruments */
+import { culture, messages, noop } from '../../utils/constants';
+import { CalendarsContext, LocalizationContext } from '../../context';
+import styles from './BaseCalendar.module.css';
+
+export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const userContext = useContext(CurrentUserContext);
-	const { allUserEvents, chosenCalendars, setEditableEvent } = userContext;
+	const { holidays, allUserEvents, chosenCalendars, setEditableEvent } =
+		useContext(CalendarsContext);
 
-	const displayedEvents = allUserEvents.filter((e) =>
+	// TODO: потом сюда добавятся события пошаренных календарей
+	const displayedEvents = [...holidays, ...allUserEvents].filter((e) =>
 		chosenCalendars.includes(e.calendar.id)
 	);
 
@@ -37,6 +43,8 @@ export function BaseCalendar({ onEventDoubleClick }) {
 		onEventDoubleClick(true);
 		setEditableEvent(event);
 	};
+
+	const handleSelectSlot = () => onNewEventClick(true);
 
 	return (
 		<Calendar
@@ -68,14 +76,18 @@ export function BaseCalendar({ onEventDoubleClick }) {
 			messages={messages}
 			eventPropGetter={eventPropGetter}
 			onDoubleClickEvent={handleDoubleClick}
+			onSelectSlot={handleSelectSlot}
+			selectable
 		/>
 	);
 }
 
 BaseCalendar.propTypes = {
 	onEventDoubleClick: PropTypes.func,
+	onNewEventClick: PropTypes.func,
 };
 
 BaseCalendar.defaultProps = {
 	onEventDoubleClick: noop,
+	onNewEventClick: noop,
 };

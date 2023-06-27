@@ -27,12 +27,16 @@ import {
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
-import { CurrentUserContext, LocalizationContext } from '../../context';
+import {
+	CurrentUserContext,
+	LocalizationContext,
+	CalendarsContext,
+} from '../../context';
 import styles from './App.module.css';
 
 /* Components */
-import { Main } from '../Main/Main';
 import { Header } from '../Header/Header';
+import { Main } from '../Main/Main';
 import { Loader } from '../Loader/Loader';
 import { NotFound } from '../NotFound/NotFound';
 import {
@@ -67,8 +71,8 @@ function App() {
 	const [currentUser, setCurrentUser] = useState({});
 
 	// Calendars & Events
-	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [holidays, setHolidays] = useState([]);
+	const [allUserCalendars, setAllUserCalendars] = useState([]);
 	const [allUserEvents, setAllUserEvents] = useState([]);
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
@@ -118,22 +122,18 @@ function App() {
 		setShowMessage(true);
 	};
 
-	const logout = useCallback(
-		(message = null) => {
-			localStorage.clear();
-			setLoggedIn(false);
-			setCurrentUser({});
+	const logout = useCallback((message = null) => {
+		localStorage.clear();
+		setLoggedIn(false);
+		setCurrentUser({});
+		setAllUserCalendars([]);
+		setAllUserEvents([]);
+		setChosenCalendars(holidaysCalendar.map((c) => c.id));
 
-			setAllUserCalendars(holidaysCalendar);
-			setChosenCalendars(holidaysCalendar.map((c) => c.id));
-			setAllUserEvents(holidays);
-
-			if (message) {
-				showToast(message, Status.SUCCESS);
-			}
-		},
-		[holidays]
-	);
+		if (message) {
+			showToast(message, Status.SUCCESS);
+		}
+	}, []);
 
 	const checkTokens = useCallback(
 		(access, refresh, launch) => {
@@ -163,11 +163,6 @@ function App() {
 	);
 
 	useEffect(() => {
-		setAllUserCalendars(holidaysCalendar);
-		setChosenCalendars(holidaysCalendar.map((c) => c.id));
-	}, []);
-
-	useEffect(() => {
 		eventApi
 			.getHolidays({
 				start: start.current,
@@ -181,11 +176,12 @@ function App() {
 					event.start = parseISO(event.datetime_start);
 					event.end = parseISO(event.datetime_finish);
 					event.allDay = event.all_day;
+
 					return event;
 				});
 
 				setHolidays(preparedData);
-				setAllUserEvents(preparedData);
+				setChosenCalendars(holidaysCalendar.map((c) => c.id));
 			})
 			.catch((error) => {
 				// eslint-disable-next-line no-console
@@ -198,11 +194,36 @@ function App() {
 			calendarApi
 				.getAllUserCalendars()
 				.then((calendars) => {
-					setAllUserCalendars((prevState) => [...calendars, ...prevState]);
+					setAllUserCalendars(calendars);
 					setChosenCalendars((prevState) => [
 						...calendars.map((c) => c.id),
 						...prevState,
 					]);
+
+					return calendars;
+				})
+				.then((calendars) => {
+					const calendarsId = calendars.map((c) => c.id);
+
+					eventApi
+						.getAllUserEvents({
+							start: start.current,
+							finish: finish.current,
+							calendar: calendarsId,
+						})
+						.then((result) => {
+							const preparedData = result.map((event) => {
+								/* eslint-disable no-param-reassign */
+								event.title = event.name;
+								event.start = parseISO(event.datetime_start);
+								event.end = parseISO(event.datetime_finish);
+								event.allDay = event.all_day;
+
+								return event;
+							});
+
+							setAllUserEvents(preparedData);
+						});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
@@ -210,35 +231,6 @@ function App() {
 				});
 		}
 	}, [loggedIn]);
-
-	useEffect(() => {
-		if (loggedIn) {
-			const calendarsId = allUserCalendars.map((c) => c.id);
-
-			eventApi
-				.getAllUserEvents({
-					start: start.current,
-					finish: finish.current,
-					calendar: calendarsId,
-				})
-				.then((result) => {
-					const preparedData = result.map((event) => {
-						/* eslint-disable no-param-reassign */
-						event.title = event.name;
-						event.start = parseISO(event.datetime_start);
-						event.end = parseISO(event.datetime_finish);
-						event.allDay = event.all_day;
-						return event;
-					});
-
-					setAllUserEvents(preparedData);
-				})
-				.catch((error) => {
-					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', error.message);
-				});
-		}
-	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -275,13 +267,16 @@ function App() {
 	const user = useMemo(
 		() => ({
 			currentUser,
-			setCurrentUser,
 			loggedIn,
-			setLoggedIn,
+		}),
+		[currentUser, loggedIn]
+	);
+
+	const calendars = useMemo(
+		() => ({
+			holidays,
 			allUserCalendars,
-			setAllUserCalendars,
 			allUserEvents,
-			setAllUserEvents,
 			chosenCalendars,
 			setChosenCalendars,
 			editableCalendar,
@@ -290,8 +285,7 @@ function App() {
 			setEditableEvent,
 		}),
 		[
-			currentUser,
-			loggedIn,
+			holidays,
 			allUserCalendars,
 			allUserEvents,
 			chosenCalendars,
@@ -596,6 +590,9 @@ function App() {
 						setAllUserCalendars((prevState) =>
 							prevState.filter((c) => c.id !== idCalendar)
 						);
+						setAllUserEvents((prevState) =>
+							prevState.filter((evt) => evt.calendar.id !== idCalendar)
+						);
 					} else {
 						throw new Error(`Что-то пошло не так`);
 					}
@@ -719,96 +716,98 @@ function App() {
 	return (
 		<LocalizationContext.Provider value={localizer}>
 			<CurrentUserContext.Provider value={user}>
-				<div className={styles.app}>
-					<Routes>
-						<Route
-							exact
-							path="/"
-							element={
-								<>
-									<Header
-										onLogin={setVisiblePopupLogin}
-										onAvatarClick={setVisiblePopupEditAvatar}
-										onUserClick={setVisiblePopupEditUser}
-										onPasswordClick={setVisiblePopupChangePassword}
-										logout={logout}
-									/>
-									<Main
-										onNewEventClick={setVisiblePopupNewEvent}
-										onEventDoubleClick={setVisiblePopupEditEvent}
-										onNewCalendarClick={setVisiblePopupNewCalendar}
-										onEditCalendarClick={setVisiblePopupEditCalendar}
-									/>
-								</>
-							}
+				<CalendarsContext.Provider value={calendars}>
+					<div className={styles.app}>
+						<Routes>
+							<Route
+								exact
+								path="/"
+								element={
+									<>
+										<Header
+											onLogin={setVisiblePopupLogin}
+											onAvatarClick={setVisiblePopupEditAvatar}
+											onUserClick={setVisiblePopupEditUser}
+											onPasswordClick={setVisiblePopupChangePassword}
+											logout={logout}
+										/>
+										<Main
+											onNewEventClick={setVisiblePopupNewEvent}
+											onEventDoubleClick={setVisiblePopupEditEvent}
+											onNewCalendarClick={setVisiblePopupNewCalendar}
+											onEditCalendarClick={setVisiblePopupEditCalendar}
+										/>
+									</>
+								}
+							/>
+							<Route path="*" element={<NotFound />} />
+						</Routes>
+
+						{isLoading && <Loader />}
+
+						<PopupLogin
+							visible={visiblePopupLogin}
+							setVisible={setVisiblePopupLogin}
+							handleRegister={handleRegister}
+							handleLogin={handleLogin}
 						/>
-						<Route path="*" element={<NotFound />} />
-					</Routes>
 
-					{isLoading && <Loader />}
+						<PopupNewEvent
+							visible={visiblePopupNewEvent}
+							setVisible={setVisiblePopupNewEvent}
+							onCreateEvent={handleCreateEvent}
+						/>
 
-					<PopupLogin
-						visible={visiblePopupLogin}
-						setVisible={setVisiblePopupLogin}
-						handleRegister={handleRegister}
-						handleLogin={handleLogin}
-					/>
+						<PopupNewCalendar
+							visible={visiblePopupNewCalendar}
+							setVisible={setVisiblePopupNewCalendar}
+							onCreateCalendar={handleCreateCalendar}
+						/>
 
-					<PopupNewEvent
-						visible={visiblePopupNewEvent}
-						setVisible={setVisiblePopupNewEvent}
-						onCreateEvent={handleCreateEvent}
-					/>
+						<PopupEditUser
+							visible={visiblePopupEditUser}
+							setVisible={setVisiblePopupEditUser}
+							onUpdateUser={handleUpdateUser}
+							onDeleteUser={handleDeleteUser}
+						/>
 
-					<PopupNewCalendar
-						visible={visiblePopupNewCalendar}
-						setVisible={setVisiblePopupNewCalendar}
-						onCreateCalendar={handleCreateCalendar}
-					/>
+						<PopupEditCalendar
+							visible={visiblePopupEditCalendar}
+							setVisible={setVisiblePopupEditCalendar}
+							onEditCalendar={handleEditCalendar}
+							onDeleteCalendar={handleDeleteCalendar}
+						/>
 
-					<PopupEditUser
-						visible={visiblePopupEditUser}
-						setVisible={setVisiblePopupEditUser}
-						onUpdateUser={handleUpdateUser}
-						onDeleteUser={handleDeleteUser}
-					/>
+						<PopupChangePassword
+							visible={visiblePopupChangePassword}
+							setVisible={setVisiblePopupChangePassword}
+							onChangePassword={handleChangePassword}
+						/>
 
-					<PopupEditCalendar
-						visible={visiblePopupEditCalendar}
-						setVisible={setVisiblePopupEditCalendar}
-						onEditCalendar={handleEditCalendar}
-						onDeleteCalendar={handleDeleteCalendar}
-					/>
+						<PopupEditEvent
+							visible={visiblePopupEditEvent}
+							setVisible={setVisiblePopupEditEvent}
+							onEditEvent={handleEditEvent}
+							onDeleteEvent={handleDeleteEvent}
+						/>
 
-					<PopupChangePassword
-						visible={visiblePopupChangePassword}
-						setVisible={setVisiblePopupChangePassword}
-						onChangePassword={handleChangePassword}
-					/>
+						<PopupEditAvatar
+							visible={visiblePopupEditAvatar}
+							setVisible={setVisiblePopupEditAvatar}
+							onEditAvatar={handleEditAvatar}
+							onDeleteAvatar={handleDeleteAvatar}
+						/>
 
-					<PopupEditEvent
-						visible={visiblePopupEditEvent}
-						setVisible={setVisiblePopupEditEvent}
-						onEditEvent={handleEditEvent}
-						onDeleteEvent={handleDeleteEvent}
-					/>
+						<Toast ref={toast} />
 
-					<PopupEditAvatar
-						visible={visiblePopupEditAvatar}
-						setVisible={setVisiblePopupEditAvatar}
-						onEditAvatar={handleEditAvatar}
-						onDeleteAvatar={handleDeleteAvatar}
-					/>
-
-					<Toast ref={toast} />
-
-					<PopupDialog
-						showMessage={showMessage}
-						setShowMessage={setShowMessage}
-						isDialogError={isDialogError}
-						dialogMessage={dialogMessage}
-					/>
-				</div>
+						<PopupDialog
+							showMessage={showMessage}
+							setShowMessage={setShowMessage}
+							isDialogError={isDialogError}
+							dialogMessage={dialogMessage}
+						/>
+					</div>
+				</CalendarsContext.Provider>
 			</CurrentUserContext.Provider>
 		</LocalizationContext.Provider>
 	);

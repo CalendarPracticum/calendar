@@ -1,11 +1,16 @@
+/* Core */
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import { useForm, Controller } from 'react-hook-form';
+import { classNames as cn } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 import { Password } from 'primereact/password';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
 import { CurrentUserContext } from '../../context';
 import styles from './Forms.module.css';
 

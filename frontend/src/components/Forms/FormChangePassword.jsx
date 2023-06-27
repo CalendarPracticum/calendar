@@ -1,10 +1,15 @@
+/* Core */
 import React from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import { useForm, Controller } from 'react-hook-form';
+import { classNames as cn } from 'primereact/utils';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { Divider } from 'primereact/divider';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
 import styles from './Forms.module.css';
 
 export function FormChangePassword({ onChangePassword }) {

@@ -1,13 +1,20 @@
-import PropTypes from 'prop-types';
+/* Core */
 import { useContext } from 'react';
-import { Button } from 'primereact/button';
-import { classNames as cn } from 'primereact/utils';
-import { Calendar } from 'react-big-calendar';
-import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
+import PropTypes from 'prop-types';
+
+/* Libraries */
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import styles from './Sidebar.module.css';
+import { Calendar } from 'react-big-calendar';
+import { classNames as cn } from 'primereact/utils';
+import { Button } from 'primereact/button';
+
+/* Instruments */
 import { culture, noop } from '../../utils/constants';
 import { CurrentUserContext, LocalizationContext } from '../../context';
+import styles from './Sidebar.module.css';
+
+/* Components */
+import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 
 export function Sidebar({
 	onEditCalendarClick,
@@ -19,8 +26,7 @@ export function Sidebar({
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const userContext = useContext(CurrentUserContext);
-	const { loggedIn } = userContext;
+	const { loggedIn } = useContext(CurrentUserContext);
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),

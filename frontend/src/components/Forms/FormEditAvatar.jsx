@@ -1,8 +1,13 @@
+/* Core */
 import React from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
+import { classNames as cn } from 'primereact/utils';
 import { FileUpload } from 'primereact/fileupload';
 import { Button } from 'primereact/button';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
 import { BASE_URL } from '../../utils/constants';
 import styles from './Forms.module.css';
 

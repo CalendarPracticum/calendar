@@ -1,24 +1,28 @@
+/* Core */
 import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
+
+/* Libraries */
 import endOfDay from 'date-fns/endOfDay';
 import startOfDay from 'date-fns/startOfDay';
 import startOfToday from 'date-fns/startOfToday';
 import getUnixTime from 'date-fns/getUnixTime';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { useForm, Controller } from 'react-hook-form';
+import { classNames as cn } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { classNames as cn } from 'primereact/utils';
+
+/* Instruments */
+import { CalendarsContext } from '../../context';
 import styles from './Forms.module.css';
-import { CurrentUserContext } from '../../context';
 
 export function FormNewEvent({ onCreateEvent }) {
-	const userContext = useContext(CurrentUserContext);
-	const { allUserCalendars } = userContext;
+	const { allUserCalendars } = useContext(CalendarsContext);
 
 	const circle = useRef(null);
 
