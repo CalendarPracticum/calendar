@@ -13,7 +13,7 @@ import { Divider } from 'primereact/divider';
 /* Instruments */
 import styles from './Forms.module.css';
 
-export function FormRegistration({ showFormLogin, handleRegister }) {
+export function FormRegistration({ handleRegister, setIsFormLogin }) {
 	const defaultValues = {
 		email: '',
 		password: '',
@@ -178,7 +178,7 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 						<button
 							type="button"
 							className={styles.linkRegistry}
-							onClick={() => showFormLogin((prev) => !prev)}
+							onClick={() => setIsFormLogin(true)}
 						>
 							Войдите,
 						</button>
@@ -191,6 +191,6 @@ export function FormRegistration({ showFormLogin, handleRegister }) {
 }
 
 FormRegistration.propTypes = {
-	showFormLogin: PropTypes.func.isRequired,
 	handleRegister: PropTypes.func.isRequired,
+	setIsFormLogin: PropTypes.func.isRequired,
 };
