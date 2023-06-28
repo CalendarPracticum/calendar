@@ -6,8 +6,8 @@ import { Button } from 'primereact/button';
 export function PopupAskToRegister({
 	visible,
 	setVisible,
-	setVisibleRegister,
-	setShowFormLogin,
+	showRegisterPopup,
+	setIsFormLogin,
 }) {
 	return (
 		<Dialog
@@ -38,19 +38,20 @@ export function PopupAskToRegister({
 				</h2>
 
 				<Button
+					type="button"
 					label="Не сейчас"
 					className="p-button-outlined"
 					onClick={() => setVisible(false)}
 				/>
 
 				<Button
-					type="submit"
+					type="button"
 					label="Попробовать"
 					className="mt-3"
 					onClick={() => {
 						setVisible(false);
-						setShowFormLogin(false);
-						setVisibleRegister(true);
+						setIsFormLogin(false);
+						showRegisterPopup(true);
 					}}
 				/>
 			</div>
@@ -61,6 +62,6 @@ export function PopupAskToRegister({
 PopupAskToRegister.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
-	setVisibleRegister: PropTypes.func.isRequired,
-	setShowFormLogin: PropTypes.func.isRequired,
+	showRegisterPopup: PropTypes.func.isRequired,
+	setIsFormLogin: PropTypes.func.isRequired,
 };

@@ -9,26 +9,23 @@ export function PopupLogin({
 	setVisible,
 	handleRegister,
 	handleLogin,
-	showFormLogin,
-	setShowFormLogin,
+	isFormLogin,
+	setIsFormLogin,
 }) {
 	return (
 		<Dialog
 			visible={visible}
 			onHide={() => {
 				setVisible(false);
-				setShowFormLogin(true);
+				setIsFormLogin(true);
 			}}
 			blockScroll
 			headerStyle={{ padding: `16px 16px 8px` }}
 		>
-			{showFormLogin ? (
-				<FormLogin showFormLogin={setShowFormLogin} handleLogin={handleLogin} />
+			{isFormLogin ? (
+				<FormLogin handleLogin={handleLogin} />
 			) : (
-				<FormRegistration
-					showFormLogin={setShowFormLogin}
-					handleRegister={handleRegister}
-				/>
+				<FormRegistration handleRegister={handleRegister} />
 			)}
 		</Dialog>
 	);
@@ -39,6 +36,6 @@ PopupLogin.propTypes = {
 	setVisible: PropTypes.func.isRequired,
 	handleRegister: PropTypes.func.isRequired,
 	handleLogin: PropTypes.func.isRequired,
-	showFormLogin: PropTypes.bool.isRequired,
-	setShowFormLogin: PropTypes.func.isRequired,
+	isFormLogin: PropTypes.bool.isRequired,
+	setIsFormLogin: PropTypes.func.isRequired,
 };

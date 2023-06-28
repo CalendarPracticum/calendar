@@ -92,13 +92,13 @@ function App() {
 		useState(false);
 	const [visiblePopupAskToRegister, setVisiblePopupAskToRegister] =
 		useState(false);
-	const [showFormLogin, setShowFormLogin] = useState(true);
 
 	// Helpers
 	const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isFormLogin, setIsFormLogin] = useState(true);
 
 	const today = new Date();
 	const start = useRef([today.getFullYear(), '-01-01'].join(''));
@@ -336,7 +336,7 @@ function App() {
 						})
 						.then(() => {
 							setLoggedIn(true);
-							setShowFormLogin(true);
+							setIsFormLogin(true);
 							setVisiblePopupLogin(false);
 							showDialog('Регистрация прошла успешно!', false);
 						});
@@ -756,8 +756,8 @@ function App() {
 							setVisible={setVisiblePopupLogin}
 							handleRegister={handleRegister}
 							handleLogin={handleLogin}
-							showFormLogin={showFormLogin}
-							setShowFormLogin={setShowFormLogin}
+							isFormLogin={isFormLogin}
+							setIsFormLogin={setIsFormLogin}
 						/>
 
 						<PopupNewEvent
@@ -809,8 +809,8 @@ function App() {
 						<PopupAskToRegister
 							visible={visiblePopupAskToRegister}
 							setVisible={setVisiblePopupAskToRegister}
-							setVisibleRegister={setVisiblePopupLogin}
-							setShowFormLogin={setShowFormLogin}
+							showRegisterPopup={setVisiblePopupLogin}
+							setIsFormLogin={setIsFormLogin}
 						/>
 
 						<Toast ref={toast} />
