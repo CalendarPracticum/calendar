@@ -199,6 +199,31 @@ function App() {
 						...calendars.map((c) => c.id),
 						...prevState,
 					]);
+
+					return calendars;
+				})
+				.then((calendars) => {
+					const calendarsId = calendars.map((c) => c.id);
+
+					eventApi
+						.getAllUserEvents({
+							start: start.current,
+							finish: finish.current,
+							calendar: calendarsId,
+						})
+						.then((result) => {
+							const preparedData = result.map((event) => {
+								/* eslint-disable no-param-reassign */
+								event.title = event.name;
+								event.start = parseISO(event.datetime_start);
+								event.end = parseISO(event.datetime_finish);
+								event.allDay = event.all_day;
+
+								return event;
+							});
+
+							setAllUserEvents(preparedData);
+						});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
@@ -206,34 +231,6 @@ function App() {
 				});
 		}
 	}, [loggedIn]);
-
-	useEffect(() => {
-		if (loggedIn) {
-			const calendarsId = allUserCalendars.map((c) => c.id);
-			eventApi
-				.getAllUserEvents({
-					start: start.current,
-					finish: finish.current,
-					calendar: calendarsId,
-				})
-				.then((result) => {
-					const preparedData = result.map((event) => {
-						/* eslint-disable no-param-reassign */
-						event.title = event.name;
-						event.start = parseISO(event.datetime_start);
-						event.end = parseISO(event.datetime_finish);
-						event.allDay = event.all_day;
-						return event;
-					});
-
-					setAllUserEvents(preparedData);
-				})
-				.catch((error) => {
-					// eslint-disable-next-line no-console
-					console.log('ОШИБКА: ', error.message);
-				});
-		}
-	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -540,6 +537,31 @@ function App() {
 		}
 	};
 
+	const handlePartialChangeEvents = (idCalendar) => {
+		eventApi
+			.getAllUserEvents({
+				start: start.current,
+				finish: finish.current,
+				calendar: idCalendar,
+			})
+			.then((result) => {
+				const preparedData = result.map((event) => {
+					/* eslint-disable no-param-reassign */
+					event.title = event.name;
+					event.start = parseISO(event.datetime_start);
+					event.end = parseISO(event.datetime_finish);
+					event.allDay = event.all_day;
+
+					return event;
+				});
+
+				setAllUserEvents((prevState) => [
+					...prevState.filter((e) => e.calendar.id !== idCalendar),
+					...preparedData,
+				]);
+			});
+	};
+
 	const handleEditCalendar = (calendar) => {
 		const access = localStorage.getItem('jwtAccess');
 		const refresh = localStorage.getItem('jwtRefresh');
@@ -553,6 +575,7 @@ function App() {
 					setAllUserCalendars((prevState) =>
 						prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
 					);
+					handlePartialChangeEvents(calendar.id);
 					setVisiblePopupEditCalendar(false);
 					showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
 				})
@@ -587,6 +610,9 @@ function App() {
 						);
 						setChosenCalendars((prevState) =>
 							prevState.filter((id) => id !== idCalendar)
+						);
+						setAllUserEvents((prevState) =>
+							prevState.filter((e) => e.calendar.id !== idCalendar)
 						);
 					} else {
 						throw new Error(`Что-то пошло не так`);
