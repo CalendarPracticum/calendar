@@ -49,6 +49,7 @@ import {
 	PopupEditEvent,
 	PopupDialog,
 	PopupEditAvatar,
+	PopupAskToRegister,
 } from '../Popups';
 
 const locales = {
@@ -89,12 +90,15 @@ function App() {
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
+	const [visiblePopupAskToRegister, setVisiblePopupAskToRegister] =
+		useState(false);
 
 	// Helpers
 	const [showMessage, setShowMessage] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isFormLogin, setIsFormLogin] = useState(true);
 
 	const today = new Date();
 	const start = useRef([today.getFullYear(), '-01-01'].join(''));
@@ -332,6 +336,7 @@ function App() {
 						})
 						.then(() => {
 							setLoggedIn(true);
+							setIsFormLogin(true);
 							setVisiblePopupLogin(false);
 							showDialog('Регистрация прошла успешно!', false);
 						});
@@ -351,7 +356,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.updateUserData(userData)
@@ -387,7 +391,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.changePassword(data)
@@ -418,7 +421,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.updateAvatar(data)
@@ -454,7 +456,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.updateAvatar({ picture: null })
@@ -488,7 +489,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.deleteUser(password)
@@ -520,13 +520,12 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			calendarApi
 				.createNewCalendar({ name, description, color })
 				.then((newCalendar) => {
 					setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
-					setChosenCalendars((prevState) => [+newCalendar.id, ...prevState]);
+					setChosenCalendars((prevState) => [newCalendar.id, ...prevState]);
 					setVisiblePopupNewCalendar(false);
 					showToast('Новый календарь создан!', Status.SUCCESS);
 				})
@@ -543,13 +542,37 @@ function App() {
 		}
 	};
 
+	const handlePartialChangeEvents = (idCalendar) => {
+		eventApi
+			.getAllUserEvents({
+				start: start.current,
+				finish: finish.current,
+				calendar: idCalendar,
+			})
+			.then((result) => {
+				const preparedData = result.map((event) => {
+					/* eslint-disable no-param-reassign */
+					event.title = event.name;
+					event.start = parseISO(event.datetime_start);
+					event.end = parseISO(event.datetime_finish);
+					event.allDay = event.all_day;
+
+					return event;
+				});
+
+				setAllUserEvents((prevState) => [
+					...prevState.filter((e) => e.calendar.id !== idCalendar),
+					...preparedData,
+				]);
+			});
+	};
+
 	const handleEditCalendar = (calendar) => {
 		const access = localStorage.getItem('jwtAccess');
 		const refresh = localStorage.getItem('jwtRefresh');
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			calendarApi
 				.partChangeCalendar(calendar)
@@ -557,6 +580,7 @@ function App() {
 					setAllUserCalendars((prevState) =>
 						prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
 					);
+					handlePartialChangeEvents(calendar.id);
 					setVisiblePopupEditCalendar(false);
 					showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
 				})
@@ -579,7 +603,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			calendarApi
 				.deleteCalendar(idCalendar)
@@ -590,8 +613,11 @@ function App() {
 						setAllUserCalendars((prevState) =>
 							prevState.filter((c) => c.id !== idCalendar)
 						);
+						setChosenCalendars((prevState) =>
+							prevState.filter((id) => id !== idCalendar)
+						);
 						setAllUserEvents((prevState) =>
-							prevState.filter((evt) => evt.calendar.id !== idCalendar)
+							prevState.filter((e) => e.calendar.id !== idCalendar)
 						);
 					} else {
 						throw new Error(`Что-то пошло не так`);
@@ -617,7 +643,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			eventApi
 				.createNewEvent(data)
@@ -649,7 +674,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			eventApi
 				.partChangeEvent(formData)
@@ -685,7 +709,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			eventApi
 				.deleteEvent(idEvent)
@@ -736,6 +759,7 @@ function App() {
 											onEventDoubleClick={setVisiblePopupEditEvent}
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
+											onNewEventClickUnauth={setVisiblePopupAskToRegister}
 										/>
 									</>
 								}
@@ -750,6 +774,8 @@ function App() {
 							setVisible={setVisiblePopupLogin}
 							handleRegister={handleRegister}
 							handleLogin={handleLogin}
+							isFormLogin={isFormLogin}
+							setIsFormLogin={setIsFormLogin}
 						/>
 
 						<PopupNewEvent
@@ -796,6 +822,13 @@ function App() {
 							setVisible={setVisiblePopupEditAvatar}
 							onEditAvatar={handleEditAvatar}
 							onDeleteAvatar={handleDeleteAvatar}
+						/>
+
+						<PopupAskToRegister
+							visible={visiblePopupAskToRegister}
+							setVisible={setVisiblePopupAskToRegister}
+							showRegisterPopup={setVisiblePopupLogin}
+							setIsFormLogin={setIsFormLogin}
 						/>
 
 						<Toast ref={toast} />

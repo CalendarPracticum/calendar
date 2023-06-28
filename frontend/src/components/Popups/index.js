@@ -7,6 +7,7 @@ import { PopupNewEvent } from './PopupNewEvent';
 import { PopupEditEvent } from './PopupEditEvent';
 import { PopupDialog } from './PopupDialog';
 import { PopupEditAvatar } from './PopupEditAvatar';
+import { PopupAskToRegister } from './PopupAskToRegister';
 
 export {
 	PopupChangePassword,
@@ -18,4 +19,5 @@ export {
 	PopupEditEvent,
 	PopupDialog,
 	PopupEditAvatar,
+	PopupAskToRegister,
 };
