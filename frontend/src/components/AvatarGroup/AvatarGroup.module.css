@@ -4,6 +4,10 @@
 	padding-bottom: 1.5rem;
 }
 
+.top img {
+	object-fit: cover;
+}
+
 .avatar {
 	background-color: var(--primary-color);
 	color: var(--surface-f);
