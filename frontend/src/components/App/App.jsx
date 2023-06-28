@@ -199,31 +199,6 @@ function App() {
 						...calendars.map((c) => c.id),
 						...prevState,
 					]);
-
-					return calendars;
-				})
-				.then((calendars) => {
-					const calendarsId = calendars.map((c) => c.id);
-
-					eventApi
-						.getAllUserEvents({
-							start: start.current,
-							finish: finish.current,
-							calendar: calendarsId,
-						})
-						.then((result) => {
-							const preparedData = result.map((event) => {
-								/* eslint-disable no-param-reassign */
-								event.title = event.name;
-								event.start = parseISO(event.datetime_start);
-								event.end = parseISO(event.datetime_finish);
-								event.allDay = event.all_day;
-
-								return event;
-							});
-
-							setAllUserEvents(preparedData);
-						});
 				})
 				.catch((err) => {
 					// eslint-disable-next-line no-console
@@ -231,6 +206,34 @@ function App() {
 				});
 		}
 	}, [loggedIn]);
+
+	useEffect(() => {
+		if (loggedIn) {
+			const calendarsId = allUserCalendars.map((c) => c.id);
+			eventApi
+				.getAllUserEvents({
+					start: start.current,
+					finish: finish.current,
+					calendar: calendarsId,
+				})
+				.then((result) => {
+					const preparedData = result.map((event) => {
+						/* eslint-disable no-param-reassign */
+						event.title = event.name;
+						event.start = parseISO(event.datetime_start);
+						event.end = parseISO(event.datetime_finish);
+						event.allDay = event.all_day;
+						return event;
+					});
+
+					setAllUserEvents(preparedData);
+				})
+				.catch((error) => {
+					// eslint-disable-next-line no-console
+					console.log('ОШИБКА: ', error.message);
+				});
+		}
+	}, [loggedIn, allUserCalendars]);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -351,7 +354,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.updateUserData(userData)
@@ -387,7 +389,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.changePassword(data)
@@ -418,7 +419,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.updateAvatar(data)
@@ -454,7 +454,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.updateAvatar({ picture: null })
@@ -488,7 +487,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			auth
 				.deleteUser(password)
@@ -520,13 +518,12 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			calendarApi
 				.createNewCalendar({ name, description, color })
 				.then((newCalendar) => {
 					setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
-					setChosenCalendars((prevState) => [+newCalendar.id, ...prevState]);
+					setChosenCalendars((prevState) => [newCalendar.id, ...prevState]);
 					setVisiblePopupNewCalendar(false);
 					showToast('Новый календарь создан!', Status.SUCCESS);
 				})
@@ -549,7 +546,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			calendarApi
 				.partChangeCalendar(calendar)
@@ -579,7 +575,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			calendarApi
 				.deleteCalendar(idCalendar)
@@ -590,8 +585,8 @@ function App() {
 						setAllUserCalendars((prevState) =>
 							prevState.filter((c) => c.id !== idCalendar)
 						);
-						setAllUserEvents((prevState) =>
-							prevState.filter((evt) => evt.calendar.id !== idCalendar)
+						setChosenCalendars((prevState) =>
+							prevState.filter((id) => id !== idCalendar)
 						);
 					} else {
 						throw new Error(`Что-то пошло не так`);
@@ -617,7 +612,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			eventApi
 				.createNewEvent(data)
@@ -649,7 +643,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			eventApi
 				.partChangeEvent(formData)
@@ -685,7 +678,6 @@ function App() {
 
 		if (access && refresh) {
 			checkTokens(access, refresh, false);
-
 			setIsLoading(true);
 			eventApi
 				.deleteEvent(idEvent)

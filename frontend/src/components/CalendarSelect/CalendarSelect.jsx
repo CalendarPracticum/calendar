@@ -11,12 +11,8 @@ import styles from './CalendarSelect.module.css';
 import { CalendarBlock } from './CalendarsBlock';
 
 export function CalendarSelect({ onEditCalendarClick }) {
-	const {
-		allUserCalendars,
-		chosenCalendars,
-		setChosenCalendars,
-		setEditableCalendar,
-	} = useContext(CalendarsContext);
+	const { allUserCalendars, setChosenCalendars, setEditableCalendar } =
+		useContext(CalendarsContext);
 
 	const handleCheckbox = (e) => {
 		const calendarId = e.target.id;
@@ -45,7 +41,6 @@ export function CalendarSelect({ onEditCalendarClick }) {
 				name="Личные календари"
 				calendars={allUserCalendars}
 				handleCheckbox={handleCheckbox}
-				chosenCalendars={chosenCalendars}
 				handleClick={handleClick}
 				editButton
 			/>
@@ -53,7 +48,6 @@ export function CalendarSelect({ onEditCalendarClick }) {
 				name="Другие"
 				calendars={otherCalendars}
 				handleCheckbox={handleCheckbox}
-				chosenCalendars={chosenCalendars}
 				handleClick={handleClick}
 				editButton={false}
 			/>
