@@ -12,7 +12,7 @@ import { Password } from 'primereact/password';
 /* Instruments */
 import styles from './Forms.module.css';
 
-export function FormLogin({ handleLogin }) {
+export function FormLogin({ handleLogin, setIsFormLogin }) {
 	const defaultValues = {
 		name: '',
 		email: '',
@@ -113,7 +113,11 @@ export function FormLogin({ handleLogin }) {
 					</form>
 
 					<p>
-						<button type="button" className={styles.linkRegistry}>
+						<button
+							type="button"
+							className={styles.linkRegistry}
+							onClick={() => setIsFormLogin(false)}
+						>
 							Зарегистрируйтесь,
 						</button>
 						{`${'\u00A0'}если ещё нет аккаунта`}
@@ -126,4 +130,5 @@ export function FormLogin({ handleLogin }) {
 
 FormLogin.propTypes = {
 	handleLogin: PropTypes.func.isRequired,
+	setIsFormLogin: PropTypes.func.isRequired,
 };

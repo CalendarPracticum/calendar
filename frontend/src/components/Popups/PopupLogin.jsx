@@ -23,9 +23,12 @@ export function PopupLogin({
 			headerStyle={{ padding: `16px 16px 8px` }}
 		>
 			{isFormLogin ? (
-				<FormLogin handleLogin={handleLogin} />
+				<FormLogin setIsFormLogin={setIsFormLogin} handleLogin={handleLogin} />
 			) : (
-				<FormRegistration handleRegister={handleRegister} />
+				<FormRegistration
+					setIsFormLogin={setIsFormLogin}
+					handleRegister={handleRegister}
+				/>
 			)}
 		</Dialog>
 	);
