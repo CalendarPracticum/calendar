@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog } from 'primereact/dialog';
 import { FormLogin } from '../Forms/FormLogin';
@@ -9,21 +9,24 @@ export function PopupLogin({
 	setVisible,
 	handleRegister,
 	handleLogin,
+	isFormLogin,
+	setIsFormLogin,
 }) {
-	const [showFormLogin, setShowFormLogin] = useState(true);
-
 	return (
 		<Dialog
 			visible={visible}
-			onHide={() => setVisible(false)}
+			onHide={() => {
+				setVisible(false);
+				setIsFormLogin(true);
+			}}
 			blockScroll
 			headerStyle={{ padding: `16px 16px 8px` }}
 		>
-			{showFormLogin ? (
-				<FormLogin showFormLogin={setShowFormLogin} handleLogin={handleLogin} />
+			{isFormLogin ? (
+				<FormLogin setIsFormLogin={setIsFormLogin} handleLogin={handleLogin} />
 			) : (
 				<FormRegistration
-					showFormLogin={setShowFormLogin}
+					setIsFormLogin={setIsFormLogin}
 					handleRegister={handleRegister}
 				/>
 			)}
@@ -36,4 +39,6 @@ PopupLogin.propTypes = {
 	setVisible: PropTypes.func.isRequired,
 	handleRegister: PropTypes.func.isRequired,
 	handleLogin: PropTypes.func.isRequired,
+	isFormLogin: PropTypes.bool.isRequired,
+	setIsFormLogin: PropTypes.func.isRequired,
 };
