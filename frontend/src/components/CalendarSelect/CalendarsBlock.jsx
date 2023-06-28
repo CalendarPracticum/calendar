@@ -1,18 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+import { CalendarsContext } from '../../context';
 import styles from './CalendarSelect.module.css';
 
 export function CalendarBlock(props) {
-	const {
-		calendars,
-		handleCheckbox,
-		chosenCalendars,
-		handleClick,
-		name,
-		editButton,
-	} = props;
+	const { chosenCalendars } = useContext(CalendarsContext);
+	const { calendars, handleCheckbox, handleClick, name, editButton } = props;
 
 	const [isActive, setIsActive] = useState(true);
+
 	return (
 		<div className={styles.calendarContainer}>
 			<div className={styles.acordion}>
@@ -44,7 +40,7 @@ export function CalendarBlock(props) {
 								id={calendar.id}
 								name={calendar.id}
 								onChange={handleCheckbox}
-								defaultChecked={chosenCalendars.some((c) => c === calendar.id)}
+								checked={chosenCalendars.some((c) => c === calendar.id)}
 							/>
 							<span
 								className={styles.checkbox}
@@ -74,6 +70,4 @@ CalendarBlock.propTypes = {
 	handleCheckbox: PropTypes.func.isRequired,
 	// eslint-disable-next-line react/forbid-prop-types
 	calendars: PropTypes.array.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	chosenCalendars: PropTypes.array.isRequired,
 };

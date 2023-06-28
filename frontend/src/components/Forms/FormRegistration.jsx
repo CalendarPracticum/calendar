@@ -107,7 +107,8 @@ export function FormRegistration({ handleRegister, setIsFormLogin }) {
 											message: 'Максимальная длина 40 символа.',
 										},
 										pattern: {
-											value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,42})/,
+											value:
+												/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[0-9a-zA-Z]{8,40}/,
 											message: 'Не корректный пароль',
 										},
 									}}
