@@ -49,6 +49,7 @@ import {
 	PopupEditEvent,
 	PopupDialog,
 	PopupEditAvatar,
+	PopupAskToRegister,
 } from '../Popups';
 
 const locales = {
@@ -89,6 +90,9 @@ function App() {
 		useState(false);
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
+	const [visiblePopupAskToRegister, setVisiblePopupAskToRegister] =
+		useState(false);
+	const [showFormLogin, setShowFormLogin] = useState(true);
 
 	// Helpers
 	const [showMessage, setShowMessage] = useState(false);
@@ -332,6 +336,7 @@ function App() {
 						})
 						.then(() => {
 							setLoggedIn(true);
+							setShowFormLogin(true);
 							setVisiblePopupLogin(false);
 							showDialog('Регистрация прошла успешно!', false);
 						});
@@ -736,6 +741,7 @@ function App() {
 											onEventDoubleClick={setVisiblePopupEditEvent}
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
+											onNewEventClickUnauth={setVisiblePopupAskToRegister}
 										/>
 									</>
 								}
@@ -750,6 +756,8 @@ function App() {
 							setVisible={setVisiblePopupLogin}
 							handleRegister={handleRegister}
 							handleLogin={handleLogin}
+							showFormLogin={showFormLogin}
+							setShowFormLogin={setShowFormLogin}
 						/>
 
 						<PopupNewEvent
@@ -796,6 +804,13 @@ function App() {
 							setVisible={setVisiblePopupEditAvatar}
 							onEditAvatar={handleEditAvatar}
 							onDeleteAvatar={handleDeleteAvatar}
+						/>
+
+						<PopupAskToRegister
+							visible={visiblePopupAskToRegister}
+							setVisible={setVisiblePopupAskToRegister}
+							setVisibleRegister={setVisiblePopupLogin}
+							setShowFormLogin={setShowFormLogin}
 						/>
 
 						<Toast ref={toast} />

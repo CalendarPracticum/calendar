@@ -44,7 +44,9 @@ export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
 		setEditableEvent(event);
 	};
 
-	const handleSelectSlot = () => onNewEventClick(true);
+	const handleSelectSlot = () => {
+		onNewEventClick(true);
+	};
 
 	return (
 		<Calendar
