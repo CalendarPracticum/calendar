@@ -1,5 +1,3 @@
-export const BASE_URL = 'http://mycalendaily.acceleratorpracticum.ru';
-
 export const Color = {
 	DEFAULT: '#49CBB8',
 	ONE: '#158DE4',

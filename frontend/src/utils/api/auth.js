@@ -1,23 +1,11 @@
-const BASE_URL = 'http://193.107.236.224/api';
-
-const HEADERS = {
-	'Content-Type': 'application/json',
-};
-
-const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
-
-const getJson = (response) => {
-	if (response.ok) {
-		return response.json();
-	}
-	return response.json().then((errorText) => {
-		throw new Error(
-			Array.isArray(errorText[Object.keys(errorText)[0]])
-				? errorText[Object.keys(errorText)[0]][0]
-				: 'Произошла ошибка на сервере'
-		);
-	});
-};
+/* eslint-disable no-console */
+import {
+	BASE_URL,
+	HEADERS,
+	getAccessToken,
+	checkReponse,
+	fetchWithRefresh,
+} from './commonApi';
 
 /*
   Регистрация
@@ -28,7 +16,7 @@ export const register = (email, password) =>
 		method: 'POST',
 		headers: HEADERS,
 		body: JSON.stringify({ email, password }),
-	}).then(getJson);
+	}).then(checkReponse);
 
 /*
   Авторизация
@@ -39,29 +27,7 @@ export const authorize = (email, password) =>
 		method: 'POST',
 		headers: HEADERS,
 		body: JSON.stringify({ email, password }),
-	}).then(getJson);
-
-/*
-  Получение access токена в случае, если в localStorage ещё остался refresh токен
-  в случае успеха возвращает {access}
-*/
-export const refreshAccess = (refreshToken) =>
-	fetch(`${BASE_URL}/auth/refresh/`, {
-		method: 'POST',
-		headers: HEADERS,
-		body: JSON.stringify({ refresh: refreshToken }),
-	}).then(getJson);
-
-/*
-  Проверка access токена на действительность
-  в случае успешной проверки возвращается {}
-*/
-export const verify = (accessToken) =>
-	fetch(`${BASE_URL}/auth/verify/`, {
-		method: 'POST',
-		headers: HEADERS,
-		body: JSON.stringify({ token: accessToken }),
-	}).then(getJson);
+	}).then(checkReponse);
 
 /*
   Получение пользовательских данных
@@ -77,13 +43,21 @@ export const verify = (accessToken) =>
     }
   }
 */
+// export const getUserData = () =>
+// 	fetch(`${BASE_URL}/v1/users/me/`, {
+// 		headers: {
+// 			...HEADERS,
+// 			authorization: getAccessToken(),
+// 		},
+// 	}).then(checkReponse);
+
 export const getUserData = () =>
-	fetch(`${BASE_URL}/v1/users/me/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/users/me/`, {
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),
 		},
-	}).then(getJson);
+	});
 
 /*
   Изменение пользовательских данных
@@ -99,8 +73,24 @@ export const getUserData = () =>
     }
   }
 */
+// export const updateUserData = ({ email, username, darkMode }) =>
+// 	fetch(`${BASE_URL}/v1/users/me/`, {
+// 		method: 'PATCH',
+// 		headers: {
+// 			...HEADERS,
+// 			authorization: getAccessToken(),
+// 		},
+// 		body: JSON.stringify({
+// 			email,
+// 			username,
+// 			settings: {
+// 				dark_mode: darkMode,
+// 			},
+// 		}),
+// 	}).then(checkReponse);
+
 export const updateUserData = ({ email, username, darkMode }) =>
-	fetch(`${BASE_URL}/v1/users/me/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/users/me/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,
@@ -113,7 +103,7 @@ export const updateUserData = ({ email, username, darkMode }) =>
 				dark_mode: darkMode,
 			},
 		}),
-	}).then(getJson);
+	});
 
 export const updateAvatar = ({ picture }) =>
 	fetch(`${BASE_URL}/v1/users/me/`, {
@@ -125,7 +115,7 @@ export const updateAvatar = ({ picture }) =>
 		body: JSON.stringify({
 			profile_picture: picture,
 		}),
-	}).then(getJson);
+	}).then(checkReponse);
 
 /*
   Изменение пароля

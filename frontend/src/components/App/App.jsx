@@ -18,12 +18,8 @@ import { Toast } from 'primereact/toast';
 
 /* Instruments */
 import ruPrime from '../../utils/ruPrime.json';
-import {
-	Color,
-	Status,
-	holidaysCalendar,
-	BASE_URL,
-} from '../../utils/constants';
+import { Color, Status, holidaysCalendar } from '../../utils/constants';
+import { PICTURE_URL, verify, refreshAccess } from '../../utils/api/commonApi';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
 import * as eventApi from '../../utils/api/events';
@@ -139,32 +135,36 @@ function App() {
 		}
 	}, []);
 
-	const checkTokens = useCallback(
-		(access, refresh, launch) => {
-			auth
-				.verify(access)
-				.then(() => {
-					if (launch) {
-						setLoggedIn(true);
-					}
-				})
-				.catch(() => {
-					if (refresh) {
-						auth
-							.refreshAccess(refresh)
-							.then((data) => {
-								localStorage.setItem('jwtAccess', data.access);
-								setLoggedIn(true);
-							})
-							.catch(() => {
-								logout();
-								showDialog('Введите логин и пароль повторно.', true);
-							});
-					}
-				});
-		},
-		[logout]
-	);
+	// TODO: надо порефакторить
+	const checkTokens = useCallback(() => {
+		verify()
+			.then(() => {
+				setLoggedIn(true);
+			})
+			.catch((err) => {
+				const refresh = localStorage.getItem('jwtRefresh');
+				if (refresh) {
+					refreshAccess()
+						.then((data) => {
+							localStorage.setItem('jwtAccess', data.access);
+							setLoggedIn(true);
+						})
+						.catch((error) => {
+							// eslint-disable-next-line no-console
+							console.log('1 from checkTokens', error);
+						});
+				} else {
+					// eslint-disable-next-line no-console
+					console.log('2 from checkTokens', err);
+					logout();
+					showDialog('Введите логин и пароль повторно.', true);
+				}
+			});
+	}, [logout]);
+
+	useEffect(() => {
+		checkTokens();
+	}, [checkTokens]);
 
 	useEffect(() => {
 		eventApi
@@ -242,7 +242,7 @@ function App() {
 				.getUserData()
 				.then((result) => {
 					const fullUrl = result.profile_picture
-						? `${BASE_URL}${result.profile_picture}`
+						? `${PICTURE_URL}${result.profile_picture}`
 						: result.profile_picture;
 
 					setCurrentUser({
@@ -258,15 +258,6 @@ function App() {
 				});
 		}
 	}, [loggedIn]);
-
-	useEffect(() => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, true);
-		}
-	}, [checkTokens]);
 
 	const user = useMemo(
 		() => ({
@@ -351,195 +342,135 @@ function App() {
 	};
 
 	const handleUpdateUser = (userData) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
+		setIsLoading(true);
+		auth
+			.updateUserData(userData)
+			.then((result) => {
+				const picture = `${PICTURE_URL}${result.profile_picture}`;
 
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			auth
-				.updateUserData(userData)
-				.then((result) => {
-					const picture = `${BASE_URL}${result.profile_picture}`;
-
-					setCurrentUser({
-						email: result.email,
-						username: result.username,
-						picture: result.profile_picture ? picture : null,
-						darkMode: result.settings.dark_mode,
-					});
-
-					setVisiblePopupEditUser(false);
-					showToast('Данные успешно обновлены!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture: result.profile_picture ? picture : null,
+					darkMode: result.settings.dark_mode,
 				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditUser(false);
-		}
+
+				setVisiblePopupEditUser(false);
+				showToast('Данные успешно обновлены!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleChangePassword = (data) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			auth
-				.changePassword(data)
-				.then((res) => {
-					if (res.status === 204) {
-						setVisiblePopupChangePassword(false);
-						showToast('Пароль изменён', Status.SUCCESS);
-					} else {
-						throw new Error(`Неверный пароль`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupChangePassword(false);
-		}
+		setIsLoading(true);
+		auth
+			.changePassword(data)
+			.then((res) => {
+				if (res.status === 204) {
+					setVisiblePopupChangePassword(false);
+					showToast('Пароль изменён', Status.SUCCESS);
+				} else {
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleEditAvatar = (data) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
+		setIsLoading(true);
+		auth
+			.updateAvatar(data)
+			.then((result) => {
+				const picture = `${PICTURE_URL}${result.profile_picture}`;
 
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			auth
-				.updateAvatar(data)
-				.then((result) => {
-					const picture = `${BASE_URL}${result.profile_picture}`;
-
-					setCurrentUser({
-						email: result.email,
-						username: result.username,
-						picture,
-						darkMode: result.settings.dark_mode,
-					});
-
-					setVisiblePopupEditAvatar(false);
-					showToast('Аватарка сохранена', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture,
+					darkMode: result.settings.dark_mode,
 				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
+
+				setVisiblePopupEditAvatar(false);
+				showToast('Аватарка сохранена', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleDeleteAvatar = () => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			auth
-				.updateAvatar({ picture: null })
-				.then((result) => {
-					setCurrentUser({
-						email: result.email,
-						username: result.username,
-						picture: result.profile_picture,
-						darkMode: result.settings.dark_mode,
-					});
-
-					setVisiblePopupEditAvatar(false);
-					showToast('Аватарка удалена', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
+		setIsLoading(true);
+		auth
+			.updateAvatar({ picture: null })
+			.then((result) => {
+				setCurrentUser({
+					email: result.email,
+					username: result.username,
+					picture: result.profile_picture,
+					darkMode: result.settings.dark_mode,
 				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
+
+				setVisiblePopupEditAvatar(false);
+				showToast('Аватарка удалена', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleDeleteUser = (password) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			auth
-				.deleteUser(password)
-				.then((res) => {
-					if (res.status === 204) {
-						setVisiblePopupEditUser(false);
-						logout('Вы удалили аккаунт!');
-					} else {
-						throw new Error(`Неверный пароль`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditUser(false);
-		}
+		setIsLoading(true);
+		auth
+			.deleteUser(password)
+			.then((res) => {
+				if (res.status === 204) {
+					setVisiblePopupEditUser(false);
+					logout('Вы удалили аккаунт!');
+				} else {
+					throw new Error(`Неверный пароль`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	// Calendars
 	const handleCreateCalendar = ({ name, description, color }) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			calendarApi
-				.createNewCalendar({ name, description, color })
-				.then((newCalendar) => {
-					setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
-					setChosenCalendars((prevState) => [newCalendar.id, ...prevState]);
-					setVisiblePopupNewCalendar(false);
-					showToast('Новый календарь создан!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupNewCalendar(false);
-		}
+		setIsLoading(true);
+		calendarApi
+			.createNewCalendar({ name, description, color })
+			.then((newCalendar) => {
+				setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
+				setChosenCalendars((prevState) => [newCalendar.id, ...prevState]);
+				setVisiblePopupNewCalendar(false);
+				showToast('Новый календарь создан!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handlePartialChangeEvents = (idCalendar) => {
@@ -568,172 +499,122 @@ function App() {
 	};
 
 	const handleEditCalendar = (calendar) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			calendarApi
-				.partChangeCalendar(calendar)
-				.then((updatedCalendar) => {
-					setAllUserCalendars((prevState) =>
-						prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
-					);
-					handlePartialChangeEvents(calendar.id);
-					setVisiblePopupEditCalendar(false);
-					showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
+		setIsLoading(true);
+		calendarApi
+			.partChangeCalendar(calendar)
+			.then((updatedCalendar) => {
+				setAllUserCalendars((prevState) =>
+					prevState.map((c) => (c.id === calendar.id ? updatedCalendar : c))
+				);
+				handlePartialChangeEvents(calendar.id);
+				setVisiblePopupEditCalendar(false);
+				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleDeleteCalendar = (idCalendar) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			calendarApi
-				.deleteCalendar(idCalendar)
-				.then((res) => {
-					if (res.status === 204) {
-						setVisiblePopupEditCalendar(false);
-						showToast('Календарь удалён', Status.SUCCESS);
-						setAllUserCalendars((prevState) =>
-							prevState.filter((c) => c.id !== idCalendar)
-						);
-						setChosenCalendars((prevState) =>
-							prevState.filter((id) => id !== idCalendar)
-						);
-						setAllUserEvents((prevState) =>
-							prevState.filter((e) => e.calendar.id !== idCalendar)
-						);
-					} else {
-						throw new Error(`Что-то пошло не так`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditCalendar(false);
-		}
+		setIsLoading(true);
+		calendarApi
+			.deleteCalendar(idCalendar)
+			.then((res) => {
+				if (res.status === 204) {
+					setVisiblePopupEditCalendar(false);
+					showToast('Календарь удалён', Status.SUCCESS);
+					setAllUserCalendars((prevState) =>
+						prevState.filter((c) => c.id !== idCalendar)
+					);
+					setChosenCalendars((prevState) =>
+						prevState.filter((id) => id !== idCalendar)
+					);
+					setAllUserEvents((prevState) =>
+						prevState.filter((e) => e.calendar.id !== idCalendar)
+					);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	// Events
 	const handleCreateEvent = (data) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			eventApi
-				.createNewEvent(data)
-				.then((event) => {
-					event.title = event.name;
-					event.start = parseISO(event.datetime_start);
-					event.end = parseISO(event.datetime_finish);
-					event.allDay = event.all_day;
-					setAllUserEvents([event, ...allUserEvents]);
-					setVisiblePopupNewEvent(false);
-					showToast('Событие создано!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupNewEvent(false);
-		}
+		setIsLoading(true);
+		eventApi
+			.createNewEvent(data)
+			.then((event) => {
+				event.title = event.name;
+				event.start = parseISO(event.datetime_start);
+				event.end = parseISO(event.datetime_finish);
+				event.allDay = event.all_day;
+				setAllUserEvents([event, ...allUserEvents]);
+				setVisiblePopupNewEvent(false);
+				showToast('Событие создано!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleEditEvent = (formData) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			eventApi
-				.partChangeEvent(formData)
-				.then((updatedEvent) => {
-					updatedEvent.title = updatedEvent.name;
-					updatedEvent.start = parseISO(updatedEvent.datetime_start);
-					updatedEvent.end = parseISO(updatedEvent.datetime_finish);
-					updatedEvent.allDay = updatedEvent.all_day;
-					setAllUserEvents((prevState) =>
-						prevState.map((event) =>
-							event.id === updatedEvent.id ? updatedEvent : event
-						)
-					);
-					setVisiblePopupEditEvent(false);
-					showToast('Событие изменено!', Status.SUCCESS);
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditEvent(false);
-		}
+		setIsLoading(true);
+		eventApi
+			.partChangeEvent(formData)
+			.then((updatedEvent) => {
+				updatedEvent.title = updatedEvent.name;
+				updatedEvent.start = parseISO(updatedEvent.datetime_start);
+				updatedEvent.end = parseISO(updatedEvent.datetime_finish);
+				updatedEvent.allDay = updatedEvent.all_day;
+				setAllUserEvents((prevState) =>
+					prevState.map((event) =>
+						event.id === updatedEvent.id ? updatedEvent : event
+					)
+				);
+				setVisiblePopupEditEvent(false);
+				showToast('Событие изменено!', Status.SUCCESS);
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleDeleteEvent = (idEvent) => {
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-
-		if (access && refresh) {
-			checkTokens(access, refresh, false);
-			setIsLoading(true);
-			eventApi
-				.deleteEvent(idEvent)
-				.then((res) => {
-					if (res.status === 204) {
-						setAllUserEvents((prevState) =>
-							prevState.filter((event) => event.id !== idEvent)
-						);
-						setVisiblePopupEditEvent(false);
-						showToast('Событие удалено!', Status.SUCCESS);
-					} else {
-						throw new Error(`Что-то пошло не так`);
-					}
-				})
-				.catch((err) => {
-					showDialog(err.message, true);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		} else {
-			logout();
-			showDialog('Введите логин и пароль повторно.', true);
-			setVisiblePopupEditEvent(false);
-		}
+		setIsLoading(true);
+		eventApi
+			.deleteEvent(idEvent)
+			.then((res) => {
+				if (res.status === 204) {
+					setAllUserEvents((prevState) =>
+						prevState.filter((event) => event.id !== idEvent)
+					);
+					setVisiblePopupEditEvent(false);
+					showToast('Событие удалено!', Status.SUCCESS);
+				} else {
+					throw new Error(`Что-то пошло не так`);
+				}
+			})
+			.catch((err) => {
+				showDialog(err.message, true);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
