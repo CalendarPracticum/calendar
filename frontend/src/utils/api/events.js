@@ -1,23 +1,24 @@
-const BASE_URL = 'http://193.107.236.224/api';
+/* eslint-disable no-console */
+import {
+	BASE_URL,
+	HEADERS,
+	getAccessToken,
+	checkReponse,
+	fetchWithRefresh,
+} from './commonApi';
 
-const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
-
-const HEADERS = {
-	'Content-Type': 'application/json',
-};
-
-const getJson = (response) => {
-	if (response.ok) {
-		return response.json();
-	}
-	return response.json().then((errorText) => {
-		throw new Error(
-			Array.isArray(errorText[Object.keys(errorText)[0]])
-				? errorText[Object.keys(errorText)[0]][0]
-				: 'Произошла ошибка на сервере'
-		);
-	});
-};
+// const getJson = (response) => {
+// 	if (response.ok) {
+// 		return response.json();
+// 	}
+// 	return response.json().then((errorText) => {
+// 		throw new Error(
+// 			Array.isArray(errorText[Object.keys(errorText)[0]])
+// 				? errorText[Object.keys(errorText)[0]][0]
+// 				: 'Произошла ошибка на сервере'
+// 		);
+// 	});
+// };
 
 /*
   Получение всех ивентов
@@ -41,19 +42,19 @@ const getJson = (response) => {
 */
 
 export const getAllUserEvents = ({ start, finish, calendar }) =>
-	fetch(
+	fetchWithRefresh(
 		`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`,
 		{
 			headers: {
 				authorization: getAccessToken(),
 			},
 		}
-	).then(getJson);
+	);
 
 export const getHolidays = ({ start, finish, calendar }) =>
 	fetch(
 		`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`
-	).then(getJson);
+	).then(checkReponse);
 
 /*
   Создание нового ивента
@@ -71,7 +72,7 @@ export const getHolidays = ({ start, finish, calendar }) =>
   }
 */
 export const createNewEvent = (formData) =>
-	fetch(`${BASE_URL}/v1/events/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/events/`, {
 		method: 'POST',
 		headers: {
 			...HEADERS,
@@ -85,7 +86,7 @@ export const createNewEvent = (formData) =>
 			description: formData.description,
 			calendar: formData.calendar.id,
 		}),
-	}).then(getJson);
+	});
 
 /*
   Получение информации о конкретном событии
@@ -107,11 +108,11 @@ export const createNewEvent = (formData) =>
   }
 */
 export const getEventById = (id) =>
-	fetch(`${BASE_URL}/v1/events/${id}`, {
+	fetchWithRefresh(`${BASE_URL}/v1/events/${id}`, {
 		headers: {
 			authorization: getAccessToken(),
 		},
-	}).then(getJson);
+	});
 
 /*
   Полное обновление события
@@ -133,7 +134,7 @@ export const getEventById = (id) =>
   }
 */
 export const fullChangeEvent = (formData) =>
-	fetch(`${BASE_URL}/v1/events/${formData.id}`, {
+	fetchWithRefresh(`${BASE_URL}/v1/events/${formData.id}`, {
 		method: 'PUT',
 		headers: {
 			...HEADERS,
@@ -149,7 +150,7 @@ export const fullChangeEvent = (formData) =>
 			holiday: formData.holiday,
 			calendar: formData.calendar.id,
 		}),
-	}).then(getJson);
+	});
 
 /*
   Частичное обновление события
@@ -171,7 +172,7 @@ export const fullChangeEvent = (formData) =>
   }
 */
 export const partChangeEvent = (data) =>
-	fetch(`${BASE_URL}/v1/events/${data.id}/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/events/${data.id}/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,
@@ -185,7 +186,7 @@ export const partChangeEvent = (data) =>
 			description: data.description,
 			calendar: data.calendar.id,
 		}),
-	}).then(getJson);
+	});
 
 /*
   Удаление события

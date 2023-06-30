@@ -1,23 +1,10 @@
-const BASE_URL = 'http://193.107.236.224/api';
-
-const getAccessToken = () => `Bearer ${localStorage.getItem('jwtAccess')}`;
-
-const HEADERS = {
-	'Content-Type': 'application/json',
-};
-
-const getJson = (response) => {
-	if (response.ok) {
-		return response.json();
-	}
-	return response.json().then((errorText) => {
-		throw new Error(
-			Array.isArray(errorText[Object.keys(errorText)[0]])
-				? errorText[Object.keys(errorText)[0]][0]
-				: 'Произошла ошибка на сервере'
-		);
-	});
-};
+/* eslint-disable no-console */
+import {
+	BASE_URL,
+	HEADERS,
+	getAccessToken,
+	fetchWithRefresh,
+} from './commonApi';
 
 /*
   Получение всех календарей пользователя
@@ -32,11 +19,12 @@ const getJson = (response) => {
   ]
 */
 export const getAllUserCalendars = () =>
-	fetch(`${BASE_URL}/v1/calendars/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/`, {
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
-	}).then(getJson);
+	});
 
 /*
   Получение конкретного календаря пользователя по его id
@@ -49,11 +37,12 @@ export const getAllUserCalendars = () =>
   }
 */
 export const getUserCalendarById = (id) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}`, {
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
-	}).then(getJson);
+	});
 
 /*
   Создание нового календаря пользователя
@@ -66,14 +55,14 @@ export const getUserCalendarById = (id) =>
   }
 */
 export const createNewCalendar = ({ name, description, color }) =>
-	fetch(`${BASE_URL}/v1/calendars/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/`, {
 		method: 'POST',
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({ name, description, color }),
-	}).then(getJson);
+	});
 
 /*
   Полное обновление календаря
@@ -87,14 +76,14 @@ export const createNewCalendar = ({ name, description, color }) =>
   }
 */
 export const fullChangeCalendar = ({ name, description, color, id }) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}`, {
 		method: 'PUT',
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({ name, description, color }),
-	}).then(getJson);
+	});
 
 /*
   Частичное обновление календаря
@@ -108,14 +97,14 @@ export const fullChangeCalendar = ({ name, description, color, id }) =>
   }
 */
 export const partChangeCalendar = ({ name, description, color, id }) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({ name, description, color }),
-	}).then(getJson);
+	});
 
 /*
   Удаление календаря
@@ -124,6 +113,7 @@ export const deleteCalendar = (id) =>
 	fetch(`${BASE_URL}/v1/calendars/${id}`, {
 		method: 'DELETE',
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
 	});

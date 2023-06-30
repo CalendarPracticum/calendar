@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* Core */
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Routes, Route } from 'react-router-dom';
@@ -102,12 +103,12 @@ function App() {
 
 	const toast = useRef(null);
 
-	const showToast = (message, status) => {
+	const showToast = (message, status, summary) => {
 		toast.current.show({
 			severity: status,
-			summary: 'Успех',
+			summary,
 			detail: message,
-			life: 3000,
+			life: 2500,
 		});
 	};
 
@@ -131,7 +132,7 @@ function App() {
 		setChosenCalendars(holidaysCalendar.map((c) => c.id));
 
 		if (message) {
-			showToast(message, Status.SUCCESS);
+			showToast(message, Status.SUCCESS, 'Успех!');
 		}
 	}, []);
 
@@ -150,14 +151,13 @@ function App() {
 							setLoggedIn(true);
 						})
 						.catch((error) => {
-							// eslint-disable-next-line no-console
 							console.log('1 from checkTokens', error);
+							logout();
+							showDialog('Введите логин и пароль повторно', true);
 						});
 				} else {
-					// eslint-disable-next-line no-console
 					console.log('2 from checkTokens', err);
-					logout();
-					showDialog('Введите логин и пароль повторно.', true);
+					showToast('Вы не авторизованы', Status.WARNING, 'Внимание');
 				}
 			});
 	}, [logout]);
@@ -188,7 +188,6 @@ function App() {
 				setChosenCalendars(holidaysCalendar.map((c) => c.id));
 			})
 			.catch((error) => {
-				// eslint-disable-next-line no-console
 				console.log('ОШИБКА: ', error.message);
 			});
 	}, []);
@@ -208,7 +207,6 @@ function App() {
 				})
 				.then((calendars) => {
 					const calendarsId = calendars.map((c) => c.id);
-
 					eventApi
 						.getAllUserEvents({
 							start: start.current,
@@ -230,7 +228,6 @@ function App() {
 						});
 				})
 				.catch((err) => {
-					// eslint-disable-next-line no-console
 					console.log('ОШИБКА: ', err.message);
 				});
 		}
@@ -253,7 +250,6 @@ function App() {
 					});
 				})
 				.catch((err) => {
-					// eslint-disable-next-line no-console
 					console.log('ОШИБКА: ', err.message);
 				});
 		}
@@ -356,7 +352,7 @@ function App() {
 				});
 
 				setVisiblePopupEditUser(false);
-				showToast('Данные успешно обновлены!', Status.SUCCESS);
+				showToast('Данные успешно обновлены!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -373,7 +369,7 @@ function App() {
 			.then((res) => {
 				if (res.status === 204) {
 					setVisiblePopupChangePassword(false);
-					showToast('Пароль изменён', Status.SUCCESS);
+					showToast('Пароль изменён', Status.SUCCESS, 'Успех!');
 				} else {
 					throw new Error(`Неверный пароль`);
 				}
@@ -401,7 +397,7 @@ function App() {
 				});
 
 				setVisiblePopupEditAvatar(false);
-				showToast('Аватарка сохранена', Status.SUCCESS);
+				showToast('Аватарка сохранена', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -424,7 +420,7 @@ function App() {
 				});
 
 				setVisiblePopupEditAvatar(false);
-				showToast('Аватарка удалена', Status.SUCCESS);
+				showToast('Аватарка удалена', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -463,7 +459,7 @@ function App() {
 				setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
 				setChosenCalendars((prevState) => [newCalendar.id, ...prevState]);
 				setVisiblePopupNewCalendar(false);
-				showToast('Новый календарь создан!', Status.SUCCESS);
+				showToast('Новый календарь создан!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -508,7 +504,11 @@ function App() {
 				);
 				handlePartialChangeEvents(calendar.id);
 				setVisiblePopupEditCalendar(false);
-				showToast('Данные календаря успешно обновлены!', Status.SUCCESS);
+				showToast(
+					'Данные календаря успешно обновлены!',
+					Status.SUCCESS,
+					'Успех!'
+				);
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -525,7 +525,7 @@ function App() {
 			.then((res) => {
 				if (res.status === 204) {
 					setVisiblePopupEditCalendar(false);
-					showToast('Календарь удалён', Status.SUCCESS);
+					showToast('Календарь удалён', Status.SUCCESS, 'Успех!');
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
 					);
@@ -559,7 +559,7 @@ function App() {
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
 				setVisiblePopupNewEvent(false);
-				showToast('Событие создано!', Status.SUCCESS);
+				showToast('Событие создано!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -584,7 +584,7 @@ function App() {
 					)
 				);
 				setVisiblePopupEditEvent(false);
-				showToast('Событие изменено!', Status.SUCCESS);
+				showToast('Событие изменено!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
 				showDialog(err.message, true);
@@ -604,7 +604,7 @@ function App() {
 						prevState.filter((event) => event.id !== idEvent)
 					);
 					setVisiblePopupEditEvent(false);
-					showToast('Событие удалено!', Status.SUCCESS);
+					showToast('Событие удалено!', Status.SUCCESS, 'Успех!');
 				} else {
 					throw new Error(`Что-то пошло не так`);
 				}

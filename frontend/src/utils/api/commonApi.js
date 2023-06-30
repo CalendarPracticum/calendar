@@ -3,7 +3,7 @@ export const BASE_URL = 'http://193.107.236.224/api';
 export const PICTURE_URL = 'http://mycalendaily.acceleratorpracticum.ru';
 
 export const HEADERS = {
-	'Content-Type': 'application/json;charset=utf-8',
+	'Content-Type': 'application/json',
 };
 
 const LIFE_TIME_TO_UPDATE_MULTIPLIER = 0.5;
