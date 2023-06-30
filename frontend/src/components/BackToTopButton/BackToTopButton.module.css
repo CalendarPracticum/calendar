@@ -22,6 +22,7 @@
 	left: 24px;
 	height: 50px;
 	width: 60px;
+  visibility: hidden;
 }
 
 .button:hover {
