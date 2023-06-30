@@ -34,7 +34,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 	}, [currentColor]);
 
 	const defaultValues = {
-		name: editableEvent.title,
+		title: editableEvent.title,
 		timeStart: editableEvent.start,
 		timeFinish: editableEvent.end,
 		allDay: editableEvent.allDay,
@@ -137,7 +137,7 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 							<span className="p-float-label p-input-icon-right">
 								<i className="pi pi-pencil" />
 								<Controller
-									name="name"
+									name="title"
 									control={control}
 									rules={{
 										required: 'Поле Название обязательное',
@@ -160,13 +160,13 @@ export function FormEditEvent({ onEditEvent, onDeleteEvent }) {
 								/>
 								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
 								<label
-									htmlFor="name"
-									className={cn({ 'p-error': errors.name })}
+									htmlFor="title"
+									className={cn({ 'p-error': errors.title })}
 								>
 									Название*
 								</label>
 							</span>
-							{getFormErrorMessage('name')}
+							{getFormErrorMessage('title')}
 						</div>
 
 						<div className={styles.field}>
