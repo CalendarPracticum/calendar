@@ -23,7 +23,7 @@ export function BaseCalendar({
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const { holidays, allUserEvents, chosenCalendars, setEditableEvent } =
+	const { holidays, allUserEvents, allUserCalendars, chosenCalendars, setEditableEvent } =
 		useContext(CalendarsContext);
 
 	// TODO: потом сюда добавятся события пошаренных календарей
@@ -31,8 +31,8 @@ export function BaseCalendar({
 		chosenCalendars.includes(e.calendar.id)
 	);
 
-	// передвижка событий
-	const moveEvent = ({
+	// изменение событий в календаре
+	const editEvent = ({
 		event,
 		start,
 		end,
@@ -40,7 +40,7 @@ export function BaseCalendar({
 	}) => {
 		const { allDay } = event;
 
-		if (event.calendar.id === 1) {
+		if (!allUserCalendars.map((el)=> el.id).includes(event.calendar.id)) {
 			return;
 		}
 
@@ -68,22 +68,22 @@ export function BaseCalendar({
 		onEditEvent(newObject);
 	};
 
-	const resizeEvent = ({ event, start, end }) => {
-		const newObject = {
-			id: event.id,
-			name: event.title,
-			timeStart: zonedTimeToUtc(start),
-			timeFinish: zonedTimeToUtc(end),
-			allDay: event.allDay,
-			description: event.description,
-			calendar: {
-				id: event.calendar.id,
-				name: event.calendar.name,
-				color: event.calendar.color,
-			},
-		};
-		onEditEvent(newObject);
-	};
+	// const resizeEvent = ({ event, start, end }) => {
+	// 	const newObject = {
+	// 		id: event.id,
+	// 		name: event.title,
+	// 		timeStart: zonedTimeToUtc(start),
+	// 		timeFinish: zonedTimeToUtc(end),
+	// 		allDay: event.allDay,
+	// 		description: event.description,
+	// 		calendar: {
+	// 			id: event.calendar.id,
+	// 			name: event.calendar.name,
+	// 			color: event.calendar.color,
+	// 		},
+	// 	};
+	// 	onEditEvent(newObject);
+	// };
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
@@ -143,8 +143,8 @@ export function BaseCalendar({
 			onDoubleClickEvent={handleDoubleClick}
 			onSelectSlot={handleSelectSlot}
 			selectable
-			onEventDrop={moveEvent}
-			onEventResize={resizeEvent}
+			onEventDrop={editEvent}
+			onEventResize={editEvent}
 			resizable
 			popup
 		/>
