@@ -6,12 +6,12 @@ import PropTypes from 'prop-types';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { Calendar } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 /* Instruments */
 import { culture, messages, noop } from '../../utils/constants';
 import { CalendarsContext, LocalizationContext } from '../../context';
 import styles from './BaseCalendar.module.css';
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
