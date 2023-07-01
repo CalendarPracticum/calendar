@@ -23,8 +23,13 @@ export function BaseCalendar({
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const { holidays, allUserEvents, allUserCalendars, chosenCalendars, setEditableEvent } =
-		useContext(CalendarsContext);
+	const {
+		holidays,
+		allUserEvents,
+		allUserCalendars,
+		chosenCalendars,
+		setEditableEvent,
+	} = useContext(CalendarsContext);
 
 	// TODO: потом сюда добавятся события пошаренных календарей
 	const displayedEvents = [...holidays, ...allUserEvents].filter((e) =>
@@ -40,7 +45,7 @@ export function BaseCalendar({
 	}) => {
 		const { allDay } = event;
 
-		if (!allUserCalendars.map((el)=> el.id).includes(event.calendar.id)) {
+		if (!allUserCalendars.map((el) => el.id).includes(event.calendar.id)) {
 			return;
 		}
 
@@ -67,23 +72,6 @@ export function BaseCalendar({
 		};
 		onEditEvent(newObject);
 	};
-
-	// const resizeEvent = ({ event, start, end }) => {
-	// 	const newObject = {
-	// 		id: event.id,
-	// 		name: event.title,
-	// 		timeStart: zonedTimeToUtc(start),
-	// 		timeFinish: zonedTimeToUtc(end),
-	// 		allDay: event.allDay,
-	// 		description: event.description,
-	// 		calendar: {
-	// 			id: event.calendar.id,
-	// 			name: event.calendar.name,
-	// 			color: event.calendar.color,
-	// 		},
-	// 	};
-	// 	onEditEvent(newObject);
-	// };
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
