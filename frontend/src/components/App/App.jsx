@@ -761,7 +761,7 @@ function App() {
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
 											onNewEventClickUnauth={setVisiblePopupAskToRegister}
-											onDragEvent={handleEditEvent}
+											onEditEvent={handleEditEvent}
 										/>
 									</>
 								}

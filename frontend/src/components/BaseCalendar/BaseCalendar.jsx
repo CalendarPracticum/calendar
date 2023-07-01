@@ -11,23 +11,20 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { culture, messages, noop } from '../../utils/constants';
 import { CalendarsContext, LocalizationContext } from '../../context';
 import styles from './BaseCalendar.module.css';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 export function BaseCalendar({
 	onEventDoubleClick,
 	onNewEventClick,
-	onDragEvent,
+	onEditEvent,
 }) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const {
-		holidays,
-		allUserEvents,
-		chosenCalendars,
-		setEditableEvent,
-	} = useContext(CalendarsContext);
+	const { holidays, allUserEvents, chosenCalendars, setEditableEvent } =
+		useContext(CalendarsContext);
 
 	// TODO: потом сюда добавятся события пошаренных календарей
 	const displayedEvents = [...holidays, ...allUserEvents].filter((e) =>
@@ -50,21 +47,42 @@ export function BaseCalendar({
 		if (!allDay && droppedOnAllDaySlot) {
 			// eslint-disable-next-line no-param-reassign
 			event.allDay = true;
+		} else if (allDay && !droppedOnAllDaySlot) {
+			// eslint-disable-next-line no-param-reassign
+			event.allDay = false;
 		}
+
 		const newObject = {
-				id: event.id,
-				name: event.title,
-				timeStart: zonedTimeToUtc(start),
-				timeFinish: zonedTimeToUtc(end),
-				allDay: event.allDay,
-				description: event.description,
-				calendar: {
-					id: event.calendar.id,
-					name: event.calendar.name,
-					color: event.calendar.color,
-				},
-			};
-			onDragEvent(newObject);
+			id: event.id,
+			name: event.title,
+			timeStart: zonedTimeToUtc(start),
+			timeFinish: zonedTimeToUtc(end),
+			allDay: event.allDay,
+			description: event.description,
+			calendar: {
+				id: event.calendar.id,
+				name: event.calendar.name,
+				color: event.calendar.color,
+			},
+		};
+		onEditEvent(newObject);
+	};
+
+	const resizeEvent = ({ event, start, end }) => {
+		const newObject = {
+			id: event.id,
+			name: event.title,
+			timeStart: zonedTimeToUtc(start),
+			timeFinish: zonedTimeToUtc(end),
+			allDay: event.allDay,
+			description: event.description,
+			calendar: {
+				id: event.calendar.id,
+				name: event.calendar.name,
+				color: event.calendar.color,
+			},
+		};
+		onEditEvent(newObject);
 	};
 
 	const { defaultDate, formats } = {
@@ -126,6 +144,9 @@ export function BaseCalendar({
 			onSelectSlot={handleSelectSlot}
 			selectable
 			onEventDrop={moveEvent}
+			onEventResize={resizeEvent}
+			resizable
+			popup
 		/>
 	);
 }
@@ -133,11 +154,11 @@ export function BaseCalendar({
 BaseCalendar.propTypes = {
 	onEventDoubleClick: PropTypes.func,
 	onNewEventClick: PropTypes.func,
-	onDragEvent: PropTypes.func,
+	onEditEvent: PropTypes.func,
 };
 
 BaseCalendar.defaultProps = {
 	onEventDoubleClick: noop,
 	onNewEventClick: noop,
-	onDragEvent: noop,
+	onEditEvent: noop,
 };
