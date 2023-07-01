@@ -244,21 +244,23 @@ class ShareCalendarSerializer(serializers.ModelSerializer):
 
 
 class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
-
     owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
-    user = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    users = serializers.SerializerMethodField()
     calendar = serializers.SerializerMethodField()
 
     class Meta:
         model = ShareCalendar
         fields = (
             'owner',
-            'user',
+            'users',
             'calendar'
         )
 
-    @staticmethod
-    def get_calendar(instance):
+    def get_users(self, instance):
+        shares = ShareCalendar.objects.filter(calendar=instance.calendar)
+        return [share.user.email for share in shares]
+
+    def get_calendar(self, instance):
         calendar = instance.calendar
         return {
             'id': calendar.id,
@@ -274,8 +276,24 @@ class ReadUserShareCalendarSerializer(ReadOwnerShareCalendarSerializer):
         fields = (
             'id',
             'owner',
-            'user',
             'calendar',
             'custom_name',
             'custom_color',
         )
+
+
+class ShareCalendarUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShareCalendar
+        fields = ('custom_name', 'custom_color')
+
+    def update(self, instance, validated_data):
+        instance.custom_name = validated_data.get('custom_name',
+                                                  instance.custom_name)
+        instance.custom_color = validated_data.get('custom_color',
+                                                   instance.custom_color)
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        return ShareCalendarSerializer(instance).data

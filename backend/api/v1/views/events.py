@@ -22,8 +22,10 @@ from api.v1.serializers.events import (
     CalendarSerializer,
     ReadEventSerializer,
     ShareCalendarSerializer,
-    WriteEventSerializer, ReadUserShareCalendarSerializer,
+    WriteEventSerializer,
+    ReadUserShareCalendarSerializer,
     ReadOwnerShareCalendarSerializer,
+    ShareCalendarUpdateSerializer,
 )
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
 from events.models import Calendar, Event, ShareCalendar
@@ -76,13 +78,13 @@ from events.models import Calendar, Event, ShareCalendar
 @extend_schema(
     methods=['PUT', 'PATCH', 'DELETE'],
     parameters=[
-             OpenApiParameter(
-                 name='id',
-                 type=int,
-                 location=OpenApiParameter.PATH,
-                 description='Идентификатор календаря',
-             )
-         ],
+        OpenApiParameter(
+            name='id',
+            type=int,
+            location=OpenApiParameter.PATH,
+            description='Идентификатор календаря',
+        )
+    ],
 )
 class CalendarViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrCalendarOwnerOrReadOnly,)
@@ -92,10 +94,13 @@ class CalendarViewSet(viewsets.ModelViewSet):
         if self.action == 'shared_to_me':
             return ShareCalendar.objects.filter(user=self.request.user)
         elif self.action == 'shared_to_user':
-            return ShareCalendar.objects.filter(owner=self.request.user)
+            return ShareCalendar.objects.filter(
+                owner=self.request.user).distinct('calendar')
         return Calendar.objects.filter(owner=self.request.user)
 
     def get_serializer_class(self):
+        if self.action == 'share' and self.request.method == 'PATCH':
+            return ShareCalendarUpdateSerializer
         if self.action == 'share':
             return ShareCalendarSerializer
         elif self.action == 'shared_to_me':
@@ -122,13 +127,18 @@ class CalendarViewSet(viewsets.ModelViewSet):
         description='⚠️ ️**В теле запроса обязательно нужно передать параметр '
                     '{"user": "user@example.com"}️** ⚠️',
     )
-    @action(methods=['post', 'delete'], detail=True)
+    @extend_schema(
+        methods=['PATCH'],
+        summary='Изменить цвет и название календаря подписчика.',
+        responses=ShareCalendarSerializer()
+    )
+    @action(methods=['post', 'delete', 'patch'], detail=True)
     def share(self, request, pk):
         calendar = get_object_or_404(Calendar, pk=pk)
+        serializer = self.get_serializer(data=request.data)
 
         if request.method == 'POST':
             owner = request.user
-            serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save(owner=owner, calendar=calendar)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -160,11 +170,27 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        if request.method == 'PATCH':
+            instance = ShareCalendar.objects.get(
+                owner=calendar.owner,
+                user__email=request.user,
+                calendar=calendar
+            )
+            serializer = self.get_serializer(
+                instance,
+                data=request.data,
+                partial=True,
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
         methods=['GET'],
-        summary='Календари, которыми поделились с пользователем'
+        summary='Календари, которыми поделились с пользователем',
+        responses=ReadUserShareCalendarSerializer,
     )
     @action(methods=['get'], detail=False)
     def shared_to_me(self, request):
@@ -173,7 +199,8 @@ class CalendarViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         methods=['GET'],
-        summary='Календари, которыми владелец поделился с пользователями'
+        summary='Календари, которыми владелец поделился с пользователями',
+        responses=ReadOwnerShareCalendarSerializer()
     )
     @action(methods=['get'], detail=False)
     def shared_to_user(self, request):
@@ -201,7 +228,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 'finish_dt',
                 datetime,
                 description='Дата окончания фильтрации: 2023-12-31',
-                required=True,),
+                required=True, ),
             OpenApiParameter(
                 'calendar',
                 str,
