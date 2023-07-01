@@ -1,5 +1,5 @@
 /* Core */
-import { React, useCallback, useContext } from 'react';
+import { React, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 /* Libraries */
@@ -25,7 +25,6 @@ export function BaseCalendar({
 	const {
 		holidays,
 		allUserEvents,
-		setAllUserEvents,
 		chosenCalendars,
 		setEditableEvent,
 	} = useContext(CalendarsContext);
@@ -36,40 +35,37 @@ export function BaseCalendar({
 	);
 
 	// передвижка событий
-	const moveEvent = useCallback(
-		({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
-			const { allDay } = event;
+	const moveEvent = ({
+		event,
+		start,
+		end,
+		isAllDay: droppedOnAllDaySlot = false,
+	}) => {
+		const { allDay } = event;
 
-			if (event.calendar.id === 1) {
-				return;
-			}
+		if (event.calendar.id === 1) {
+			return;
+		}
 
-			if (!allDay && droppedOnAllDaySlot) {
-				// eslint-disable-next-line no-param-reassign
-				event.allDay = true;
-			}
-			setAllUserEvents((prev) => {
-				const existing = prev.find((ev) => ev.id === event.id) ?? {};
-				const filtered = prev.filter((ev) => ev.id !== event.id);
-				const newObject = {
-					id: existing.id,
-					name: existing.title,
-					timeStart: zonedTimeToUtc(start),
-					timeFinish: zonedTimeToUtc(end),
-					allDay: existing.allDay,
-					description: existing.description,
-					calendar: {
-						id: existing.calendar.id,
-						name: existing.calendar.name,
-						color: existing.calendar.color,
-					},
-				};
-				onDragEvent(newObject);
-				return [...filtered, { ...existing, start, end, allDay }];
-			});
-		},
-		[setAllUserEvents, onDragEvent]
-	);
+		if (!allDay && droppedOnAllDaySlot) {
+			// eslint-disable-next-line no-param-reassign
+			event.allDay = true;
+		}
+		const newObject = {
+				id: event.id,
+				name: event.title,
+				timeStart: zonedTimeToUtc(start),
+				timeFinish: zonedTimeToUtc(end),
+				allDay: event.allDay,
+				description: event.description,
+				calendar: {
+					id: event.calendar.id,
+					name: event.calendar.name,
+					color: event.calendar.color,
+				},
+			};
+			onDragEvent(newObject);
+	};
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
