@@ -115,21 +115,8 @@ export const updateAvatar = ({ picture }) =>
     "current_password": "string"
   }
 */
-// export const changePassword = ({ newPassword, currentPassword }) =>
-//   fetchWithRefresh(`${BASE_URL}/v1/users/set_password/`, {
-// 		method: 'POST',
-// 		headers: {
-// 			...HEADERS,
-// 			authorization: getAccessToken(),
-// 		},
-// 		body: JSON.stringify({
-// 			new_password: newPassword,
-// 			current_password: currentPassword,
-// 		}),
-// 	});
-
 export const changePassword = ({ newPassword, currentPassword }) =>
-	fetch(`${BASE_URL}/v1/users/set_password/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/users/set_password/`, {
 		method: 'POST',
 		headers: {
 			...HEADERS,
@@ -144,20 +131,8 @@ export const changePassword = ({ newPassword, currentPassword }) =>
 /*
 Удаление пользовательского аккаунта
 */
-// export const deleteUser = (password) =>
-//   fetchWithRefresh(`${BASE_URL}/v1/users/me/`, {
-// 		method: 'DELETE',
-// 		headers: {
-// 			...HEADERS,
-// 			authorization: getAccessToken(),
-// 		},
-// 		body: JSON.stringify({
-// 			current_password: password,
-// 		}),
-// 	});
-
 export const deleteUser = (password) =>
-	fetch(`${BASE_URL}/v1/users/me/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/users/me/`, {
 		method: 'DELETE',
 		headers: {
 			...HEADERS,

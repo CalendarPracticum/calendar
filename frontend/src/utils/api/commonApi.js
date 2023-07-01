@@ -6,36 +6,41 @@ export const HEADERS = {
 	'Content-Type': 'application/json',
 };
 
-const LIFE_TIME_TO_UPDATE_MULTIPLIER = 0.5;
-const getUnixTime = () => Math.round(+new Date() / 1000);
+// const LIFE_TIME_TO_UPDATE_MULTIPLIER = 0.5;
+// const getUnixTime = () => Math.round(+new Date() / 1000);
 
-const isTokenExpired = (token) => {
-	if (!token) {
-		return true;
-	}
+// const isTokenExpired = (token) => {
+// 	if (!token) {
+// 		return true;
+// 	}
 
-	try {
-		const tokenInfo = token.split('.')[1];
-		const tokenInfoDecoded = window.atob(tokenInfo);
-		const { exp, iat } = JSON.parse(tokenInfoDecoded);
+// 	try {
+// 		const tokenInfo = token.split('.')[1];
+// 		const tokenInfoDecoded = window.atob(tokenInfo);
+// 		const { exp, iat } = JSON.parse(tokenInfoDecoded);
 
-		const tokenLeftTime = exp - getUnixTime();
-		const minLifeTimeForUpdate = (exp - iat) * LIFE_TIME_TO_UPDATE_MULTIPLIER;
-		console.log('осталось жить токену', { tokenLeftTime });
-		console.log('планируемое обновление', { minLifeTimeForUpdate });
+// 		const tokenLeftTime = exp - getUnixTime();
+// 		const minLifeTimeForUpdate = (exp - iat) * LIFE_TIME_TO_UPDATE_MULTIPLIER;
+// 		console.log('осталось жить токену', { tokenLeftTime });
+// 		console.log('планируемое обновление', { minLifeTimeForUpdate });
 
-		return tokenLeftTime < minLifeTimeForUpdate;
-	} catch (e) {
-		console.error(e);
-		return true;
-	}
-};
+// 		return tokenLeftTime < minLifeTimeForUpdate;
+// 	} catch (e) {
+// 		console.error(e);
+// 		return true;
+// 	}
+// };
 
 export const getAccessToken = () =>
 	`Bearer ${localStorage.getItem('jwtAccess')}`;
 
-export const checkReponse = (res) =>
-	res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
+export const checkReponse = (res) => {
+	if (res.status === 204) {
+		return res;
+	}
+
+	return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
+};
 
 /*
   Проверка access токена на действительность
@@ -64,7 +69,7 @@ export const fetchWithRefresh = async (url, options) => {
 		const res = await fetch(url, options);
 		return await checkReponse(res);
 	} catch (err) {
-		if (isTokenExpired(localStorage.getItem('jwtAccess'))) {
+		if (err.code === 'token_not_valid') {
 			const refreshData = await refreshAccess(); // обновляем access токен
 			console.log('новый токен', { refreshData });
 
@@ -81,7 +86,7 @@ export const fetchWithRefresh = async (url, options) => {
 			return await checkReponse(res);
 			// eslint-disable-next-line no-else-return
 		} else {
-			console.log({ err });
+			console.log('проскочили обновление токена', { err });
 			return Promise.reject(err);
 		}
 	}

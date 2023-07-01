@@ -110,7 +110,7 @@ export const partChangeCalendar = ({ name, description, color, id }) =>
   Удаление календаря
 */
 export const deleteCalendar = (id) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}`, {
 		method: 'DELETE',
 		headers: {
 			...HEADERS,

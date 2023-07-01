@@ -192,7 +192,7 @@ export const partChangeEvent = (data) =>
   Удаление события
 */
 export const deleteEvent = (id) =>
-	fetch(`${BASE_URL}/v1/events/${id}`, {
+	fetchWithRefresh(`${BASE_URL}/v1/events/${id}`, {
 		method: 'DELETE',
 		headers: {
 			authorization: getAccessToken(),
