@@ -115,7 +115,7 @@ function App() {
 			severity: status,
 			summary,
 			detail: message,
-			life: 2500,
+			life: 2000,
 		});
 	};
 
@@ -124,7 +124,7 @@ function App() {
 		if (status === false) {
 			setTimeout(() => {
 				setShowMessage(false);
-			}, 1500);
+			}, 2000);
 		}
 		setIsDialogError(status);
 		setShowMessage(true);
@@ -154,27 +154,19 @@ function App() {
 		}
 	}, []);
 
-	const showDefaultErrorMessage = useCallback(() => {
-		showDialog(ErrorMessage.DEFAULT, true);
-	}, []);
-
 	const handleErrors = useCallback(
 		({ error, res }) => {
-			console.log('---handleErrors---');
 			if (error.code === 'token_not_valid') {
-				console.log('code', error.code);
 				logout();
 				showDialog(ErrorMessage.UNAUTHORIZED, true);
 			} else if (res.status === 401) {
-				console.log('status', res.status);
 				logout();
 				showDialog(ErrorMessage.UNAUTHORIZED, true);
 			} else {
-				console.log('Упс', { error, res });
-				showDefaultErrorMessage();
+				showDialog(ErrorMessage.DEFAULT, true);
 			}
 		},
-		[logout, showDefaultErrorMessage]
+		[logout]
 	);
 
 	useEffect(() => {
@@ -221,7 +213,8 @@ function App() {
 				setChosenCalendars(holidaysCalendar.map((c) => c.id));
 			})
 			.catch((err) => {
-				console.log('ОШИБКА holidays: ', err);
+				console.log(err);
+				showDialog(ErrorMessage.DEFAULT, true);
 			});
 	}, []);
 
@@ -331,8 +324,8 @@ function App() {
 				setVisiblePopupLogin(false);
 				showDialog(SuccessMessage.LOGIN, false);
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
 				showDialog(ErrorMessage.LOGIN, true);
 			})
 			.finally(() => {
@@ -370,7 +363,7 @@ function App() {
 				} else if (res.status === 400 && error.email) {
 					showDialog(ErrorMessage.REGISTER_EMAIL, true);
 				} else {
-					showDefaultErrorMessage();
+					showDialog(ErrorMessage.DEFAULT, true);
 				}
 			})
 			.finally(() => {
@@ -397,7 +390,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -419,7 +412,7 @@ function App() {
 				if (res.status === 400 && error.current_password) {
 					showDialog(ErrorMessage.CHANGE_PASSWORD, true);
 				} else {
-					showDefaultErrorMessage();
+					handleErrors({ error, res });
 				}
 			})
 			.finally(() => {
@@ -446,7 +439,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -470,7 +463,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -492,7 +485,7 @@ function App() {
 				if (res.status === 400 && error.current_password) {
 					showDialog(ErrorMessage.DELETE_USER, true);
 				} else {
-					showDefaultErrorMessage();
+					handleErrors({ error, res });
 				}
 			})
 			.finally(() => {
@@ -513,7 +506,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -559,7 +552,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -587,7 +580,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -610,7 +603,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -636,7 +629,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -658,7 +651,7 @@ function App() {
 			})
 			.catch(({ error, res }) => {
 				console.log({ error, res });
-				showDefaultErrorMessage();
+				handleErrors({ error, res });
 			})
 			.finally(() => {
 				setIsLoading(false);
