@@ -11,8 +11,11 @@ const getUnixTime = () => Math.round(+new Date() / 1000);
 const isTokenSoonExpired = (token) => {
 	const tokenInfo = token.split('.')[1];
 	const tokenInfoDecoded = window.atob(tokenInfo);
-	const { exp } = JSON.parse(tokenInfoDecoded);
+	// eslint-disable-next-line camelcase
+	const { exp, token_type } = JSON.parse(tokenInfoDecoded);
 	const tokenLeftTime = exp - getUnixTime();
+	// eslint-disable-next-line no-console
+	console.log(token_type, { tokenLeftTime });
 
 	return tokenLeftTime < LIFE_TIME_TO_UPDATE;
 };
