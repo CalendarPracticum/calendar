@@ -55,25 +55,6 @@ export const refreshAccess = () =>
 
 export const fetchWithRefresh = async (url, options) => {
 	try {
-		/*
-		const access = localStorage.getItem('jwtAccess');
-		const refresh = localStorage.getItem('jwtRefresh');
-		if (
-			access &&
-			isTokenSoonExpired(access) &&
-			refresh &&
-			!isTokenSoonExpired(refresh)
-		) {
-			const refreshData = await refreshAccess(); // обновляем access токен
-			if (!refreshData.access) {
-				return Promise.reject(refreshData);
-			}
-			localStorage.setItem('jwtAccess', refreshData.access);
-			// eslint-disable-next-line no-param-reassign
-			options.headers.authorization = getAccessToken();
-		}
-    */
-
 		const access = localStorage.getItem('jwtAccess');
 		const refresh = localStorage.getItem('jwtRefresh');
 		isTokenSoonExpired(access);
