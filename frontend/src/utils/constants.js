@@ -1,14 +1,27 @@
 export const ErrorMessage = {
-	DEFAULT: 'Упс... произошла ошибка, попробуйте ещё раз',
+	DEFAULT: 'Упс... что-то пошло не так, попробуйте ещё раз',
 	UNAUTHORIZED: 'Введите логин и пароль повторно',
 	REGISTER_PASSWORD: 'Этот пароль слишком часто используется',
 	REGISTER_EMAIL: 'Такой пользователь уже существует',
 	LOGIN: 'Ошибочный пароль или Email',
+	CHANGE_PASSWORD: 'Неверный пароль',
+	DELETE_USER: 'Неверный пароль',
 };
 
 export const SuccessMessage = {
-	LOGIN: 'Вы успешно вошли!',
+	LOGIN: 'Вы успешно вошли',
 	REGISTER: 'Регистрация прошла успешно!',
+	UPDATE_USER: 'Данные успешно обновлены',
+	CHANGE_PASSWORD: 'Пароль изменён',
+	EDIT_AVATAR: 'Аватарка сохранена',
+	DELETE_AVATAR: 'Аватарка удалена',
+	DELETE_USER: 'Вы удалили аккаунт!',
+	CREATE_CALENDAR: 'Новый календарь создан',
+	EDIT_CALENDAR: 'Данные календаря успешно обновлены',
+	DELETE_CALENDAR: 'Календарь удалён',
+	CREATE_EVENT: 'Событие создано',
+	EDIT_EVENT: 'Событие изменено',
+	DELETE_EVENT: 'Событие удалено',
 };
 
 export const WarningMessage = {

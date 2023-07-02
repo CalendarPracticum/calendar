@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 export const BASE_URL = 'http://193.107.236.224/api';
 export const PICTURE_URL = 'http://mycalendaily.acceleratorpracticum.ru';
 
@@ -12,10 +11,8 @@ const getUnixTime = () => Math.round(+new Date() / 1000);
 const isTokenSoonExpired = (token) => {
 	const tokenInfo = token.split('.')[1];
 	const tokenInfoDecoded = window.atob(tokenInfo);
-	// eslint-disable-next-line camelcase
-	const { exp, token_type } = JSON.parse(tokenInfoDecoded);
+	const { exp } = JSON.parse(tokenInfoDecoded);
 	const tokenLeftTime = exp - getUnixTime();
-	console.log(token_type, { tokenLeftTime });
 
 	return tokenLeftTime < LIFE_TIME_TO_UPDATE;
 };
@@ -86,7 +83,7 @@ export const fetchWithRefresh = async (url, options) => {
 		return await checkReponse(res);
 	} catch (errWithRes) {
 		if (errWithRes.error.code === 'token_not_valid') {
-			const refreshData = await refreshAccess(); // обновляем access токен
+			const refreshData = await refreshAccess();
 
 			if (!refreshData.access) {
 				return Promise.reject(refreshData);
@@ -95,7 +92,7 @@ export const fetchWithRefresh = async (url, options) => {
 			localStorage.setItem('jwtAccess', refreshData.access);
 			// eslint-disable-next-line no-param-reassign
 			options.headers.authorization = getAccessToken();
-			const res = await fetch(url, options); // повторяем запрос
+			const res = await fetch(url, options);
 			// eslint-disable-next-line no-return-await
 			return await checkReponse(res);
 			// eslint-disable-next-line no-else-return

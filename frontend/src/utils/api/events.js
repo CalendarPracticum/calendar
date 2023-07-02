@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
 	BASE_URL,
 	HEADERS,
@@ -6,19 +5,6 @@ import {
 	checkReponse,
 	fetchWithRefresh,
 } from './commonApi';
-
-// const getJson = (response) => {
-// 	if (response.ok) {
-// 		return response.json();
-// 	}
-// 	return response.json().then((errorText) => {
-// 		throw new Error(
-// 			Array.isArray(errorText[Object.keys(errorText)[0]])
-// 				? errorText[Object.keys(errorText)[0]][0]
-// 				: 'Произошла ошибка на сервере'
-// 		);
-// 	});
-// };
 
 /*
   Получение всех ивентов
@@ -40,7 +26,6 @@ import {
     }
   ]
 */
-
 export const getAllUserEvents = ({ start, finish, calendar }) =>
 	fetchWithRefresh(
 		`${BASE_URL}/v1/events/?finish_dt=${finish}&start_dt=${start}&calendar=${calendar}`,

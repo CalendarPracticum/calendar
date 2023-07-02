@@ -393,11 +393,11 @@ function App() {
 				});
 
 				setVisiblePopupEditUser(false);
-				showToast('Данные успешно обновлены!', Status.SUCCESS, 'Успех!');
+				showToast(SuccessMessage.UPDATE_USER, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -411,14 +411,16 @@ function App() {
 			.then((res) => {
 				if (res.status === 204) {
 					setVisiblePopupChangePassword(false);
-					showToast('Пароль изменён', Status.SUCCESS, 'Успех!');
-				} else {
-					throw new Error(`Неверный пароль`);
+					showToast(SuccessMessage.CHANGE_PASSWORD, Status.SUCCESS, 'Успех!');
 				}
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				if (res.status === 400 && error.current_password) {
+					showDialog(ErrorMessage.CHANGE_PASSWORD, true);
+				} else {
+					showDefaultErrorMessage();
+				}
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -440,11 +442,11 @@ function App() {
 				});
 
 				setVisiblePopupEditAvatar(false);
-				showToast('Аватарка сохранена', Status.SUCCESS, 'Успех!');
+				showToast(SuccessMessage.EDIT_AVATAR, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -464,11 +466,11 @@ function App() {
 				});
 
 				setVisiblePopupEditAvatar(false);
-				showToast('Аватарка удалена', Status.SUCCESS, 'Успех!');
+				showToast(SuccessMessage.DELETE_AVATAR, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -482,14 +484,16 @@ function App() {
 			.then((res) => {
 				if (res.status === 204) {
 					setVisiblePopupEditUser(false);
-					logout('Вы удалили аккаунт!');
-				} else {
-					throw new Error(`Неверный пароль`);
+					logout(SuccessMessage.DELETE_USER);
 				}
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				if (res.status === 400 && error.current_password) {
+					showDialog(ErrorMessage.DELETE_USER, true);
+				} else {
+					showDefaultErrorMessage();
+				}
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -505,11 +509,11 @@ function App() {
 				setAllUserCalendars((prevState) => [newCalendar, ...prevState]);
 				setChosenCalendars((prevState) => [newCalendar.id, ...prevState]);
 				setVisiblePopupNewCalendar(false);
-				showToast('Новый календарь создан!', Status.SUCCESS, 'Успех!');
+				showToast(SuccessMessage.CREATE_CALENDAR, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -551,15 +555,11 @@ function App() {
 				);
 				handlePartialChangeEvents(calendar.id);
 				setVisiblePopupEditCalendar(false);
-				showToast(
-					'Данные календаря успешно обновлены!',
-					Status.SUCCESS,
-					'Успех!'
-				);
+				showToast(SuccessMessage.EDIT_CALENDAR, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -573,7 +573,7 @@ function App() {
 			.then((res) => {
 				if (res.status === 204) {
 					setVisiblePopupEditCalendar(false);
-					showToast('Календарь удалён', Status.SUCCESS, 'Успех!');
+					showToast(SuccessMessage.DELETE_CALENDAR, Status.SUCCESS, 'Успех!');
 					setAllUserCalendars((prevState) =>
 						prevState.filter((c) => c.id !== idCalendar)
 					);
@@ -583,13 +583,11 @@ function App() {
 					setAllUserEvents((prevState) =>
 						prevState.filter((e) => e.calendar.id !== idCalendar)
 					);
-				} else {
-					throw new Error(`Что-то пошло не так`);
 				}
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -608,11 +606,11 @@ function App() {
 				event.allDay = event.all_day;
 				setAllUserEvents([event, ...allUserEvents]);
 				setVisiblePopupNewEvent(false);
-				showToast('Событие создано!', Status.SUCCESS, 'Успех!');
+				showToast(SuccessMessage.CREATE_EVENT, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -634,11 +632,11 @@ function App() {
 					)
 				);
 				setVisiblePopupEditEvent(false);
-				showToast('Событие изменено!', Status.SUCCESS, 'Успех!');
+				showToast(SuccessMessage.EDIT_EVENT, Status.SUCCESS, 'Успех!');
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -655,14 +653,12 @@ function App() {
 						prevState.filter((event) => event.id !== idEvent)
 					);
 					setVisiblePopupEditEvent(false);
-					showToast('Событие удалено!', Status.SUCCESS, 'Успех!');
-				} else {
-					throw new Error(`Что-то пошло не так`);
+					showToast(SuccessMessage.DELETE_EVENT, Status.SUCCESS, 'Успех!');
 				}
 			})
-			.catch((err) => {
-				handleErrors(err);
-				// showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				showDefaultErrorMessage();
 			})
 			.finally(() => {
 				setIsLoading(false);
