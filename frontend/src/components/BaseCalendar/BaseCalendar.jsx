@@ -58,17 +58,9 @@ export function BaseCalendar({
 		}
 
 		const newObject = {
-			id: event.id,
-			title: event.title,
+			...event,
 			timeStart: zonedTimeToUtc(start),
 			timeFinish: zonedTimeToUtc(end),
-			allDay: event.allDay,
-			description: event.description,
-			calendar: {
-				id: event.calendar.id,
-				name: event.calendar.name,
-				color: event.calendar.color,
-			},
 		};
 		onEditEvent(newObject);
 	};
