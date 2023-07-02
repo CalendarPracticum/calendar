@@ -57,12 +57,12 @@ export function BaseCalendar({
 			event.allDay = false;
 		}
 
-		const newObject = {
+		const changedEvent = {
 			...event,
 			timeStart: zonedTimeToUtc(start),
 			timeFinish: zonedTimeToUtc(end),
 		};
-		onEditEvent(newObject);
+		onEditEvent(changedEvent);
 	};
 
 	const { defaultDate, formats } = {
