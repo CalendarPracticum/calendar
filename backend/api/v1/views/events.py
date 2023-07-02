@@ -101,7 +101,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'share' and self.request.method == 'PATCH':
             return ShareCalendarUpdateSerializer
-        if self.action == 'share':
+        elif self.action == 'share':
             return ShareCalendarSerializer
         elif self.action == 'shared_to_me':
             return ReadUserShareCalendarSerializer
@@ -149,7 +149,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
             calendar_owner = ShareCalendar.objects.filter(
                 owner=request.user, user__email=user, calendar=calendar)
             calendar_user = ShareCalendar.objects.filter(
-                owner__email=user, user=request.user, calendar=calendar)
+                owner__email=calendar.owner, user=request.user, calendar=calendar)
 
             if calendar_owner.exists():
                 calendar_owner.delete()
@@ -162,7 +162,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 calendar_user.delete()
                 return Response(
                     {'info': f'Вам больше не доступен календарь {calendar} '
-                             f'пользователя {user} '},
+                             f'пользователя {calendar.owner}'},
                     status=status.HTTP_204_NO_CONTENT)
 
             return Response(
