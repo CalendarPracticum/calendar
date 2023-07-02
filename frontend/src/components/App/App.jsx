@@ -147,6 +147,17 @@ function App() {
 		}
 	}, []);
 
+	const handleErrors = useCallback(
+		(err) => {
+			console.log(err);
+			if (err.code === 'token_not_valid') {
+				logout();
+				showDialog('Введите логин и пароль повторно', true);
+			}
+		},
+		[logout]
+	);
+
 	// TODO: надо порефакторить
 	const checkTokens = useCallback(() => {
 		verify()
@@ -163,15 +174,14 @@ function App() {
 						})
 						.catch((error) => {
 							console.log('1 from checkTokens', error);
-							logout();
-							showDialog('Введите логин и пароль повторно', true);
+							handleErrors(error);
 						});
 				} else {
 					console.log('2 from checkTokens', err);
 					showToast('Вы не авторизованы', Status.WARNING, 'Внимание');
 				}
 			});
-	}, [logout]);
+	}, [handleErrors]);
 
 	useEffect(() => {
 		checkTokens();
@@ -199,7 +209,7 @@ function App() {
 				setChosenCalendars(holidaysCalendar.map((c) => c.id));
 			})
 			.catch((err) => {
-				console.log('ОШИБКА: ', err);
+				console.log('ОШИБКА holidays: ', err);
 			});
 	}, []);
 
@@ -239,7 +249,7 @@ function App() {
 						});
 				})
 				.catch((err) => {
-					console.log('ОШИБКА: ', err);
+					console.log('ОШИБКА calendars & events: ', err);
 				});
 		}
 	}, [loggedIn]);
@@ -261,7 +271,7 @@ function App() {
 					});
 				})
 				.catch((err) => {
-					console.log('ОШИБКА: ', err);
+					console.log('ОШИБКА user: ', err);
 				});
 		}
 	}, [loggedIn]);
@@ -368,8 +378,7 @@ function App() {
 				showToast('Данные успешно обновлены!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -390,8 +399,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -417,8 +425,7 @@ function App() {
 				showToast('Аватарка сохранена', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -442,8 +449,7 @@ function App() {
 				showToast('Аватарка удалена', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -464,8 +470,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -485,8 +490,7 @@ function App() {
 				showToast('Новый календарь создан!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -536,8 +540,7 @@ function App() {
 				);
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -567,8 +570,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -591,8 +593,7 @@ function App() {
 				showToast('Событие создано!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -618,8 +619,7 @@ function App() {
 				showToast('Событие изменено!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -643,8 +643,7 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
-				showDialog('Error!', true);
+				handleErrors(err);
 				// showDialog(err.message, true);
 			})
 			.finally(() => {
