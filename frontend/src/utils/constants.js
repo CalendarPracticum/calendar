@@ -1,3 +1,20 @@
+export const ErrorMessage = {
+	DEFAULT: 'Упс... произошла ошибка, попробуйте ещё раз',
+	UNAUTHORIZED: 'Введите логин и пароль повторно',
+	REGISTER_PASSWORD: 'Этот пароль слишком часто используется',
+	REGISTER_EMAIL: 'Такой пользователь уже существует',
+	LOGIN: 'Ошибочный пароль или Email',
+};
+
+export const SuccessMessage = {
+	LOGIN: 'Вы успешно вошли!',
+	REGISTER: 'Регистрация прошла успешно!',
+};
+
+export const WarningMessage = {
+	DEFAULT: 'Вы не авторизованы',
+};
+
 export const Color = {
 	ONE: '#158DE4',
 	TWO: '#00759A',

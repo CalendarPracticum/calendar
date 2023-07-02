@@ -19,7 +19,14 @@ import { Toast } from 'primereact/toast';
 
 /* Instruments */
 import ruPrime from '../../utils/ruPrime.json';
-import { Color, Status, holidaysCalendar } from '../../utils/constants';
+import {
+	Color,
+	Status,
+	holidaysCalendar,
+	ErrorMessage,
+	SuccessMessage,
+	WarningMessage,
+} from '../../utils/constants';
 import { PICTURE_URL, verify, refreshAccess } from '../../utils/api/commonApi';
 import * as auth from '../../utils/api/auth';
 import * as calendarApi from '../../utils/api/calendars';
@@ -147,45 +154,50 @@ function App() {
 		}
 	}, []);
 
+	const showDefaultErrorMessage = useCallback(() => {
+		showDialog(ErrorMessage.DEFAULT, true);
+	}, []);
+
 	const handleErrors = useCallback(
-		(err) => {
-			console.log(err);
-			if (err.code === 'token_not_valid') {
+		({ error, res }) => {
+			console.log('---handleErrors---');
+			if (error.code === 'token_not_valid') {
+				console.log('code', error.code);
 				logout();
-				showDialog('Введите логин и пароль повторно', true);
+				showDialog(ErrorMessage.UNAUTHORIZED, true);
+			} else if (res.status === 401) {
+				console.log('status', res.status);
+				logout();
+				showDialog(ErrorMessage.UNAUTHORIZED, true);
+			} else {
+				console.log('Упс', { error, res });
+				showDefaultErrorMessage();
 			}
 		},
-		[logout]
+		[logout, showDefaultErrorMessage]
 	);
 
-	// TODO: надо порефакторить
-	const checkTokens = useCallback(() => {
-		verify()
-			.then(() => {
-				setLoggedIn(true);
-			})
-			.catch((err) => {
-				const refresh = localStorage.getItem('jwtRefresh');
-				if (refresh) {
+	useEffect(() => {
+		const access = localStorage.getItem('jwtAccess');
+		if (access) {
+			verify()
+				.then(() => {
+					setLoggedIn(true);
+				})
+				.catch(() => {
 					refreshAccess()
 						.then((data) => {
 							localStorage.setItem('jwtAccess', data.access);
 							setLoggedIn(true);
 						})
-						.catch((error) => {
-							console.log('1 from checkTokens', error);
-							handleErrors(error);
+						.catch((err) => {
+							handleErrors(err);
 						});
-				} else {
-					console.log('2 from checkTokens', err);
-					showToast('Вы не авторизованы', Status.WARNING, 'Внимание');
-				}
-			});
+				});
+		} else {
+			showToast(WarningMessage.DEFAULT, Status.WARNING, 'Внимание');
+		}
 	}, [handleErrors]);
-
-	useEffect(() => {
-		checkTokens();
-	}, [checkTokens]);
 
 	useEffect(() => {
 		eventApi
@@ -249,10 +261,10 @@ function App() {
 						});
 				})
 				.catch((err) => {
-					console.log('ОШИБКА calendars & events: ', err);
+					handleErrors(err);
 				});
 		}
-	}, [loggedIn]);
+	}, [loggedIn, handleErrors]);
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -271,10 +283,10 @@ function App() {
 					});
 				})
 				.catch((err) => {
-					console.log('ОШИБКА user: ', err);
+					handleErrors(err);
 				});
 		}
-	}, [loggedIn]);
+	}, [loggedIn, handleErrors]);
 
 	const user = useMemo(
 		() => ({
@@ -317,11 +329,11 @@ function App() {
 
 				setLoggedIn(true);
 				setVisiblePopupLogin(false);
-				showDialog('Вы успешно вошли!', false);
+				showDialog(SuccessMessage.LOGIN, false);
 			})
 			.catch((err) => {
 				console.log(err);
-				showDialog(err.message, true);
+				showDialog(ErrorMessage.LOGIN, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -347,13 +359,19 @@ function App() {
 							setLoggedIn(true);
 							setIsFormLogin(true);
 							setVisiblePopupLogin(false);
-							showDialog('Регистрация прошла успешно!', false);
+							showDialog(SuccessMessage.REGISTER, false);
 						});
 				})
 			)
-			.catch((err) => {
-				console.log(err);
-				showDialog(err.message, true);
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				if (res.status === 400 && error.password) {
+					showDialog(ErrorMessage.REGISTER_PASSWORD, true);
+				} else if (res.status === 400 && error.email) {
+					showDialog(ErrorMessage.REGISTER_EMAIL, true);
+				} else {
+					showDefaultErrorMessage();
+				}
 			})
 			.finally(() => {
 				setIsLoading(false);
