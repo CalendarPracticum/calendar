@@ -59,7 +59,7 @@ export function BaseCalendar({
 
 		const newObject = {
 			id: event.id,
-			name: event.title,
+			title: event.title,
 			timeStart: zonedTimeToUtc(start),
 			timeFinish: zonedTimeToUtc(end),
 			allDay: event.allDay,
@@ -130,9 +130,9 @@ export function BaseCalendar({
 			eventPropGetter={eventPropGetter}
 			onDoubleClickEvent={handleDoubleClick}
 			onSelectSlot={handleSelectSlot}
-			selectable
 			onEventDrop={editEvent}
 			onEventResize={editEvent}
+			selectable
 			resizable
 			popup
 		/>
