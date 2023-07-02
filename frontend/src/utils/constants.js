@@ -1,16 +1,16 @@
 export const Color = {
-	DEFAULT: '#49CBB8',
 	ONE: '#158DE4',
-	TWO: '#9BA434',
-	THREE: '#FF8176',
-	FOUR: '#00759A',
-	FIVE: '#EE316E',
-	SIX: '#40B160',
-	SEVEN: '#225662',
+	TWO: '#00759A',
+	THREE: '#225662',
+	DEFAULT: '#49CBB8',
+	FOUR: '#40B160',
+	FIVE: '#9BA434',
+	SIX: '#E7B431',
+	SEVEN: '#FF8176',
 	EIGHT: '#F43F3F',
-	NINE: '#7F9498',
-	TEN: '#E7B431',
-	ELEVEN: '#74329D',
+	NINE: '#EE316E',
+	TEN: '#74329D',
+	ELEVEN: '#7F9498',
 };
 
 export const Status = {
