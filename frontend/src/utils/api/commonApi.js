@@ -4,22 +4,7 @@ export const PICTURE_URL = 'http://mycalendaily.acceleratorpracticum.ru';
 export const HEADERS = {
 	'Content-Type': 'application/json',
 };
-/*
-const LIFE_TIME_TO_UPDATE = 60;
-const getUnixTime = () => Math.round(+new Date() / 1000);
 
-const isTokenSoonExpired = (token) => {
-	const tokenInfo = token.split('.')[1];
-	const tokenInfoDecoded = window.atob(tokenInfo);
-	// eslint-disable-next-line camelcase
-	const { exp, token_type } = JSON.parse(tokenInfoDecoded);
-	const tokenLeftTime = exp - getUnixTime();
-	// eslint-disable-next-line no-console
-	console.log(token_type, tokenLeftTime);
-
-	return tokenLeftTime < LIFE_TIME_TO_UPDATE;
-};
-*/
 export const getAccessToken = () =>
 	`Bearer ${localStorage.getItem('jwtAccess')}`;
 
@@ -58,11 +43,6 @@ export const refreshAccess = () =>
 
 export const fetchWithRefresh = async (url, options) => {
 	try {
-		// const access = localStorage.getItem('jwtAccess');
-		// const refresh = localStorage.getItem('jwtRefresh');
-		// isTokenSoonExpired(access);
-		// isTokenSoonExpired(refresh);
-
 		const res = await fetch(url, options);
 		return await checkReponse(res);
 	} catch (errWithRes) {
