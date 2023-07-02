@@ -123,6 +123,16 @@ function App() {
 		setShowMessage(true);
 	};
 
+	const closeAllPopups = () => {
+		setVisiblePopupNewEvent(false);
+		setVisiblePopupNewCalendar(false);
+		setVisiblePopupEditUser(false);
+		setVisiblePopupEditEvent(false);
+		setVisiblePopupEditAvatar(false);
+		setVisiblePopupEditCalendar(false);
+		setVisiblePopupChangePassword(false);
+	};
+
 	const logout = useCallback((message = null) => {
 		localStorage.clear();
 		setLoggedIn(false);
@@ -130,6 +140,7 @@ function App() {
 		setAllUserCalendars([]);
 		setAllUserEvents([]);
 		setChosenCalendars(holidaysCalendar.map((c) => c.id));
+		closeAllPopups();
 
 		if (message) {
 			showToast(message, Status.SUCCESS, 'Успех!');
@@ -187,8 +198,8 @@ function App() {
 				setHolidays(preparedData);
 				setChosenCalendars(holidaysCalendar.map((c) => c.id));
 			})
-			.catch((error) => {
-				console.log('ОШИБКА: ', error.message);
+			.catch((err) => {
+				console.log('ОШИБКА: ', err);
 			});
 	}, []);
 
@@ -228,7 +239,7 @@ function App() {
 						});
 				})
 				.catch((err) => {
-					console.log('ОШИБКА: ', err.message);
+					console.log('ОШИБКА: ', err);
 				});
 		}
 	}, [loggedIn]);
@@ -250,7 +261,7 @@ function App() {
 					});
 				})
 				.catch((err) => {
-					console.log('ОШИБКА: ', err.message);
+					console.log('ОШИБКА: ', err);
 				});
 		}
 	}, [loggedIn]);
@@ -299,6 +310,7 @@ function App() {
 				showDialog('Вы успешно вошли!', false);
 			})
 			.catch((err) => {
+				console.log(err);
 				showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -330,6 +342,7 @@ function App() {
 				})
 			)
 			.catch((err) => {
+				console.log(err);
 				showDialog(err.message, true);
 			})
 			.finally(() => {
@@ -355,7 +368,9 @@ function App() {
 				showToast('Данные успешно обновлены!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -375,7 +390,9 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -400,7 +417,9 @@ function App() {
 				showToast('Аватарка сохранена', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -423,7 +442,9 @@ function App() {
 				showToast('Аватарка удалена', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -443,7 +464,9 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -462,7 +485,9 @@ function App() {
 				showToast('Новый календарь создан!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -511,7 +536,9 @@ function App() {
 				);
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -540,7 +567,9 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -562,7 +591,9 @@ function App() {
 				showToast('Событие создано!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -587,7 +618,9 @@ function App() {
 				showToast('Событие изменено!', Status.SUCCESS, 'Успех!');
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -610,7 +643,9 @@ function App() {
 				}
 			})
 			.catch((err) => {
-				showDialog(err.message, true);
+				console.log(err);
+				showDialog('Error!', true);
+				// showDialog(err.message, true);
 			})
 			.finally(() => {
 				setIsLoading(false);
