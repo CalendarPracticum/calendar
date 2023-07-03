@@ -209,7 +209,8 @@ class ShareCalendarSerializer(serializers.ModelSerializer):
     3. calendar является календарем созданным owner'ом
     """
     owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
-    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='email')
+    user = serializers.SlugRelatedField(queryset=User.objects.all(),
+                                        slug_field='email')
     calendar = serializers.SlugRelatedField(read_only=True, slug_field='name')
 
     class Meta:
@@ -234,10 +235,15 @@ class ShareCalendarSerializer(serializers.ModelSerializer):
         if not calendar:
             raise ValidationError('Нельзя поделиться чужим календарем')
         if user == owner:
-            raise ValidationError('Нельзя поделиться календарем с собой')
+            raise ValidationError(
+                {'user': 'Нельзя поделиться календарем с собой'}
+            )
         if share.exists():
             raise ValidationError(
-                'Вы уже поделились этим календарем с этим пользователем'
+                {
+                    'user':
+                    'Вы уже поделились этим календарем с этим пользователем',
+                }
             )
 
         return data
@@ -270,7 +276,6 @@ class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
 
 
 class ReadUserShareCalendarSerializer(ReadOwnerShareCalendarSerializer):
-
     class Meta:
         model = ShareCalendar
         fields = (
