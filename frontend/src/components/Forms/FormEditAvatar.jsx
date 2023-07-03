@@ -8,7 +8,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { Button } from 'primereact/button';
 
 /* Instruments */
-import { BASE_URL } from '../../utils/constants';
+import { PICTURE_URL } from '../../utils/api/commonApi';
 import styles from './Forms.module.css';
 
 export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
@@ -36,7 +36,7 @@ export function FormEditAvatar({ onEditAvatar, onDeleteAvatar }) {
 
 					<div>
 						<FileUpload
-							url={`${BASE_URL}/api/v1/users/me/`}
+							url={`${PICTURE_URL}/api/v1/users/me/`}
 							name=""
 							accept="image/*"
 							maxFileSize={1000000}
