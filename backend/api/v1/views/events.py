@@ -142,6 +142,19 @@ class CalendarViewSet(viewsets.ModelViewSet):
         permission_classes=[ShareCalendarPermissions]
     )
     def share(self, request, pk):
+        """
+        Метод реализует функционал шаринга календаря.
+
+        Доступные HTTP-методы:
+         - POST — создание подписки. Необходимо передать email в теле запроса;
+         - DELETE — удаление подписки;
+         Если удаляет владелец календаря, то необходимо передать email
+         подписчика в теле запроса.
+         Если удаляет подписчик, то запрос отправляет без тела;
+         - PATCH — метод для обновления полей custom_name и custom_color,
+         для того, чтобы на фронте была возможность отрисовать название и цвет
+         отличные от оригинальных полей календаря.
+        """
         calendar = get_object_or_404(Calendar, pk=pk)
         serializer = self.get_serializer(data=request.data)
 
@@ -204,6 +217,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
     )
     @action(methods=['get'], detail=False)
     def shared_to_me(self, request):
+        """Метод возвращает календари, которыми поделились с пользователем."""
         serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -214,6 +228,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
     )
     @action(methods=['get'], detail=False)
     def shared_to_user(self, request):
+        """Метод возвращает календари, которыми пользователь поделился."""
         serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

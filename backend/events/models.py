@@ -119,6 +119,7 @@ class ShareCalendar(models.Model):
     Owner - Владелец календаря.
     User - Пользователь которому открыт доступ.
     Calendar - календарь, которым поделился владелец.
+    Custom_name и custom_color поля для кастомизации на фронте.
     User и Calendar уникальные поля и не могут повторяться.
     """
 

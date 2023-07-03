@@ -250,6 +250,13 @@ class ShareCalendarSerializer(serializers.ModelSerializer):
 
 
 class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
+    """
+    Сериализация ответа для эндпойнта share_to_user.
+
+    Owner - владелец календаря.
+    users - массив пользователей, которым предоставляется доступ.
+    calendar - календарь, которым делится владелец.
+    """
     owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
     users = serializers.SerializerMethodField()
     calendar = serializers.SerializerMethodField()
@@ -276,6 +283,15 @@ class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
 
 
 class ReadUserShareCalendarSerializer(ReadOwnerShareCalendarSerializer):
+    """
+    Сериализация ответа для эндпойнта share_to_me.
+
+    id - идентификатор экземпляра ShareCalendar
+    owner - владелец календаря.
+    calendar - календарь, к которому предоставлен доступ
+    custom_name - поле названия для переопределения на фронте
+    custom_color - поле цвета для переопределения на фронте
+    """
     class Meta:
         model = ShareCalendar
         fields = (
@@ -288,6 +304,12 @@ class ReadUserShareCalendarSerializer(ReadOwnerShareCalendarSerializer):
 
 
 class ShareCalendarUpdateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для PATCH-запроса на эндпойнт /:id/share.
+
+    Позволяет обновить поля custom_name и custom_color.
+    Возвращает объект сериализованый ShareCalendarSerializer.
+    """
     class Meta:
         model = ShareCalendar
         fields = ('custom_name', 'custom_color')
