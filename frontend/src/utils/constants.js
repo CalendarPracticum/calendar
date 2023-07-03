@@ -1,18 +1,46 @@
-export const BASE_URL = 'http://mycalendaily.acceleratorpracticum.ru';
+export const ErrorMessage = {
+	DEFAULT: 'Упс... что-то пошло не так, попробуйте ещё раз',
+	UNAUTHORIZED: 'Введите логин и пароль повторно',
+	REGISTER_PASSWORD: 'Этот пароль слишком часто используется',
+	REGISTER_EMAIL: 'Такой пользователь уже существует',
+	LOGIN: 'Ошибочный пароль или Email',
+	CHANGE_PASSWORD: 'Неверный пароль',
+	DELETE_USER: 'Неверный пароль',
+};
+
+export const SuccessMessage = {
+	LOGIN: 'Вы успешно вошли',
+	REGISTER: 'Регистрация прошла успешно!',
+	UPDATE_USER: 'Данные успешно обновлены',
+	CHANGE_PASSWORD: 'Пароль изменён',
+	EDIT_AVATAR: 'Аватарка сохранена',
+	DELETE_AVATAR: 'Аватарка удалена',
+	DELETE_USER: 'Вы удалили аккаунт!',
+	CREATE_CALENDAR: 'Новый календарь создан',
+	EDIT_CALENDAR: 'Данные календаря успешно обновлены',
+	DELETE_CALENDAR: 'Календарь удалён',
+	CREATE_EVENT: 'Событие создано',
+	EDIT_EVENT: 'Событие изменено',
+	DELETE_EVENT: 'Событие удалено',
+};
+
+export const WarningMessage = {
+	DEFAULT: 'Вы не авторизованы',
+};
 
 export const Color = {
-	DEFAULT: '#49CBB8',
 	ONE: '#158DE4',
-	TWO: '#9BA434',
-	THREE: '#FF8176',
-	FOUR: '#00759A',
-	FIVE: '#EE316E',
-	SIX: '#40B160',
-	SEVEN: '#225662',
+	TWO: '#00759A',
+	THREE: '#225662',
+	DEFAULT: '#49CBB8',
+	FOUR: '#40B160',
+	FIVE: '#9BA434',
+	SIX: '#E7B431',
+	SEVEN: '#FF8176',
 	EIGHT: '#F43F3F',
-	NINE: '#7F9498',
-	TEN: '#E7B431',
-	ELEVEN: '#74329D',
+	NINE: '#EE316E',
+	TEN: '#74329D',
+	ELEVEN: '#7F9498',
 };
 
 export const Status = {
@@ -20,6 +48,7 @@ export const Status = {
 	LOADING: 'loading',
 	SUCCESS: 'success',
 	ERROR: 'error',
+	WARNING: 'warn',
 };
 
 export const noop = () => {};
