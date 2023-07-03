@@ -18,6 +18,7 @@ export function Main({
 	onEditCalendarClick,
 	onEventDoubleClick,
 	onNewEventClickUnauth,
+	onEditEvent,
 }) {
 	const { loggedIn } = useContext(CurrentUserContext);
 	const [visibleProdCalendar, setVisibleProdCalendar] = useState(false);
@@ -40,6 +41,7 @@ export function Main({
 				<BaseCalendar
 					onEventDoubleClick={onEventDoubleClick}
 					onNewEventClick={onNewEventClick}
+					onEditEvent={onEditEvent}
 				/>
 			);
 		}
@@ -72,4 +74,5 @@ Main.propTypes = {
 	onNewEventClickUnauth: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,
 	onEventDoubleClick: PropTypes.func.isRequired,
+	onEditEvent: PropTypes.func.isRequired,
 };

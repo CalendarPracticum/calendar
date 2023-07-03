@@ -294,6 +294,7 @@ function App() {
 			holidays,
 			allUserCalendars,
 			allUserEvents,
+			setAllUserEvents,
 			chosenCalendars,
 			setChosenCalendars,
 			editableCalendar,
@@ -682,6 +683,7 @@ function App() {
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
 											onNewEventClickUnauth={setVisiblePopupAskToRegister}
+											onEditEvent={handleEditEvent}
 										/>
 									</>
 								}

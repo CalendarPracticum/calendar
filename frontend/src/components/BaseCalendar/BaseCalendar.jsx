@@ -1,26 +1,69 @@
 /* Core */
-import { React, useCallback, useContext } from 'react';
+import { React, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 /* Libraries */
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { Calendar } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 /* Instruments */
 import { culture, messages, noop } from '../../utils/constants';
 import { CalendarsContext, LocalizationContext } from '../../context';
 import styles from './BaseCalendar.module.css';
 
-export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
+const DragAndDropCalendar = withDragAndDrop(Calendar);
+
+export function BaseCalendar({
+	onEventDoubleClick,
+	onNewEventClick,
+	onEditEvent,
+}) {
 	const localizer = useContext(LocalizationContext);
 	const { format } = localizer;
 
-	const { holidays, allUserEvents, chosenCalendars, setEditableEvent } =
-		useContext(CalendarsContext);
+	const {
+		holidays,
+		allUserEvents,
+		allUserCalendars,
+		chosenCalendars,
+		setEditableEvent,
+	} = useContext(CalendarsContext);
 
 	// TODO: потом сюда добавятся события пошаренных календарей
 	const displayedEvents = [...holidays, ...allUserEvents].filter((e) =>
 		chosenCalendars.includes(e.calendar.id)
 	);
+
+	// изменение событий в календаре
+	const editEvent = ({
+		event,
+		start,
+		end,
+		isAllDay: droppedOnAllDaySlot = false,
+	}) => {
+		if (!allUserCalendars.map((el) => el.id).includes(event.calendar.id)) {
+			return;
+		}
+
+		const { allDay } = event;
+
+		if (!allDay && droppedOnAllDaySlot) {
+			// eslint-disable-next-line no-param-reassign
+			event.allDay = true;
+		} else if (allDay && !droppedOnAllDaySlot) {
+			return;
+		}
+
+		const changeEvent = {
+			...event,
+			timeStart: zonedTimeToUtc(start),
+			timeFinish: zonedTimeToUtc(end),
+		};
+
+		onEditEvent(changeEvent);
+	};
 
 	const { defaultDate, formats } = {
 		defaultDate: new Date(),
@@ -49,7 +92,7 @@ export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
 	};
 
 	return (
-		<Calendar
+		<DragAndDropCalendar
 			dayPropGetter={(date) => {
 				const dayOfWeek = date.getDay();
 				const dateOfMonth = date.getMonth();
@@ -79,7 +122,11 @@ export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
 			eventPropGetter={eventPropGetter}
 			onDoubleClickEvent={handleDoubleClick}
 			onSelectSlot={handleSelectSlot}
+			onEventDrop={editEvent}
+			onEventResize={editEvent}
 			selectable
+			resizable
+			popup
 		/>
 	);
 }
@@ -87,9 +134,11 @@ export function BaseCalendar({ onEventDoubleClick, onNewEventClick }) {
 BaseCalendar.propTypes = {
 	onEventDoubleClick: PropTypes.func,
 	onNewEventClick: PropTypes.func,
+	onEditEvent: PropTypes.func,
 };
 
 BaseCalendar.defaultProps = {
 	onEventDoubleClick: noop,
 	onNewEventClick: noop,
+	onEditEvent: noop,
 };
