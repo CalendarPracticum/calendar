@@ -43,26 +43,26 @@ export function BaseCalendar({
 		end,
 		isAllDay: droppedOnAllDaySlot = false,
 	}) => {
-		const { allDay } = event;
-
 		if (!allUserCalendars.map((el) => el.id).includes(event.calendar.id)) {
 			return;
 		}
+
+		const { allDay } = event;
 
 		if (!allDay && droppedOnAllDaySlot) {
 			// eslint-disable-next-line no-param-reassign
 			event.allDay = true;
 		} else if (allDay && !droppedOnAllDaySlot) {
-			// eslint-disable-next-line no-param-reassign
-			event.allDay = false;
+			return;
 		}
 
-		const changedEvent = {
+		const changeEvent = {
 			...event,
 			timeStart: zonedTimeToUtc(start),
 			timeFinish: zonedTimeToUtc(end),
 		};
-		onEditEvent(changedEvent);
+
+		onEditEvent(changeEvent);
 	};
 
 	const { defaultDate, formats } = {
