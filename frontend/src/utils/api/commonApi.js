@@ -5,6 +5,18 @@ export const HEADERS = {
 	'Content-Type': 'application/json',
 };
 
+const LIFE_TIME_TO_UPDATE = 60;
+const getUnixTime = () => Math.round(+new Date() / 1000);
+
+const isTokenSoonExpired = (token) => {
+	const tokenInfo = token.split('.')[1];
+	const tokenInfoDecoded = window.atob(tokenInfo);
+	const { exp } = JSON.parse(tokenInfoDecoded);
+	const tokenLeftTime = exp - getUnixTime();
+
+	return tokenLeftTime < LIFE_TIME_TO_UPDATE;
+};
+
 export const getAccessToken = () =>
 	`Bearer ${localStorage.getItem('jwtAccess')}`;
 
@@ -43,16 +55,31 @@ export const refreshAccess = () =>
 
 export const fetchWithRefresh = async (url, options) => {
 	try {
+		const access = localStorage.getItem('jwtAccess');
+		const refresh = localStorage.getItem('jwtRefresh');
+		if (
+			access &&
+			isTokenSoonExpired(access) &&
+			refresh &&
+			!isTokenSoonExpired(refresh)
+		) {
+			const refreshData = await refreshAccess(); // обновляем access токен
+			if (!refreshData.access) {
+				return Promise.reject(refreshData);
+			}
+			localStorage.setItem('jwtAccess', refreshData.access);
+			// eslint-disable-next-line no-param-reassign
+			options.headers.authorization = getAccessToken();
+		}
+
 		const res = await fetch(url, options);
 		return await checkReponse(res);
 	} catch (errWithRes) {
 		if (errWithRes.error.code === 'token_not_valid') {
 			const refreshData = await refreshAccess();
-
 			if (!refreshData.access) {
 				return Promise.reject(refreshData);
 			}
-
 			localStorage.setItem('jwtAccess', refreshData.access);
 			// eslint-disable-next-line no-param-reassign
 			options.headers.authorization = getAccessToken();
