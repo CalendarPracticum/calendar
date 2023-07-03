@@ -50,6 +50,7 @@ import {
 	PopupDialog,
 	PopupEditAvatar,
 	PopupAskToRegister,
+	PopupShareCalendar,
 } from '../Popups';
 
 const locales = {
@@ -91,6 +92,8 @@ function App() {
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
 	const [visiblePopupAskToRegister, setVisiblePopupAskToRegister] =
+		useState(false);
+	const [visiblePopupShareCalendar, setVisiblePopupShareCalendar] =
 		useState(false);
 
 	// Helpers
@@ -736,6 +739,11 @@ function App() {
 		}
 	};
 
+	const handleShareCalendar = () => {
+		// eslint-disable-next-line
+		console.log('поделился (^-^)');
+	};
+
 	return (
 		<LocalizationContext.Provider value={localizer}>
 			<CurrentUserContext.Provider value={user}>
@@ -759,6 +767,7 @@ function App() {
 											onEventDoubleClick={setVisiblePopupEditEvent}
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
+											onShareCalendarClick={setVisiblePopupShareCalendar}
 											onNewEventClickUnauth={setVisiblePopupAskToRegister}
 										/>
 									</>
@@ -829,6 +838,12 @@ function App() {
 							setVisible={setVisiblePopupAskToRegister}
 							showRegisterPopup={setVisiblePopupLogin}
 							setIsFormLogin={setIsFormLogin}
+						/>
+
+						<PopupShareCalendar
+							visible={visiblePopupShareCalendar}
+							setVisible={setVisiblePopupShareCalendar}
+							handleShare={handleShareCalendar}
 						/>
 
 						<Toast ref={toast} />

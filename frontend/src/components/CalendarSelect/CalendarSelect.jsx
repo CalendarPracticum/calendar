@@ -10,7 +10,7 @@ import styles from './CalendarSelect.module.css';
 /* Components */
 import { CalendarBlock } from './CalendarsBlock';
 
-export function CalendarSelect({ onEditCalendarClick }) {
+export function CalendarSelect({ onEditCalendarClick, onShareCalendarClick }) {
 	const { allUserCalendars, setChosenCalendars, setEditableCalendar } =
 		useContext(CalendarsContext);
 
@@ -27,9 +27,13 @@ export function CalendarSelect({ onEditCalendarClick }) {
 		}
 	};
 
-	const handleClick = (calendar) => {
+	const handleClick = (calendar, isEdit) => {
 		setEditableCalendar(calendar);
-		onEditCalendarClick(true);
+		if (isEdit) {
+			onEditCalendarClick(true);
+		} else {
+			onShareCalendarClick(true);
+		}
 	};
 
 	// TODO: потом сюда добявятся пошаренные календари
@@ -57,4 +61,5 @@ export function CalendarSelect({ onEditCalendarClick }) {
 
 CalendarSelect.propTypes = {
 	onEditCalendarClick: PropTypes.func.isRequired,
+	onShareCalendarClick: PropTypes.func.isRequired,
 };

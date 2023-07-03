@@ -1,6 +1,6 @@
 /* ОБЩИЕ СТИЛИ */
 .card {
-	width: 20rem;
+	width: 21rem;
 }
 
 .form {
@@ -8,6 +8,10 @@
 }
 
 .title {
+	font-size: 26px;
+	font-family: Roboto;
+	font-weight: 600;
+	word-wrap: break-word;
 	margin: 0 0 2.5rem;
 }
 
@@ -110,4 +114,22 @@
 
 .avatar .dangerBtn {
 	margin-top: 3rem;
+}
+
+.inputBox {
+	display: grid;
+	grid-template-columns: 6fr 1fr;
+	gap: 8px;
+}
+
+.circle {
+	width: 18px;
+	height: 18px;
+	border-radius: 25px;
+	background: red;
+}
+
+.nameCalendar {
+	margin: 0 0 0 12px;
+	padding-top: 1px;
 }
