@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,25 +11,28 @@ from drf_spectacular.utils import (
 )
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
 from api.filters import EventFilter
 from api.permissions import (
     EventsOwnerOrAdminOrReadOnly,
     IsAuthenticatedOrCalendarOwnerOrReadOnly,
+    ShareCalendarPermissions,
 )
 from api.v1.serializers.events import (
     CalendarSerializer,
     ReadEventSerializer,
-    ShareCalendarSerializer,
-    WriteEventSerializer,
-    ReadUserShareCalendarSerializer,
     ReadOwnerShareCalendarSerializer,
+    ReadUserShareCalendarSerializer,
+    ShareCalendarSerializer,
     ShareCalendarUpdateSerializer,
+    WriteEventSerializer,
 )
 from api.v1.utils.events.mixins import RequiredGETQueryParamMixin
 from events.models import Calendar, Event, ShareCalendar
+
+User = get_user_model()
 
 
 @extend_schema(tags=['Календарь'])
@@ -132,7 +136,11 @@ class CalendarViewSet(viewsets.ModelViewSet):
         summary='Изменить цвет и название календаря подписчика.',
         responses=ShareCalendarSerializer()
     )
-    @action(methods=['post', 'delete', 'patch'], detail=True)
+    @action(
+        methods=['post', 'delete', 'patch'],
+        detail=True,
+        permission_classes=[ShareCalendarPermissions]
+    )
     def share(self, request, pk):
         calendar = get_object_or_404(Calendar, pk=pk)
         serializer = self.get_serializer(data=request.data)
@@ -144,31 +152,33 @@ class CalendarViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
-            user = request.data.get('user')
+            if request.user == calendar.owner:
+                user = request.data.get('user')
+                if user is None:
+                    raise ValidationError({'user': 'Укажите пользователя'})
+                owner = request.user
+                try:
+                    user = User.objects.get(email=user)
+                except User.DoesNotExist:
+                    raise ValidationError(
+                        {'user': 'Пользователь не существует'}
+                    )
+            else:
+                owner = calendar.owner
+                user = request.user
 
-            calendar_owner = ShareCalendar.objects.filter(
-                owner=request.user, user__email=user, calendar=calendar)
-            calendar_user = ShareCalendar.objects.filter(
-                owner__email=calendar.owner, user=request.user, calendar=calendar)
-
-            if calendar_owner.exists():
-                calendar_owner.delete()
+            share = ShareCalendar.objects.filter(
+                owner=owner, user=user, calendar=calendar)
+            if share.exists():
+                share.delete()
                 return Response(
-                    {'info': f'Пользователь {user}, больше не видит ваш '
-                             f'календарь {calendar}'},
-                    status=status.HTTP_204_NO_CONTENT)
-
-            elif calendar_user.exists():
-                calendar_user.delete()
-                return Response(
-                    {'info': f'Вам больше не доступен календарь {calendar} '
-                             f'пользователя {calendar.owner}'},
-                    status=status.HTTP_204_NO_CONTENT)
-
+                    {'info': f'Пользователю "{user}" больше недоступен '
+                             f'календарь "{calendar}"'},
+                    status=status.HTTP_200_OK)
             return Response(
-                {'error': 'У вас нет доступа к этому календарю.'},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+                {'info': (f'Пользователь "{user}" еще не подписан на '
+                          f'календарь "{calendar}"')},
+                status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'PATCH':
             instance = ShareCalendar.objects.get(
@@ -228,7 +238,8 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 'finish_dt',
                 datetime,
                 description='Дата окончания фильтрации: 2023-12-31',
-                required=True, ),
+                required=True,
+            ),
             OpenApiParameter(
                 'calendar',
                 str,
@@ -313,9 +324,9 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                               calendar__public=True)
             if self.request.user.is_authenticated:
                 return qs.filter(
-                    Q(calendar__owner=self.request.user) |
-                    Q(calendar__share_calendars__user=self.request.user) |
-                    global_events
+                    Q(calendar__owner=self.request.user)
+                    | Q(calendar__share_calendars__user=self.request.user)
+                    | global_events
                 )
             return qs.filter(global_events)
 
