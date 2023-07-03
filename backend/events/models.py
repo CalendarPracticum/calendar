@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import CheckConstraint, F, Q, UniqueConstraint
 
 
 class Calendar(models.Model):
@@ -160,18 +161,24 @@ class ShareCalendar(models.Model):
         verbose_name = 'Доступ к календарю'
         verbose_name_plural = 'Доступ к календарям'
         constraints = [
-            models.UniqueConstraint(
+            UniqueConstraint(
                 fields=['user', 'calendar'],
                 name='unique_calendar_name',
-                violation_error_message='Поля calendar и user должны '
-                                        'быть уникальными.'
-            )
+                violation_error_message=('Поля calendar и user должны '
+                                         'быть уникальными.')
+            ),
+            CheckConstraint(
+                check=~Q(owner=F('user')),
+                name='owner_not_equal_user',
+                violation_error_message=('Нельзя поделиться календарем с '
+                                         'самим собой.')
+            ),
         ]
 
     def __str__(self):
         return str(self.calendar)
 
     def clean(self):
-        if self.owner == self.user:
-            message = 'Нельзя поделиться календарем с самим собой.'
+        if self.owner != self.calendar.owner:
+            message = 'Пользователь не является владельцем календаря.'
             raise ValidationError(message)
