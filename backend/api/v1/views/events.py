@@ -184,10 +184,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 owner=owner, user=user, calendar=calendar)
             if share.exists():
                 share.delete()
-                return Response(
-                    {'info': f'Пользователю "{user}" больше недоступен '
-                             f'календарь "{calendar}"'},
-                    status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(
                 {'info': (f'Пользователь "{user}" еще не подписан на '
                           f'календарь "{calendar}"')},
