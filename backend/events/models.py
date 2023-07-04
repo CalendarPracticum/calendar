@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import CheckConstraint, F, Q, UniqueConstraint
 
 
 class Calendar(models.Model):
@@ -109,4 +110,76 @@ class Event(models.Model):
     def clean(self):
         if self.datetime_start >= self.datetime_finish:
             message = 'Мероприятие не может начинаться после даты окончания.'
+            raise ValidationError(message)
+
+
+class ShareCalendar(models.Model):
+    """
+    Шеринг календаря владельцем, пользователю, который есть в базе.
+    Owner - Владелец календаря.
+    User - Пользователь которому открыт доступ.
+    Calendar - календарь, которым поделился владелец.
+    Custom_name и custom_color поля для кастомизации на фронте.
+    User и Calendar уникальные поля и не могут повторяться.
+    """
+
+    owner = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='owner_of_calendars'
+    )
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь кому открыт доступ',
+        related_name='share_to_user'
+    )
+    calendar = models.ForeignKey(
+        Calendar,
+        on_delete=models.CASCADE,
+        verbose_name='Календарь',
+        related_name='share_calendars',
+    )
+    custom_name = models.CharField(
+        'Название',
+        max_length=100,
+        null=True,
+        blank=True,
+    )
+    custom_color = models.CharField(
+        'Код цвета в формате HEX',
+        max_length=7,
+        null=True,
+        blank=True,
+        validators=[RegexValidator(
+            regex='^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$',
+            message='Недопустимые символы в коде цвета!'
+        )]
+    )
+
+    class Meta:
+        verbose_name = 'Доступ к календарю'
+        verbose_name_plural = 'Доступ к календарям'
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'calendar'],
+                name='unique_calendar_name',
+                violation_error_message=('Поля calendar и user должны '
+                                         'быть уникальными.')
+            ),
+            CheckConstraint(
+                check=~Q(owner=F('user')),
+                name='owner_not_equal_user',
+                violation_error_message=('Нельзя поделиться календарем с '
+                                         'самим собой.')
+            ),
+        ]
+
+    def __str__(self):
+        return str(self.calendar)
+
+    def clean(self):
+        if self.owner != self.calendar.owner:
+            message = 'Пользователь не является владельцем календаря.'
             raise ValidationError(message)

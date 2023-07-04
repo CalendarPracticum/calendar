@@ -46,7 +46,6 @@ class CalendarTest(BaseAPITestCase):
         Получение правильного кверисета календарей.
 
         У пользователя есть доступ только к своим календарям.
-        У админа есть доступ ко всем календарям.
         """
 
         response = self.owner.get(reverse('calendars-list'))
@@ -58,14 +57,6 @@ class CalendarTest(BaseAPITestCase):
         self.assertEqual(
             len(qs_calendars), amount_calendar_owner,
             'Пользователь должен получить только свои календари'
-        )
-
-        response = self.admin.get(reverse('calendars-list'))
-        qs_calendars = response.data
-        amount_all_calendars = Calendar.objects.all().count()
-        self.assertEqual(
-            len(qs_calendars), amount_all_calendars,
-            'Админ должен получить все календари'
         )
 
     def test_create_calendar(self):
@@ -103,7 +94,6 @@ class CalendarTest(BaseAPITestCase):
 
         У анонима нет доступа к редактированию календарей.
         У пользователя есть доступ к редактированию только своих календарей.
-        У админа есть доступ к редактированию всех календарей.
         """
 
         owner_id = User.objects.get(username='owner').id
@@ -112,7 +102,6 @@ class CalendarTest(BaseAPITestCase):
             (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_404_NOT_FOUND),
             (self.owner, status.HTTP_200_OK),
-            (self.admin, status.HTTP_200_OK),
         )
 
         for client, expected_code in cases:
@@ -137,7 +126,6 @@ class CalendarTest(BaseAPITestCase):
 
         У анонима нет доступа к удалению календарей.
         У пользователя есть доступ к удалению только своих календарей.
-        У админа есть доступ к удалению всех календарей.
         """
 
         mock_delete.return_value = None
@@ -147,7 +135,6 @@ class CalendarTest(BaseAPITestCase):
             (self.anon, status.HTTP_401_UNAUTHORIZED),
             (self.user, status.HTTP_404_NOT_FOUND),
             (self.owner, status.HTTP_204_NO_CONTENT),
-            (self.admin, status.HTTP_204_NO_CONTENT),
         )
 
         for client, expected_code in cases:

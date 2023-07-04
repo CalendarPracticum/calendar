@@ -2,7 +2,8 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from events.models import Calendar, Event
+from events.models import Calendar, Event, ShareCalendar
+from users.models import User
 
 
 class CalendarSerializer(serializers.ModelSerializer):
@@ -59,6 +60,7 @@ class ShortCalendarSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'color',
+            'owner'
         )
 
 
@@ -188,3 +190,137 @@ class WriteEventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(message)
 
         return data
+
+
+class ShareCalendarSerializer(serializers.ModelSerializer):
+    """
+    Сериализация данных шеринга календаря.
+    Owner - владелец календаря.
+    user (share_to) - пользователь которому предоставляется доступ.
+    calendar - календарь, которым делится владелец.
+
+    Создание:
+    При создании записи в бд owner и calendar подставляются автоматически и
+    являются текущим календарем и текущим пользователем.
+
+    Валидация:
+    1. owner != user
+    2. Поля user и calendar уникальные
+    3. calendar является календарем созданным owner'ом
+    """
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    user = serializers.SlugRelatedField(queryset=User.objects.all(),
+                                        slug_field='email')
+    calendar = serializers.SlugRelatedField(read_only=True, slug_field='name')
+
+    class Meta:
+        model = ShareCalendar
+        fields = (
+            'owner',
+            'user',
+            'calendar',
+            'custom_name',
+            'custom_color',
+        )
+
+    def validate(self, data):
+        request = self.context.get('request')
+        calendar_pk = request.parser_context.get('kwargs').get('pk')
+
+        owner = request.user
+        user = data.get('user')
+        calendar = owner.calendars.filter(pk=calendar_pk)
+        share = ShareCalendar.objects.filter(user=user, calendar=calendar_pk)
+
+        if not calendar:
+            raise ValidationError('Нельзя поделиться чужим календарем')
+        if user == owner:
+            raise ValidationError(
+                {'user': 'Нельзя поделиться календарем с собой'}
+            )
+        if share.exists():
+            raise ValidationError(
+                {
+                    'user':
+                    'Вы уже поделились этим календарем с этим пользователем',
+                }
+            )
+
+        return data
+
+
+class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
+    """
+    Сериализация ответа для эндпойнта share_to_user.
+
+    Owner - владелец календаря.
+    users - массив пользователей, которым предоставляется доступ.
+    calendar - календарь, которым делится владелец.
+    """
+    owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    users = serializers.SerializerMethodField()
+    calendar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ShareCalendar
+        fields = (
+            'owner',
+            'users',
+            'calendar'
+        )
+
+    def get_users(self, instance):
+        shares = ShareCalendar.objects.filter(calendar=instance.calendar)
+        return [share.user.email for share in shares]
+
+    def get_calendar(self, instance):
+        calendar = instance.calendar
+        return {
+            'id': calendar.id,
+            'name': calendar.name,
+            'color': calendar.color,
+        }
+
+
+class ReadUserShareCalendarSerializer(ReadOwnerShareCalendarSerializer):
+    """
+    Сериализация ответа для эндпойнта share_to_me.
+
+    id - идентификатор экземпляра ShareCalendar
+    owner - владелец календаря.
+    calendar - календарь, к которому предоставлен доступ
+    custom_name - поле названия для переопределения на фронте
+    custom_color - поле цвета для переопределения на фронте
+    """
+    class Meta:
+        model = ShareCalendar
+        fields = (
+            'id',
+            'owner',
+            'calendar',
+            'custom_name',
+            'custom_color',
+        )
+
+
+class ShareCalendarUpdateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для PATCH-запроса на эндпойнт /:id/share.
+
+    Позволяет обновить поля custom_name и custom_color.
+    Возвращает объект сериализованый ShareCalendarSerializer.
+    """
+    class Meta:
+        model = ShareCalendar
+        fields = ('custom_name', 'custom_color')
+
+    def update(self, instance, validated_data):
+        instance.custom_name = validated_data.get('custom_name',
+                                                  instance.custom_name)
+        instance.custom_color = validated_data.get('custom_color',
+                                                   instance.custom_color)
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        return ShareCalendarSerializer(instance).data
