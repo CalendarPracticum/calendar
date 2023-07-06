@@ -739,9 +739,10 @@ function App() {
 		}
 	};
 
-	const handleShareCalendar = () => {
+	const handleShareCalendar = (data) => {
 		// eslint-disable-next-line
-		console.log('поделился (^-^)');
+		// TODO: добавить сюда вызов запроса на шаринг календариком
+		console.log(data);
 	};
 
 	return (

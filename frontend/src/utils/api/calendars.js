@@ -151,10 +151,10 @@ export const shareCalendar = ({ id, user, name, color }) =>
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({
-      user,
-      custom_name: name,
-      custom_color: color,
-    }),
+			user,
+			custom_name: name,
+			custom_color: color,
+		}),
 	}).then(getJson);
 
 /*
@@ -221,9 +221,9 @@ export const changeSharedCalendar = ({ id, name, color }) =>
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({
-      custom_name: name,
-      custom_color: color,
-    }),
+			custom_name: name,
+			custom_color: color,
+		}),
 	}).then(getJson);
 
 /*
@@ -239,7 +239,7 @@ export const deleteSharedCalendar = ({ id, user }) =>
 		headers: {
 			authorization: getAccessToken(),
 		},
-    body: JSON.stringify({
-      user,
-    })
+		body: JSON.stringify({
+			user,
+		}),
 	});

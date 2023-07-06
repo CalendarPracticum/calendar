@@ -14,9 +14,7 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 	const { id, name, color } = editableCalendar;
 
 	const defaultValues = {
-		id,
-		name,
-		color,
+		email: '',
 	};
 
 	const {
@@ -27,7 +25,11 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		onShareCalendar(data);
+		const result = { ...data };
+		result.id = id;
+		result.name = name;
+		result.color = color;
+		onShareCalendar(result);
 		reset();
 	};
 
@@ -58,59 +60,35 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 					</div>
 
 					<div className="flex mb-4">
-						<div className={`${styles.circle} mb-1`} />
-						<p className={styles.nameCalendar}>Акселератор</p>
+						<div
+							className={cn(styles.circle, 'mb-1')}
+							style={{
+								backgroundColor: color,
+							}}
+						/>
+						<p className={styles.nameCalendar}>{name}</p>
 					</div>
 
-          <div className={cn(
-            styles.field,
-            styles.guestsTable,
-          )}>
-            <div className={cn(
-              styles.guest,
-            )}>
-              <div className={cn(
-                'flex align-items-center',
-                styles.guestInfo,
-              )}>
-                <Avatar
-                  className={cn(
-                    styles.guestAvatar,
-                  )}
-                  shape="circle"
-                />
+					<div className={cn(styles.field, styles.guestsTable)}>
+						<div className={cn(styles.guest)}>
+							<div className={cn('flex align-items-center', styles.guestInfo)}>
+								<Avatar className={cn(styles.guestAvatar)} shape="circle" />
 
-                <p
-                  className={cn(
-                    'my-0 ml-2',
-                    styles.guestEmail,
-                  )}
-                >
-                  hoba@ya.ru
-                </p>
+								<p className={cn('my-0 ml-2', styles.guestEmail)}>hoba@ya.ru</p>
 
-                <i
-                  className={cn(
-                    "pi pi-check",
-                    styles.guestIcon,
-                  )}
-                />
-                {/* <i className="pi pi-spin pi-spinner" style={{'fontSize': '2em'}} /> */}
-              </div>
+								<i className={cn('pi pi-check', styles.guestIcon)} />
+								{/* <i className="pi pi-spin pi-spinner" style={{'fontSize': '2em'}} /> */}
+							</div>
 
-              <button
-                className={cn(
-                  styles.delButton,
-                )}
-                type='button'
-                onClick={() => {}}
-              >
-                <i
-                  className='pi pi-trash'
-                />
-              </button>
-            </div>
-          </div>
+							<button
+								className={cn(styles.delButton)}
+								type="button"
+								onClick={() => {}}
+							>
+								<i className="pi pi-trash" />
+							</button>
+						</div>
+					</div>
 
 					<form
 						className={`p-fluid ${styles.form}`}
@@ -120,14 +98,14 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 							<div className={styles.field}>
 								<span className="p-float-label p-input-icon-right">
 									<Controller
-										name="title"
+										name="email"
 										control={control}
 										rules={{
-											required: 'Поле адреса почты обязательное',
-											minLength: 1,
-											maxLength: {
-												value: 100,
-												message: 'Максимальная длина 100 символа.',
+											required: 'Обязательное поле Email.',
+											pattern: {
+												value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+												message:
+													'Не корректный email. Например: example@email.ru',
 											},
 										}}
 										render={({ field, fieldState }) => (
@@ -135,33 +113,28 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 												id={field.name}
 												{...field}
 												autoFocus
-                        type="text"
-												className={cn(
-													{
-														'p-invalid': fieldState.invalid,
-													},
-												)}
+												className={cn({
+													'p-invalid': fieldState.invalid,
+												})}
 											/>
 										)}
 									/>
-                  {/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
-                  <label
-                    htmlFor="title"
-                    className={cn({ 'p-error': errors.name })}
-                  >
-									  Пригласить по email
-								  </label>
+									{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
+									<label
+										htmlFor="email"
+										className={cn({ 'p-error': errors.name })}
+									>
+										Пригласить по email
+									</label>
 								</span>
-								{getFormErrorMessage('title')}
+								{getFormErrorMessage('email')}
 							</div>
 
 							<Button
 								type="submit"
 								icon="pi pi-plus"
 								disabled={!isValid || !isDirty}
-								className={cn(
-									'p-button-rounded p-button-outlined'
-								)}
+								className={cn('p-button-rounded p-button-outlined')}
 							/>
 						</div>
 
