@@ -127,3 +127,119 @@ export const deleteCalendar = (id) =>
 			authorization: getAccessToken(),
 		},
 	});
+
+/*
+  ЗАПРОСЫ НА ШЕРИНГ КАЛЕНДАРЯ
+*/
+
+/*
+  Поделиться календарём с польщователем
+  Вернётся:
+  {
+    "owner": "user@example.com",
+    "user": "user@example.com",
+    "calendar": "string",
+    "custom_name": "string",
+    "custom_color": "#fDd449"
+  }
+*/
+export const shareCalendar = ({ id, user, name, color }) =>
+	fetch(`${BASE_URL}/v1/calendars/${id}/share`, {
+		method: 'POST',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+      user,
+      custom_name: name,
+      custom_color: color,
+    }),
+	}).then(getJson);
+
+/*
+  Получение календарей, которыми ТЫ поделился с пользователями
+  Вернётся массив объектов:
+  {
+    "owner": "user@example.com",
+    "users": [
+        "user1@user.com",
+        "user2@user.com",
+    ],
+    "calendar": {
+        "id": 1,
+        "name": "string",
+        "color": "#000",
+    }
+  }
+*/
+export const getAllSharedToOthers = () =>
+	fetch(`${BASE_URL}/v1/calendars/shared_to_user`, {
+		headers: {
+			authorization: getAccessToken(),
+		},
+	}).then(getJson);
+
+/*
+  Получение календарей, которыми поделились с тобой
+  Вернётся массив объектов:
+  {
+    "id": 0,
+    "owner": "user@example.com",
+    "calendar": {
+          "id": 1,
+          "name": "string",
+          "color": "#000",
+    },
+    "custom_name": "string",
+    "custom_color": "#2Bd"
+  }
+*/
+export const getAllSharedToMe = () =>
+	fetch(`${BASE_URL}/v1/calendars/shared_to_me`, {
+		headers: {
+			authorization: getAccessToken(),
+		},
+	}).then(getJson);
+
+/*
+  Изменить свою копию календаря
+  Вернётся:
+  {
+    "owner": "user@example.com",
+    "user": "user@example.com",
+    "calendar": "string",
+    "custom_name": "string",
+    "custom_color": "#2C6"
+  }
+*/
+export const changeSharedCalendar = ({ id, name, color }) =>
+	fetch(`${BASE_URL}/v1/calendars/${id}/share`, {
+		method: 'PATCH',
+		headers: {
+			...HEADERS,
+			authorization: getAccessToken(),
+		},
+		body: JSON.stringify({
+      custom_name: name,
+      custom_color: color,
+    }),
+	}).then(getJson);
+
+/*
+  TODO: Спросить у бэков, работает это с двух сторон одиноково или нет
+
+  Удалить доступ к календарю
+  Вернётся 204))))
+*/
+
+export const deleteSharedCalendar = ({ id, user }) =>
+	fetch(`${BASE_URL}/v1/calendars/${id}/share/`, {
+		method: 'DELETE',
+		headers: {
+			authorization: getAccessToken(),
+		},
+    body: JSON.stringify({
+      user,
+    })
+	});
