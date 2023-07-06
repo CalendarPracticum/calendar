@@ -116,10 +116,11 @@
 	margin-top: 3rem;
 }
 
+/* FormShareCalendar */
 .inputBox {
 	display: grid;
 	grid-template-columns: 6fr 1fr;
-	gap: 8px;
+	gap: 1rem;
 }
 
 .circle {
@@ -132,4 +133,72 @@
 .nameCalendar {
 	margin: 0 0 0 12px;
 	padding-top: 1px;
+}
+
+.guestsTable {
+	padding: 1.2rem;
+  border: 1px solid;
+	border-radius: 0.3rem;
+	border-color: var(--surface-border);
+	display: flex;
+  flex-direction: column;
+  gap: 12px;
+	column-gap: 1.1rem;
+}
+
+.guest {
+  width: 100%;
+	border-radius: 0.3rem;
+	border-color: var(--surface-border);
+	display: grid;
+	grid-template-columns: auto 24px;
+	column-gap: 1.1rem;
+  align-items: center;
+}
+
+.guestInfo {
+  max-width: 270px;
+  height: 32px;
+  border-radius: 20px;
+  background-color: var(--highlight-bg);
+  margin-left: 5px;
+}
+
+.guestIcon {
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.guestAvatar {
+  margin-left: 2px;
+  width: 28px;
+  height: 28px;
+  background-color: violet;
+}
+
+.guestEmail {
+  max-width: 170px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 150%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.delButton {
+  justify-self: center;
+	border: none;
+	background-color: transparent;
+	color: var(--text-color);
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.2s ease-out;
+	width: 16px;
+	height: 16px;
+}
+
+.delButton:hover {
+	color: var(--surface-200);
 }
