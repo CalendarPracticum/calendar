@@ -137,7 +137,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
         responses=ShareCalendarSerializer()
     )
     @action(
-        methods=['post', 'delete', 'patch'],
+        methods=['get', 'post', 'delete', 'patch'],
         detail=True,
         permission_classes=[ShareCalendarPermissions]
     )
@@ -157,6 +157,11 @@ class CalendarViewSet(viewsets.ModelViewSet):
         """
         calendar = get_object_or_404(Calendar, pk=pk)
         serializer = self.get_serializer(data=request.data)
+
+        if request.method == 'GET':
+            share = ShareCalendar.objects.filter(calendar=calendar).first()
+            serializer = ReadOwnerShareCalendarSerializer(share)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         if request.method == 'POST':
             owner = request.user
@@ -196,6 +201,7 @@ class CalendarViewSet(viewsets.ModelViewSet):
                 user__email=request.user,
                 calendar=calendar
             )
+
             serializer = self.get_serializer(
                 instance,
                 data=request.data,
