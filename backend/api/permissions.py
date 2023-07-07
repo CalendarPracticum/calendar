@@ -34,4 +34,6 @@ class ShareCalendarPermissions(BasePermission):
         calendar = get_object_or_404(Calendar, pk=calendar_pk)
         users = ShareCalendar.objects.filter(
             calendar=calendar).values_list('user', flat=True)
+        if request.method == 'PATCH' and request.user.id not in users:
+            return False
         return request.user.id in users or calendar.owner == request.user

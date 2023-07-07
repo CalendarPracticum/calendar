@@ -13,6 +13,7 @@ class CalendarSerializer(serializers.ModelSerializer):
     """
 
     owner = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    shared = serializers.SerializerMethodField()
 
     class Meta:
         model = Calendar
@@ -22,6 +23,7 @@ class CalendarSerializer(serializers.ModelSerializer):
             'description',
             'owner',
             'color',
+            'shared',
         )
         extra_kwargs = {
             'name':
@@ -31,6 +33,12 @@ class CalendarSerializer(serializers.ModelSerializer):
                      }
                  },
         }
+
+    def get_shared(self, instance):
+        """
+        Булевое значение: есть ли подписчики у календаря.
+        """
+        return bool(ShareCalendar.objects.filter(calendar=instance))
 
     @transaction.atomic
     def create(self, validated_data):
