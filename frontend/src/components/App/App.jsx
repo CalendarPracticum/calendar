@@ -83,6 +83,8 @@ function App() {
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
 	const [editableEvent, setEditableEvent] = useState({});
+	const [team, setTeam] = useState([]);
+	const [temp, setTemp] = useState([]);
 
 	// Popups
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
@@ -149,6 +151,7 @@ function App() {
 		setCurrentUser({});
 		setAllUserCalendars([]);
 		setAllUserEvents([]);
+		setTeam([]);
 		setChosenCalendars(holidaysCalendar.map((c) => c.id));
 		closeAllPopups();
 
@@ -159,7 +162,9 @@ function App() {
 
 	const handleErrors = useCallback(
 		({ error, res }) => {
-			if (error.code === 'token_not_valid') {
+			console.log({ error, res });
+
+			if (error.code && error.code === 'token_not_valid') {
 				logout();
 				showDialog(ErrorMessage.UNAUTHORIZED, true);
 			} else if (res.status === 401) {
@@ -304,6 +309,10 @@ function App() {
 			setEditableCalendar,
 			editableEvent,
 			setEditableEvent,
+			team,
+			setTeam,
+			temp,
+			setTemp,
 		}),
 		[
 			holidays,
@@ -312,6 +321,8 @@ function App() {
 			chosenCalendars,
 			editableCalendar,
 			editableEvent,
+			team,
+			temp,
 		]
 	);
 
@@ -663,9 +674,34 @@ function App() {
 	};
 
 	const handleShareCalendar = (data) => {
-		// eslint-disable-next-line
-		// TODO: добавить сюда вызов запроса на шаринг календариком
-		console.log(data);
+		setIsLoading(true);
+		calendarApi
+			.shareCalendar(data)
+			.then((res) => setTeam([res.user, ...team]))
+			.catch(({ error, res }) => {
+				console.log(error, res);
+				handleErrors({ error, res });
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleShowSharePopup = (id) => {
+		setIsLoading(true);
+		calendarApi
+			.getSharedCalendarById(id)
+			.then((res) => {
+				setTeam(res.users);
+				setVisiblePopupShareCalendar(true);
+			})
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				handleErrors({ error, res });
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
@@ -691,7 +727,7 @@ function App() {
 											onEventDoubleClick={setVisiblePopupEditEvent}
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
-											onShareCalendarClick={setVisiblePopupShareCalendar}
+											onShareCalendarClick={handleShowSharePopup}
 											onNewEventClickUnauth={setVisiblePopupAskToRegister}
 											onEditEvent={handleEditEvent}
 										/>
@@ -769,6 +805,7 @@ function App() {
 							visible={visiblePopupShareCalendar}
 							setVisible={setVisiblePopupShareCalendar}
 							handleShare={handleShareCalendar}
+							colleagues={team}
 						/>
 
 						<Toast ref={toast} />

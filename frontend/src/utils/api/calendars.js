@@ -122,7 +122,7 @@ export const deleteCalendar = (id) =>
 */
 
 /*
-  Поделиться календарём с польщователем
+  Поделиться календарём с пользователем
   Вернётся:
   {
     "owner": "user@example.com",
@@ -132,42 +132,66 @@ export const deleteCalendar = (id) =>
     "custom_color": "#fDd449"
   }
 */
-export const shareCalendar = ({ id, user, name, color }) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}/share`, {
+export const shareCalendar = ({ id, email, name, color }) =>
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
 		method: 'POST',
 		headers: {
 			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({
-			user,
+			user: email,
 			custom_name: name,
 			custom_color: color,
 		}),
-	}).then(getJson);
+	});
 
 /*
+  NOTE: НЕ ИСПОЛЬЗУЕМ
   Получение календарей, которыми ТЫ поделился с пользователями
   Вернётся массив объектов:
   {
     "owner": "user@example.com",
     "users": [
-        "user1@user.com",
-        "user2@user.com",
+      "user1@user.com",
+      "user2@user.com",
     ],
     "calendar": {
-        "id": 1,
-        "name": "string",
-        "color": "#000",
+      "id": 1,
+      "name": "string",
+      "color": "#000",
     }
   }
 */
 export const getAllSharedToOthers = () =>
-	fetch(`${BASE_URL}/v1/calendars/shared_to_user`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/shared_to_user/`, {
 		headers: {
 			authorization: getAccessToken(),
 		},
-	}).then(getJson);
+	});
+
+/*
+  Получение данных конкретного календаря, которым ты поделился
+  Вернётся объект:
+  {
+    "owner": "user@example.com",
+    "users": [
+      "user1@user.com",
+      "user2@user.com",
+    ],
+    "calendar": {
+      "id": 1,
+      "name": "string",
+      "color": "#000",
+    }
+  }
+*/
+export const getSharedCalendarById = (id) =>
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
+		headers: {
+			authorization: getAccessToken(),
+		},
+	});
 
 /*
   Получение календарей, которыми поделились с тобой
@@ -176,20 +200,20 @@ export const getAllSharedToOthers = () =>
     "id": 0,
     "owner": "user@example.com",
     "calendar": {
-          "id": 1,
-          "name": "string",
-          "color": "#000",
+      "id": 1,
+      "name": "string",
+      "color": "#000",
     },
     "custom_name": "string",
     "custom_color": "#2Bd"
   }
 */
 export const getAllSharedToMe = () =>
-	fetch(`${BASE_URL}/v1/calendars/shared_to_me`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/shared_to_me/`, {
 		headers: {
 			authorization: getAccessToken(),
 		},
-	}).then(getJson);
+	});
 
 /*
   Изменить свою копию календаря
@@ -203,7 +227,7 @@ export const getAllSharedToMe = () =>
   }
 */
 export const changeSharedCalendar = ({ id, name, color }) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}/share`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
 		method: 'PATCH',
 		headers: {
 			...HEADERS,
@@ -213,7 +237,7 @@ export const changeSharedCalendar = ({ id, name, color }) =>
 			custom_name: name,
 			custom_color: color,
 		}),
-	}).then(getJson);
+	});
 
 /*
   TODO: Спросить у бэков, работает это с двух сторон одиноково или нет
@@ -223,7 +247,7 @@ export const changeSharedCalendar = ({ id, name, color }) =>
 */
 
 export const deleteSharedCalendar = ({ id, user }) =>
-	fetch(`${BASE_URL}/v1/calendars/${id}/share/`, {
+	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
 		method: 'DELETE',
 		headers: {
 			authorization: getAccessToken(),

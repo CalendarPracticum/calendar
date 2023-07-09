@@ -32,7 +32,7 @@ export function CalendarSelect({ onEditCalendarClick, onShareCalendarClick }) {
 		if (isEdit) {
 			onEditCalendarClick(true);
 		} else {
-			onShareCalendarClick(true);
+			onShareCalendarClick(calendar.id);
 		}
 	};
 

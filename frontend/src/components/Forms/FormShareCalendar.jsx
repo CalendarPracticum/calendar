@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'primereact/button';
-import { Avatar } from 'primereact/avatar';
+// import { Avatar } from 'primereact/avatar';
 import { InputText } from 'primereact/inputtext';
 import { Tooltip } from 'primereact/tooltip';
 import { useForm, Controller } from 'react-hook-form';
@@ -9,9 +9,11 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CalendarsContext } from '../../context';
 
-export function FormShareCalendar({ onShareCalendar, setVisible }) {
+export function FormShareCalendar({ onShareCalendar, setVisible, colleagues }) {
 	const { editableCalendar } = useContext(CalendarsContext);
 	const { id, name, color } = editableCalendar;
+
+	// console.log({colleagues});
 
 	const defaultValues = {
 		email: '',
@@ -19,16 +21,18 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 
 	const {
 		control,
-		formState: { errors, isValid, isDirty },
+		formState: { errors, isValid },
 		handleSubmit,
 		reset,
 	} = useForm({ defaultValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		const result = { ...data };
-		result.id = id;
-		result.name = name;
-		result.color = color;
+		const result = {
+			...data,
+			id,
+			name,
+			color,
+		};
 		onShareCalendar(result);
 		reset();
 	};
@@ -69,26 +73,34 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 						<p className={styles.nameCalendar}>{name}</p>
 					</div>
 
-					<div className={cn(styles.field, styles.guestsTable)}>
-						<div className={cn(styles.guest)}>
-							<div className={cn('flex align-items-center', styles.guestInfo)}>
-								<Avatar className={cn(styles.guestAvatar)} shape="circle" />
+					{/* {colleagues.length > 0 &&
+            (<div className={cn(styles.field, styles.guestsTable)}>
+              {colleagues.map((colleague) => (
+                <div
+                  className={cn(styles.guest)}
+                  // TODO: попросить бэков расширить данные и добавить аватар + id пользака
+                  key={colleague}
+                >
+                  <div className={cn('flex align-items-center', styles.guestInfo)}>
+                    <Avatar className={cn(styles.guestAvatar)} shape="circle" />
 
-								<p className={cn('my-0 ml-2', styles.guestEmail)}>hoba@ya.ru</p>
+                    <p className={cn('my-0 ml-2', styles.guestEmail)}>{colleague}</p>
 
-								<i className={cn('pi pi-check', styles.guestIcon)} />
-								{/* <i className="pi pi-spin pi-spinner" style={{'fontSize': '2em'}} /> */}
-							</div>
+                    <i className={cn('pi pi-check', styles.guestIcon)} />
 
-							<button
-								className={cn(styles.delButton)}
-								type="button"
-								onClick={() => {}}
-							>
-								<i className="pi pi-trash" />
-							</button>
-						</div>
-					</div>
+                  </div>
+
+                  <button
+                    className={cn(styles.delButton)}
+                    type="button"
+                    onClick={() => {}}
+                  >
+                    <i className="pi pi-trash" />
+                  </button>
+                </div>
+              ))}
+            </div>)
+          } */}
 
 					<form
 						className={`p-fluid ${styles.form}`}
@@ -133,7 +145,7 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 							<Button
 								type="submit"
 								icon="pi pi-plus"
-								disabled={!isValid || !isDirty}
+								disabled={!isValid}
 								className={cn('p-button-rounded p-button-outlined')}
 							/>
 						</div>
@@ -153,4 +165,6 @@ export function FormShareCalendar({ onShareCalendar, setVisible }) {
 FormShareCalendar.propTypes = {
 	onShareCalendar: PropTypes.func.isRequired,
 	setVisible: PropTypes.func.isRequired,
+	// eslint-disable-next-line react/forbid-prop-types
+	colleagues: PropTypes.array.isRequired,
 };
