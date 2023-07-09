@@ -101,10 +101,10 @@ export function FormRegistration({ handleRegister, setIsFormLogin }) {
 									name="password"
 									control={control}
 									rules={{
-										required: 'Обязательное поле Пароль.',
+										required: 'Обязательное поле Пароль',
 										maxLength: {
 											value: 40,
-											message: 'Максимальная длина 40 символа.',
+											message: 'Максимальная длина 40 символов',
 										},
 										pattern: {
 											value:

@@ -27,7 +27,7 @@ export function FormNewEvent({ onCreateEvent }) {
 	const circle = useRef(null);
 
 	const defaultValues = {
-		name: '',
+		title: '',
 		timeStart: null,
 		timeFinish: null,
 		allDay: false,
@@ -126,7 +126,7 @@ export function FormNewEvent({ onCreateEvent }) {
 							<span className="p-float-label p-input-icon-right">
 								<i className="pi pi-pencil" />
 								<Controller
-									name="name"
+									name="title"
 									control={control}
 									rules={{
 										required: 'Поле Название обязательное',
@@ -149,13 +149,13 @@ export function FormNewEvent({ onCreateEvent }) {
 								/>
 								{/* eslint jsx-a11y/label-has-associated-control: ["error", { assert: "either" } ] */}
 								<label
-									htmlFor="name"
-									className={cn({ 'p-error': errors.name })}
+									htmlFor="title"
+									className={cn({ 'p-error': errors.title })}
 								>
 									Название*
 								</label>
 							</span>
-							{getFormErrorMessage('name')}
+							{getFormErrorMessage('title')}
 						</div>
 
 						<div className={styles.field}>
