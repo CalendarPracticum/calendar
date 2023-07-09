@@ -18,6 +18,7 @@ import { CalendarSelect } from '../CalendarSelect/CalendarSelect';
 
 export function Sidebar({
 	onEditCalendarClick,
+	onShareCalendarClick,
 	onNewEventClick,
 	onNewCalendarClick,
 	visibleProdCalendar,
@@ -76,7 +77,10 @@ export function Sidebar({
 			/>
 			{loggedIn && (
 				<>
-					<CalendarSelect onEditCalendarClick={onEditCalendarClick} />
+					<CalendarSelect
+						onEditCalendarClick={onEditCalendarClick}
+						onShareCalendarClick={onShareCalendarClick}
+					/>
 					<Button
 						label="Новый календарь"
 						icon="pi pi-plus"
@@ -105,6 +109,7 @@ export function Sidebar({
 // href='#about-project'
 Sidebar.propTypes = {
 	onEditCalendarClick: PropTypes.func.isRequired,
+	onShareCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,
 	visibleProdCalendar: PropTypes.bool.isRequired,

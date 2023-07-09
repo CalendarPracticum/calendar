@@ -8,6 +8,7 @@ import { PopupEditEvent } from './PopupEditEvent';
 import { PopupDialog } from './PopupDialog';
 import { PopupEditAvatar } from './PopupEditAvatar';
 import { PopupAskToRegister } from './PopupAskToRegister';
+import { PopupShareCalendar } from './PopupShareCalendar';
 
 export {
 	PopupChangePassword,
@@ -20,4 +21,5 @@ export {
 	PopupDialog,
 	PopupEditAvatar,
 	PopupAskToRegister,
+	PopupShareCalendar,
 };
