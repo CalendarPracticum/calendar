@@ -160,6 +160,17 @@ class CalendarViewSet(viewsets.ModelViewSet):
 
         if request.method == 'GET':
             share = ShareCalendar.objects.filter(calendar=calendar).first()
+            if not share:
+                data = {
+                    "owner": calendar.owner.email,
+                    "users": [],
+                    "calendar": {
+                        "id": calendar.id,
+                        "name": calendar.name,
+                        "color": calendar.color
+                    }
+                }
+                return Response(data, status=status.HTTP_200_OK)
             serializer = ReadOwnerShareCalendarSerializer(share)
             return Response(serializer.data, status=status.HTTP_200_OK)
 

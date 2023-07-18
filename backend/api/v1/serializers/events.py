@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from api.v1.serializers.users import UsersSerializer
 from events.models import Calendar, Event, ShareCalendar
 from users.models import User
 
@@ -279,7 +280,8 @@ class ReadOwnerShareCalendarSerializer(serializers.ModelSerializer):
 
     def get_users(self, instance):
         shares = ShareCalendar.objects.filter(calendar=instance.calendar)
-        return [share.user.email for share in shares]
+        users = User.objects.filter(id__in=[share.user.id for share in shares])
+        return UsersSerializer(users, many=True).data
 
     def get_calendar(self, instance):
         calendar = instance.calendar
