@@ -3,7 +3,7 @@ import styles from './Footer.module.css';
 
 export function Footer() {
 	return (
-		<footer className={styles.footer}>
+		<footer className={`${styles.footer} container`}>
 			<a
 				className={styles.link}
 				href="https://github.com/CalendarPracticum/calendar"
