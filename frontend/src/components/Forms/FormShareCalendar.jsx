@@ -9,8 +9,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CalendarsContext } from '../../context';
+import { PICTURE_URL } from '../../utils/api/commonApi';
 
-export function FormShareCalendar({ onShareCalendar, setVisible, /* isShareLoading */ }) {
+export function FormShareCalendar({
+	onShareCalendar,
+	setVisible,
+	handleDeleteMate,
+}) {
 	const { editableCalendar, team } = useContext(CalendarsContext);
 	const { id, name, color } = editableCalendar;
 
@@ -72,44 +77,69 @@ export function FormShareCalendar({ onShareCalendar, setVisible, /* isShareLoadi
 						<p className={styles.nameCalendar}>{name}</p>
 					</div>
 
-					{team.length > 0 &&
-            (<div className={cn(styles.field, styles.guestsTable)}>
-              {team.map((mate) => (
-                <div
-                  className={cn(styles.guest)}
-                  key={mate.id}
-                >
-                  <div className={cn('flex align-items-center', styles.guestInfo)}>
-                    <Avatar className={cn(styles.guestAvatar)} shape="circle" />
+					{team.length > 0 && (
+						<div className={cn(styles.field, styles.guestsTable)}>
+							{team.map((mate) => (
+								<div className={cn(styles.guest)} key={mate.email}>
+									<div
+										className={cn('flex align-items-center', styles.guestInfo)}
+									>
+										<Avatar
+											icon={mate.profile_picture ? '' : 'pi pi-user'}
+											image={`${PICTURE_URL}${mate.profile_picture}` || ''}
+											className={cn(styles.guestAvatar)}
+											shape="circle"
+										/>
 
-                    <p className={cn('my-0 ml-2', styles.guestEmail)}>{mate.email}</p>
+										<p className={cn('my-0 ml-2', styles.guestEmail)}>
+											{mate.email}
+										</p>
 
-                    {
-                      (mate.infoIcon)
-                      ? (
-                          mate.infoIcon === 'load' ? (
-                            <i className={cn('pi pi-spin pi-spinner', styles.guestIcon)} />
-                          ) : mate.infoIcon === 'success' ? (
-                            <i className={cn('pi pi-check', styles.guestIcon)} />
-                          ) : (
-                            <i className={cn('pi pi-times', styles.guestIcon)} />
-                          )
-                        )
-                      : <i className={cn('pi pi-check', styles.guestIcon)} />
-                    }
-                  </div>
+										{mate.infoIcon ? (
+											mate.infoIcon === 'load' ? (
+												<i
+													className={cn(
+														'pi pi-spin pi-spinner',
+														styles.guestIcon
+													)}
+												/>
+											) : mate.infoIcon === 'success' ? (
+												<i className={cn('pi pi-check', styles.guestIcon)} />
+											) : (
+												<i className={cn('pi pi-times', styles.guestIcon)} />
+											)
+										) : (
+											<i className={cn('pi pi-check', styles.guestIcon)} />
+										)}
+									</div>
 
-                  <button
-                    className={cn(styles.delButton)}
-                    type="button"
-                    onClick={() => {}}
-                  >
-                    <i className="pi pi-trash" />
-                  </button>
-                </div>
-              ))}
-            </div>)
-          }
+									{mate.infoIcon ? (
+										mate.infoIcon === 'success' && (
+											<button
+												className={cn(styles.delButton)}
+												type="button"
+												onClick={() => {
+													handleDeleteMate({ id, email: mate.email });
+												}}
+											>
+												<i className="pi pi-trash" />
+											</button>
+										)
+									) : (
+										<button
+											className={cn(styles.delButton)}
+											type="button"
+											onClick={() => {
+												handleDeleteMate({ id, email: mate.email });
+											}}
+										>
+											<i className="pi pi-trash" />
+										</button>
+									)}
+								</div>
+							))}
+						</div>
+					)}
 
 					<form
 						className={`p-fluid ${styles.form}`}
@@ -174,5 +204,5 @@ export function FormShareCalendar({ onShareCalendar, setVisible, /* isShareLoadi
 FormShareCalendar.propTypes = {
 	onShareCalendar: PropTypes.func.isRequired,
 	setVisible: PropTypes.func.isRequired,
-  // isShareLoading: PropTypes.bool.isRequired,
+	handleDeleteMate: PropTypes.func.isRequired,
 };

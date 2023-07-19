@@ -65,7 +65,9 @@ export function CalendarBlock(props) {
 										onClick={() => handleClick(calendar, false)}
 									>
 										<i
-											className="pi pi-share-alt"
+											className={
+												calendar.shared ? 'pi pi-users' : 'pi pi-share-alt'
+											}
 											style={{ fontSize: '0.75rem' }}
 										/>
 									</button>

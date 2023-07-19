@@ -108,7 +108,6 @@ function App() {
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isFormLogin, setIsFormLogin] = useState(true);
-  // const [isShareLoading, setIsShareLoading] = useState(false);
 
 	const today = new Date();
 	const start = useRef([today.getFullYear(), '-01-01'].join(''));
@@ -671,38 +670,53 @@ function App() {
 	};
 
 	const handleShareCalendar = (data) => {
-    /*
-      здесь нужно включить новый лоадер,
-      который также нужно передавать через контекст
-      после чего сразу добавитть пользака в список
-      а уже после ответа заменять лоадер на галочку или на крестик
-    */
-    const newMate = {
-      // TODO: что то придумать с id
-      email: data.email,
-      infoIcon: 'load',
-    }
-    setTeam([...team, newMate]);
+		const newMate = {
+			email: data.email,
+			infoIcon: 'load',
+		};
+		setTeam([...team, newMate]);
 
 		calendarApi
 			.shareCalendar(data)
 			.then(() => {
-        newMate.infoIcon = 'success';
+				newMate.infoIcon = 'success';
 
-        const index = team.findIndex((m) => m.email === data.email);
-        team.splice(index, 1);
+				const index = team.findIndex((m) => m.email === data.email);
+				if (index !== -1) {
+					team.splice(index, 1);
+				}
 
-        setTeam([...team, newMate]);
-      })
-			.catch(({ error, res }) => {
-        newMate.infoIcon = 'denied';
-
-        const index = team.findIndex((m) => m.email === data.email);
-        team.splice(index, 1);
-
-        setTeam([...team, newMate]);
-				handleErrors({ error, res });
+				setTeam([...team, newMate]);
 			})
+			.catch((/* { error, res } */) => {
+				newMate.infoIcon = 'denied';
+
+				const index = team.findIndex((m) => m.email === data.email);
+				if (index !== -1) {
+					team.splice(index, 1);
+				}
+
+				setTeam([...team, newMate]);
+				// handleErrors({ error, res });
+			});
+	};
+
+	const handleDeleteMate = ({ id, email }) => {
+		setIsLoading(true);
+		calendarApi
+			.deleteSharedCalendar({ id, email })
+			.then(() => {
+				const index = team.findIndex((m) => m.email === email);
+				if (index !== -1) {
+					team.splice(index, 1);
+				}
+			})
+			.catch(({ err, res }) => {
+				handleErrors({ err, res });
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleShowSharePopup = (id) => {
@@ -710,11 +724,7 @@ function App() {
 		calendarApi
 			.getSharedCalendarById(id)
 			.then((res) => {
-        // в случае, если календарь не расшарен, возвращается пустой объект и 200
-        // возможно нужно попросить бэков вернуть
-        // const isEmpty = Object.keys(res).length === 0 && res.constructor === Object;
-        // setTeam(isEmpty ? [] : res.users)
-        setTeam(res.users)
+				setTeam(res.users);
 				setVisiblePopupShareCalendar(true);
 			})
 			.catch(({ error, res }) => {
@@ -828,7 +838,7 @@ function App() {
 							visible={visiblePopupShareCalendar}
 							setVisible={setVisiblePopupShareCalendar}
 							handleShare={handleShareCalendar}
-              // isShareLoading={isShareLoading}
+							handleDeleteMate={handleDeleteMate}
 						/>
 
 						<Toast ref={toast} />

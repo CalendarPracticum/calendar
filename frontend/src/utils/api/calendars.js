@@ -167,6 +167,7 @@ export const shareCalendar = ({ id, email, name, color }) =>
 export const getAllSharedToOthers = () =>
 	fetchWithRefresh(`${BASE_URL}/v1/calendars/shared_to_user/`, {
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
 	});
@@ -190,6 +191,7 @@ export const getAllSharedToOthers = () =>
 export const getSharedCalendarById = (id) =>
 	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
 	});
@@ -212,6 +214,7 @@ export const getSharedCalendarById = (id) =>
 export const getAllSharedToMe = () =>
 	fetchWithRefresh(`${BASE_URL}/v1/calendars/shared_to_me/`, {
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
 	});
@@ -247,13 +250,14 @@ export const changeSharedCalendar = ({ id, name, color }) =>
   Вернётся 204))))
 */
 
-export const deleteSharedCalendar = ({ id, user }) =>
+export const deleteSharedCalendar = ({ id, email }) =>
 	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
 		method: 'DELETE',
 		headers: {
+			...HEADERS,
 			authorization: getAccessToken(),
 		},
 		body: JSON.stringify({
-			user,
+			user: email,
 		}),
 	});

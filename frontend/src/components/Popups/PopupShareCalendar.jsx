@@ -7,14 +7,14 @@ export function PopupShareCalendar({
 	visible,
 	setVisible,
 	handleShare,
-  // isShareLoading,
+	handleDeleteMate,
 }) {
 	return (
 		<Dialog visible={visible} onHide={() => setVisible(false)}>
 			<FormShareCalendar
 				onShareCalendar={handleShare}
 				setVisible={setVisible}
-        // isShareLoading={isShareLoading}
+				handleDeleteMate={handleDeleteMate}
 			/>
 		</Dialog>
 	);
@@ -24,5 +24,5 @@ PopupShareCalendar.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
 	handleShare: PropTypes.func.isRequired,
-  // isShareLoading: PropTypes.bool.isRequired
+	handleDeleteMate: PropTypes.func.isRequired,
 };
