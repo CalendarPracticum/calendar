@@ -84,7 +84,6 @@ function App() {
 	const [editableCalendar, setEditableCalendar] = useState({});
 	const [editableEvent, setEditableEvent] = useState({});
 	const [team, setTeam] = useState([]);
-	const [temp, setTemp] = useState([]);
 
 	// Popups
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
@@ -108,6 +107,7 @@ function App() {
 	const [isDialogError, setIsDialogError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isFormLogin, setIsFormLogin] = useState(true);
+  // const [isShareLoading, setIsShareLoading] = useState(false);
 
 	const today = new Date();
 	const start = useRef([today.getFullYear(), '-01-01'].join(''));
@@ -310,9 +310,6 @@ function App() {
 			editableEvent,
 			setEditableEvent,
 			team,
-			setTeam,
-			temp,
-			setTemp,
 		}),
 		[
 			holidays,
@@ -322,7 +319,6 @@ function App() {
 			editableCalendar,
 			editableEvent,
 			team,
-			temp,
 		]
 	);
 
@@ -674,17 +670,38 @@ function App() {
 	};
 
 	const handleShareCalendar = (data) => {
-		setIsLoading(true);
+    /*
+      здесь нужно включить новый лоадер,
+      который также нужно передавать через контекст
+      после чего сразу добавитть пользака в список
+      а уже после ответа заменять лоадер на галочку или на крестик
+    */
+    const newMate = {
+      // TODO: что то придумать с id
+      email: data.email,
+      infoIcon: 'load',
+    }
+    setTeam([...team, newMate]);
+
 		calendarApi
 			.shareCalendar(data)
-			.then((res) => setTeam([res.user, ...team]))
+			.then(() => {
+        newMate.infoIcon = 'success';
+
+        const index = team.findIndex((m) => m.email === data.email);
+        team.splice(index, 1);
+
+        setTeam([...team, newMate]);
+      })
 			.catch(({ error, res }) => {
-				console.log(error, res);
+        newMate.infoIcon = 'denied';
+
+        const index = team.findIndex((m) => m.email === data.email);
+        team.splice(index, 1);
+
+        setTeam([...team, newMate]);
 				handleErrors({ error, res });
 			})
-			.finally(() => {
-				setIsLoading(false);
-			});
 	};
 
 	const handleShowSharePopup = (id) => {
@@ -692,7 +709,11 @@ function App() {
 		calendarApi
 			.getSharedCalendarById(id)
 			.then((res) => {
-				setTeam(res.users);
+        // в случае, если календарь не расшарен, возвращается пустой объект и 200
+        // возможно нужно попросить бэков вернуть
+        // const isEmpty = Object.keys(res).length === 0 && res.constructor === Object;
+        // setTeam(isEmpty ? [] : res.users)
+        setTeam(res.users)
 				setVisiblePopupShareCalendar(true);
 			})
 			.catch(({ error, res }) => {
@@ -805,7 +826,7 @@ function App() {
 							visible={visiblePopupShareCalendar}
 							setVisible={setVisiblePopupShareCalendar}
 							handleShare={handleShareCalendar}
-							colleagues={team}
+              // isShareLoading={isShareLoading}
 						/>
 
 						<Toast ref={toast} />

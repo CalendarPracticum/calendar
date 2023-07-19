@@ -1,7 +1,8 @@
+/* eslint-disable no-nested-ternary */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'primereact/button';
-// import { Avatar } from 'primereact/avatar';
+import { Avatar } from 'primereact/avatar';
 import { InputText } from 'primereact/inputtext';
 import { Tooltip } from 'primereact/tooltip';
 import { useForm, Controller } from 'react-hook-form';
@@ -9,11 +10,9 @@ import { classNames as cn } from 'primereact/utils';
 import styles from './Forms.module.css';
 import { CalendarsContext } from '../../context';
 
-export function FormShareCalendar({ onShareCalendar, setVisible, colleagues }) {
-	const { editableCalendar } = useContext(CalendarsContext);
+export function FormShareCalendar({ onShareCalendar, setVisible, /* isShareLoading */ }) {
+	const { editableCalendar, team } = useContext(CalendarsContext);
 	const { id, name, color } = editableCalendar;
-
-	// console.log({colleagues});
 
 	const defaultValues = {
 		email: '',
@@ -73,21 +72,31 @@ export function FormShareCalendar({ onShareCalendar, setVisible, colleagues }) {
 						<p className={styles.nameCalendar}>{name}</p>
 					</div>
 
-					{/* {colleagues.length > 0 &&
+					{team.length > 0 &&
             (<div className={cn(styles.field, styles.guestsTable)}>
-              {colleagues.map((colleague) => (
+              {team.map((mate) => (
                 <div
                   className={cn(styles.guest)}
-                  // TODO: попросить бэков расширить данные и добавить аватар + id пользака
-                  key={colleague}
+                  key={mate.id}
                 >
                   <div className={cn('flex align-items-center', styles.guestInfo)}>
                     <Avatar className={cn(styles.guestAvatar)} shape="circle" />
 
-                    <p className={cn('my-0 ml-2', styles.guestEmail)}>{colleague}</p>
+                    <p className={cn('my-0 ml-2', styles.guestEmail)}>{mate.email}</p>
 
-                    <i className={cn('pi pi-check', styles.guestIcon)} />
-
+                    {
+                      (mate.infoIcon)
+                      ? (
+                          mate.infoIcon === 'load' ? (
+                            <i className={cn('pi pi-spin pi-spinner', styles.guestIcon)} />
+                          ) : mate.infoIcon === 'success' ? (
+                            <i className={cn('pi pi-check', styles.guestIcon)} />
+                          ) : (
+                            <i className={cn('pi pi-times', styles.guestIcon)} />
+                          )
+                        )
+                      : <i className={cn('pi pi-check', styles.guestIcon)} />
+                    }
                   </div>
 
                   <button
@@ -100,7 +109,7 @@ export function FormShareCalendar({ onShareCalendar, setVisible, colleagues }) {
                 </div>
               ))}
             </div>)
-          } */}
+          }
 
 					<form
 						className={`p-fluid ${styles.form}`}
@@ -165,6 +174,5 @@ export function FormShareCalendar({ onShareCalendar, setVisible, colleagues }) {
 FormShareCalendar.propTypes = {
 	onShareCalendar: PropTypes.func.isRequired,
 	setVisible: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	colleagues: PropTypes.array.isRequired,
+  // isShareLoading: PropTypes.bool.isRequired,
 };

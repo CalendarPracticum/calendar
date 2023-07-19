@@ -132,6 +132,7 @@ export const deleteCalendar = (id) =>
     "custom_color": "#fDd449"
   }
 */
+// TODO: Здесь нужно получать id пользака
 export const shareCalendar = ({ id, email, name, color }) =>
 	fetchWithRefresh(`${BASE_URL}/v1/calendars/${id}/share/`, {
 		method: 'POST',

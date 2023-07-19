@@ -7,14 +7,14 @@ export function PopupShareCalendar({
 	visible,
 	setVisible,
 	handleShare,
-	colleagues,
+  // isShareLoading,
 }) {
 	return (
 		<Dialog visible={visible} onHide={() => setVisible(false)}>
 			<FormShareCalendar
 				onShareCalendar={handleShare}
 				setVisible={setVisible}
-				colleagues={colleagues}
+        // isShareLoading={isShareLoading}
 			/>
 		</Dialog>
 	);
@@ -24,6 +24,5 @@ PopupShareCalendar.propTypes = {
 	visible: PropTypes.bool.isRequired,
 	setVisible: PropTypes.func.isRequired,
 	handleShare: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	colleagues: PropTypes.array.isRequired,
+  // isShareLoading: PropTypes.bool.isRequired
 };
