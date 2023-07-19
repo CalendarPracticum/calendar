@@ -19,7 +19,7 @@
 .buttonBox {
 	position: absolute;
 	top: 92vh;
-	left: 24px;
+	right: 0px;
 	height: 50px;
 	width: 60px;
 	visibility: hidden;

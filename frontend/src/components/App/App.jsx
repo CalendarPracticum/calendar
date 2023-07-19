@@ -41,6 +41,7 @@ import styles from './App.module.css';
 /* Components */
 import { Header } from '../Header/Header';
 import { Main } from '../Main/Main';
+import { Footer } from '../Footer/Footer';
 import { Loader } from '../Loader/Loader';
 import { NotFound } from '../NotFound/NotFound';
 import {
@@ -752,6 +753,7 @@ function App() {
 											onNewEventClickUnauth={setVisiblePopupAskToRegister}
 											onEditEvent={handleEditEvent}
 										/>
+										<Footer />
 									</>
 								}
 							/>
