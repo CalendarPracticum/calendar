@@ -162,12 +162,12 @@ class CalendarViewSet(viewsets.ModelViewSet):
             share = ShareCalendar.objects.filter(calendar=calendar).first()
             if not share:
                 data = {
-                    "owner": calendar.owner.email,
-                    "users": [],
-                    "calendar": {
-                        "id": calendar.id,
-                        "name": calendar.name,
-                        "color": calendar.color
+                    'owner': calendar.owner.email,
+                    'users': [],
+                    'calendar': {
+                        'id': calendar.id,
+                        'name': calendar.name,
+                        'color': calendar.color
                     }
                 }
                 return Response(data, status=status.HTTP_200_OK)
