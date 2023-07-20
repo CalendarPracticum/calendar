@@ -356,7 +356,7 @@ class EventViewSet(RequiredGETQueryParamMixin, viewsets.ModelViewSet):
                     Q(calendar__owner=self.request.user)
                     | Q(calendar__share_calendars__user=self.request.user)
                     | global_events
-                )
+                ).distinct('id')
             return qs.filter(global_events)
 
         return qs
