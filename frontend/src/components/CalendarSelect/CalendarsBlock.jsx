@@ -48,13 +48,30 @@ export function CalendarBlock(props) {
 							/>
 							<span className={styles.text}>{calendar.name}</span>
 							{editButton && (
-								<button
-									className={styles.edit}
-									type="button"
-									onClick={() => handleClick(calendar)}
-								>
-									<i className="pi pi-pencil" style={{ fontSize: '0.75rem' }} />
-								</button>
+								<div className="flex">
+									<button
+										className={styles.edit}
+										type="button"
+										onClick={() => handleClick(calendar, true)}
+									>
+										<i
+											className="pi pi-pencil"
+											style={{ fontSize: '0.75rem' }}
+										/>
+									</button>
+									<button
+										className={styles.edit}
+										type="button"
+										onClick={() => handleClick(calendar, false)}
+									>
+										<i
+											className={
+												calendar.shared ? 'pi pi-users' : 'pi pi-share-alt'
+											}
+											style={{ fontSize: '0.75rem' }}
+										/>
+									</button>
+								</div>
 							)}
 						</label>
 					))}

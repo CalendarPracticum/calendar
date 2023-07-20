@@ -16,6 +16,7 @@ export function Main({
 	onNewEventClick,
 	onNewCalendarClick,
 	onEditCalendarClick,
+	onShareCalendarClick,
 	onEventDoubleClick,
 	onNewEventClickUnauth,
 	onEditEvent,
@@ -57,6 +58,7 @@ export function Main({
 		<main className={`${styles.main} container`}>
 			<Sidebar
 				onEditCalendarClick={onEditCalendarClick}
+				onShareCalendarClick={onShareCalendarClick}
 				onNewEventClick={onNewEventClick}
 				onNewCalendarClick={onNewCalendarClick}
 				showProdCalendar={setVisibleProdCalendar}
@@ -70,6 +72,7 @@ export function Main({
 
 Main.propTypes = {
 	onEditCalendarClick: PropTypes.func.isRequired,
+	onShareCalendarClick: PropTypes.func.isRequired,
 	onNewEventClick: PropTypes.func.isRequired,
 	onNewEventClickUnauth: PropTypes.func.isRequired,
 	onNewCalendarClick: PropTypes.func.isRequired,

@@ -55,6 +55,7 @@ import {
 	PopupDialog,
 	PopupEditAvatar,
 	PopupAskToRegister,
+	PopupShareCalendar,
 } from '../Popups';
 
 const locales = {
@@ -83,6 +84,7 @@ function App() {
 	const [chosenCalendars, setChosenCalendars] = useState([]);
 	const [editableCalendar, setEditableCalendar] = useState({});
 	const [editableEvent, setEditableEvent] = useState({});
+	const [team, setTeam] = useState([]);
 
 	// Popups
 	const [visiblePopupLogin, setVisiblePopupLogin] = useState(false);
@@ -96,6 +98,8 @@ function App() {
 	const [visiblePopupChangePassword, setVisiblePopupChangePassword] =
 		useState(false);
 	const [visiblePopupAskToRegister, setVisiblePopupAskToRegister] =
+		useState(false);
+	const [visiblePopupShareCalendar, setVisiblePopupShareCalendar] =
 		useState(false);
 
 	// Helpers
@@ -147,6 +151,7 @@ function App() {
 		setCurrentUser({});
 		setAllUserCalendars([]);
 		setAllUserEvents([]);
+		setTeam([]);
 		setChosenCalendars(holidaysCalendar.map((c) => c.id));
 		closeAllPopups();
 
@@ -157,7 +162,9 @@ function App() {
 
 	const handleErrors = useCallback(
 		({ error, res }) => {
-			if (error.code === 'token_not_valid') {
+			console.log({ error, res });
+
+			if (error.code && error.code === 'token_not_valid') {
 				logout();
 				showDialog(ErrorMessage.UNAUTHORIZED, true);
 			} else if (res.status === 401) {
@@ -302,6 +309,7 @@ function App() {
 			setEditableCalendar,
 			editableEvent,
 			setEditableEvent,
+			team,
 		}),
 		[
 			holidays,
@@ -310,6 +318,7 @@ function App() {
 			chosenCalendars,
 			editableCalendar,
 			editableEvent,
+			team,
 		]
 	);
 
@@ -660,6 +669,73 @@ function App() {
 			});
 	};
 
+	const handleShareCalendar = (data) => {
+		const newMate = {
+			email: data.email,
+			infoIcon: 'load',
+		};
+		setTeam([...team, newMate]);
+
+		calendarApi
+			.shareCalendar(data)
+			.then(() => {
+				newMate.infoIcon = 'success';
+
+				const index = team.findIndex((m) => m.email === data.email);
+				if (index !== -1) {
+					team.splice(index, 1);
+				}
+
+				setTeam([...team, newMate]);
+			})
+			.catch((/* { error, res } */) => {
+				newMate.infoIcon = 'denied';
+
+				const index = team.findIndex((m) => m.email === data.email);
+				if (index !== -1) {
+					team.splice(index, 1);
+				}
+
+				setTeam([...team, newMate]);
+				// handleErrors({ error, res });
+			});
+	};
+
+	const handleDeleteMate = ({ id, email }) => {
+		setIsLoading(true);
+		calendarApi
+			.deleteSharedCalendar({ id, email })
+			.then(() => {
+				const index = team.findIndex((m) => m.email === email);
+				if (index !== -1) {
+					team.splice(index, 1);
+				}
+			})
+			.catch(({ err, res }) => {
+				handleErrors({ err, res });
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
+	const handleShowSharePopup = (id) => {
+		setIsLoading(true);
+		calendarApi
+			.getSharedCalendarById(id)
+			.then((res) => {
+				setTeam(res.users);
+				setVisiblePopupShareCalendar(true);
+			})
+			.catch(({ error, res }) => {
+				console.log({ error, res });
+				handleErrors({ error, res });
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
 	return (
 		<LocalizationContext.Provider value={localizer}>
 			<CurrentUserContext.Provider value={user}>
@@ -683,6 +759,7 @@ function App() {
 											onEventDoubleClick={setVisiblePopupEditEvent}
 											onNewCalendarClick={setVisiblePopupNewCalendar}
 											onEditCalendarClick={setVisiblePopupEditCalendar}
+											onShareCalendarClick={handleShowSharePopup}
 											onNewEventClickUnauth={setVisiblePopupAskToRegister}
 											onEditEvent={handleEditEvent}
 										/>
@@ -755,6 +832,13 @@ function App() {
 							setVisible={setVisiblePopupAskToRegister}
 							showRegisterPopup={setVisiblePopupLogin}
 							setIsFormLogin={setIsFormLogin}
+						/>
+
+						<PopupShareCalendar
+							visible={visiblePopupShareCalendar}
+							setVisible={setVisiblePopupShareCalendar}
+							handleShare={handleShareCalendar}
+							handleDeleteMate={handleDeleteMate}
 						/>
 
 						<Toast ref={toast} />
