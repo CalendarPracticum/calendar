@@ -4,7 +4,7 @@
 	width: 60px;
 	font-size: 60px;
 	border: none;
-	transition: transform 0.25s linear;
+	transition: transform 0.1s linear;
 	cursor: pointer;
 }
 
@@ -21,7 +21,8 @@
 	top: 92vh;
 	right: 0px;
 	height: 50px;
-	width: 60px;
+	width: 56px;
+	visibility: hidden;
 }
 
 .button:hover {
