@@ -1,6 +1,8 @@
+import unittest
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.urls import reverse
 from rest_framework import status
 
@@ -15,6 +17,10 @@ class EventTest(BaseAPITestCase):
     Тестирование доступности эндопойнтов приложения events.
     """
 
+    @unittest.skipIf(
+        connection.vendor == 'sqlite',
+        'Skip test if using SQLite'
+    )
     def test_get_events_list(self):
         """
         Получить список событий.
